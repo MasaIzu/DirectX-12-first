@@ -211,6 +211,42 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	barrierDesc.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	commandList->ResourceBarrier(1, &barrierDesc);
 
+	//2.描画先の変更
+	//レンダーターゲットビューのハンドルを取得
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = rtvHeap->GetCPUDescriptorHandleForHeapStart();
+	rtvHandle.ptr += bbIndex * device->GetDescriptorHandleIncrementSize(rtvHeapDesc.Type);
+	commandList->OMSetRenderTargets(1, &rtvHandle, false, nullptr);
+
+	//3.画面クリア			R	  G	   B	A
+	FLOAT clearColor[] = { 0.1f,0.25f,0.5f,0.0f };//青っぽい色
+	commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+
+	//4.描画コマンドここから
+	//4.描画コマンドここまで
+
+	//5.リソースバリアを戻す
+	barrierDesc.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;//描画状態から
+	barrierDesc.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;//表示状態へ
+	commandList->ResourceBarrier(1, &barrierDesc);
+
+	//命令のクローズ
+	result = commandList->Close();
+	assert(SUCCEEDED(result));
+	//コマンドリストの実行
+	ID3D12CommandList* commandLists[] = { commandList };
+	commandQueue->ExecuteCommandLists(1, commandLists);
+
+	//画面に表示するバッファをフリップ(裏表の入れ替え)
+	result = swapChain->Present(1, 0);
+	assert(SUCCEEDED(result));
+
+	//コマンドの実行完了を待つ
+	commandQueue->Signal(fence, ++fenceVal);
+	if (fence->GetCompletedValue() != fenceVal) {
+		HANDLE event = CreateEvent(nullptr, false, false, nullptr);
+		fence->SetEventOnCompletion(fenceVal, event);
+	}
+
 	while (true) {
 		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
 			TranslateMessage(&msg);

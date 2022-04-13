@@ -8,8 +8,11 @@
 #pragma comment(lib,"dxgi.lib")
 #include <vector>
 #include <string>
+#include<DirectXMath.h>
+
 
 using namespace std;
+using namespace DirectX;
 
 // @brief コンソール画面にフォーマット付き文字列の表示
 // @param format フォーマット(%dとか%fとかの)
@@ -205,6 +208,26 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	//DirectX12初期化処理　ここまで
 
+	//描画初期化処理　ここから
+
+	//頂点データ
+	XMFLOAT3 vertices[] = {
+		{-0.5f,-0.5f,0.0f},//左下
+		{-0.5f,+0.5,0.0f},//左上
+		{+0.5f,-0.5f,0.0f},//右下
+	};
+	//頂点データ全体のサイズ = 頂点データの一つ分のサイズ * 頂点データの要素数
+	UINT sizeVB = static_cast<UINT>(sizeof(XMFLOAT3) * _countof(vertices));
+
+	//頂点バッファの設定
+	D3D12_HEAP_PROPERTIES heapProp{};//ヒープ設定
+	heapProp.Type = D3D12_HEAP_TYPE_UPLOAD;//GPUへの転送用
+	//リソース設定
+	D3D12_RESOURCE_DESC resDesc{};
+
+
+
+	//描画初期化処理　ここまで
 
 	while (true) {
 		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {

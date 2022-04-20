@@ -1,3 +1,5 @@
+#include<d3dcompiler.h>
+#pragma comment(lib,"d3dcompiler.lib")
 #include<Windows.h>
 #include <tchar.h>
 #include<iostream>
@@ -8,7 +10,9 @@
 #pragma comment(lib,"dxgi.lib")
 #include <vector>
 #include <string>
+#include<DirectXMath.h>
 
+using namespace DirectX;
 using namespace std;
 
 // @brief コンソール画面にフォーマット付き文字列の表示
@@ -205,6 +209,85 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	//DirectX12初期化処理　ここまで
 
+	//描画初期化処理 ここから
+	XMFLOAT3 vertices[] = {
+		{-0.5f,-0.5f,0.0f},//左下
+		{-0.5f,+0.5f,0.0f},//左上
+		{+0.5f,-0.5f,0.0f},//右下
+	};
+	//頂点データ全体のサイズ = 頂点データ一つ分のサイズ * 頂点データの要素数
+	UINT sizeVB = static_cast<UINT>(sizeof(XMFLOAT3) * _countof(vertices));
+
+	//頂点バッファの設定
+	D3D12_HEAP_PROPERTIES heapProp{};//ヒープ設定
+	heapProp.Type = D3D12_HEAP_TYPE_UPLOAD;//GPUへの転送用
+	//リソース設定
+	D3D12_RESOURCE_DESC resDesc{};
+	resDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	resDesc.Width = sizeVB;//頂点データ全体のサイズ
+	resDesc.Height = 1;
+	resDesc.DepthOrArraySize = 1;
+	resDesc.MipLevels = 1;
+	resDesc.SampleDesc.Count = 1;
+	resDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+	//頂点バッファの生成
+	ID3D12Resource* vertBuff = nullptr;
+	result = device->CreateCommittedResource(
+		&heapProp,//ヒープ設定
+		D3D12_HEAP_FLAG_NONE,
+		&resDesc,//リソース設定
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&vertBuff));
+	assert(SUCCEEDED(result));
+
+	//GPU上のバッファに対応した仮想メモリ(メインメモリ上)を取得
+	XMFLOAT3* vertMap = nullptr;
+	result = vertBuff->Map(0, nullptr, (void**)&vertMap);
+	assert(SUCCEEDED(result));
+	//全頂点に対して
+	for (int i = 0; i < _countof(vertices); i++) {
+		vertMap[i] = vertices[i];//座標をコピー
+	}
+	//繋がりを解除
+	vertBuff->Unmap(0, nullptr);
+
+	//頂点バッファビューの作成
+	D3D12_VERTEX_BUFFER_VIEW vbView{};
+	//GPU仮想アドレス
+	vbView.BufferLocation = vertBuff->GetGPUVirtualAddress();
+	//頂点バッファのサイズ
+	vbView.StrideInBytes = sizeof(XMFLOAT3);
+
+	ID3DBlob* vsBlob = nullptr;//頂点シェーダオブジェクト
+	ID3DBlob* psBlob = nullptr;//ピクセルシェーダオブジェクト
+	ID3DBlob* errorBlob = nullptr;//エラーオブジェクト
+
+	//頂点シェーダの読み込みとコンパイル
+	result = D3DCompileFromFile(
+		L"BasicVS.hlsl",//シェーダファイル名
+		nullptr,
+		D3D_COMPILE_STANDARD_FILE_INCLUDE,//インクルード可能にする
+		"main", "vs_5_0",//エントリーポイント名,シェーダモデル指定
+		D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,//デバッグ用設定
+		0,
+		&vsBlob, &errorBlob
+	);
+
+	//エラーなら
+	if (FAILED(result)) {
+		//errorBlobからエラー内容をstryng型にコピー
+		std::string error;
+		error.resize(errorBlob->GetBufferSize());
+
+		std::copy_n((char*)errorBlob->GetBufferPointer(),
+			errorBlob->GetBufferSize(),
+			error.begin());
+		error += "\n";
+		//エラー内容を出力ウィンドウに表示
+		OutputDebugStringA(error.c_str());
+		assert(0);
+	}
 
 	while (true) {
 		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {

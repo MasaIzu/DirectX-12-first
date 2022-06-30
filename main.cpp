@@ -371,6 +371,29 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ID3D12Resource* constBuffTransform = nullptr;
 	ConstBufferDataTransform* constMapTransform = nullptr;
 
+	//スケーリング倍率
+	XMFLOAT3 scale = { 1.0f,1.0f,1.0f };
+	//回転角
+	XMFLOAT3 rotation = { 0.0f,0.0f,0.0f };
+	//座標
+	XMFLOAT3 position = { 0.0f,0.0f,0.0f };
+
+	//ワールド変換行列
+	XMMATRIX matWorld;
+	XMMATRIX matScale; //スケーリング行列
+	XMMATRIX matRot; //回転
+	XMMATRIX matTrans; //回転
+	
+
+	//単位行列を代入
+	matWorld = XMMatrixIdentity();
+	matRot = XMMatrixIdentity();
+	
+	matTrans = XMMatrixTranslation(-50.0f, 0, 0);//(-50.0f, 0, 0)平行移動
+
+	matWorld *= matTrans;
+
+
 	// 定数バッファの生成
 	result = device->CreateCommittedResource(
 		&cbHeapProp, // ヒープ設定
@@ -420,7 +443,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	XMFLOAT3 up(0, 1, 0);
 	matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
 
-	constMapTransform->mat = matView * matProjection;
+	constMapTransform->mat = matWorld * matView * matProjection;
 
 	//定数バッファに転送
 	constMapTransform->mat = matProjection;
@@ -483,8 +506,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	float transformX = 0.0f;
 	float transformY = 0.0f;
-	float rotation = 0.0f;
-	float scale = 1.0f;
 
 	float affin[3][3] = {
 		{1.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f, 1.0f} };
@@ -834,8 +855,32 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		}
 
+		//回転
+		if (keys[DIK_UP] || keys[DIK_DOWN] || keys[DIK_RIGHT] || keys[DIK_LEFT]) {
+			if (keys[DIK_UP]) { position.z += 1.0f; }
+			else if (keys[DIK_DOWN]) { position.z -= 1.0f; }
+			if (keys[DIK_RIGHT]) { position.x += 1.0f; }
+			else if (keys[DIK_LEFT]) { position.x -= 1.0f; }
+		}
+
+		matWorld = XMMatrixIdentity();
+		matScale = XMMatrixScaling(scale.x, scale.y, scale.z);
+		matWorld *= matScale;
+		//単位行列を代入
+		matRot = XMMatrixIdentity();
+		matRot *= XMMatrixRotationX(XMConvertToRadians(rotation.x));
+		matRot *= XMMatrixRotationY(XMConvertToRadians(rotation.y));
+		matRot *= XMMatrixRotationZ(XMConvertToRadians(rotation.z));
+		matWorld *= matRot;
+
+
+		matTrans = XMMatrixTranslation(position.x, position.y, position.z);
+		matWorld *= matTrans;
+
 		//定数バッファに転送
-		constMapTransform->mat = matView * matProjection;
+		constMapTransform->mat = matWorld * matView * matProjection;
+
+
 		
 
 		//4.描画コマンドここから

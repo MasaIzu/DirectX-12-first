@@ -246,6 +246,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// 配列の要素数
 	const size_t imageDataCount = textureWidth * textureHeight;
 
+	float angle = 0.0;
+
 	//// 画像イメージデータ配列
 	//XMFLOAT4* imageData = new XMFLOAT4[imageDataCount]; // ※必ず後で解放する
 
@@ -391,6 +393,38 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	constMapTransform->mat.r[3].m128_f32[0] = -1.0f;
 	constMapTransform->mat.r[3].m128_f32[1] = 1.0f;
 
+	//平行投影行列を代入
+	constMapTransform->mat = XMMatrixOrthographicOffCenterLH(
+		//左端			//右端    
+		0.0f, window_width,
+
+		//下端			//上端
+		window_height, 0.0f,
+
+		//前端			//奥端
+		0.0f, 1.0f
+	);
+
+	//平行投影行列を代入
+	XMMATRIX matProjection = XMMatrixPerspectiveFovLH(
+	XMConvertToRadians(45.0f),					//上下画角45度
+		(float)window_width/window_height,		//アスペクト比
+		0.1f,1000.0f							//前端,奥端
+	
+	);
+
+	//ビュー変換行列
+	XMMATRIX matView;
+	XMFLOAT3 eye(0, 0, -100);
+	XMFLOAT3 target(0, 0, 0);
+	XMFLOAT3 up(0, 1, 0);
+	matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
+
+	constMapTransform->mat = matView * matProjection;
+
+	//定数バッファに転送
+	constMapTransform->mat = matProjection;
+
 	// ルートパラメータの設定
 	D3D12_ROOT_PARAMETER rootParams[3] = {};
 	// 定数バッファ0番
@@ -433,10 +467,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// 頂点データ
 	Vertex vertices[] = {
 		// x      y     z       u     v
-		{{0.0f, 100.0f, 0.0f}, {0.0f, 1.0f}}, // 左下
-		{{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}}, // 左上
-		{{100.0f, 100.0f, 0.0f}, {1.0f, 1.0f}}, // 右下
-		{{100.0f, 0.0f, 0.0f}, {1.0f, 0.0f}}, // 右上
+		{{-50.0f, -50.0f, 0.0f}, {0.0f, 1.0f}}, // 左下
+		{{-50.0f, 50.0f, 0.0f}, {0.0f, 0.0f}}, // 左上
+		{{50.0f, -50.0f, 0.0f}, {1.0f, 1.0f}}, // 右下
+		{{50.0f, 50.0f, 0.0f}, {1.0f, 0.0f}}, // 右上
 	};
 
 
@@ -789,7 +823,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		keyboard->GetDeviceState(sizeof(keys), keys);
 
-		
+		if (keys[DIK_D] || keys[DIK_A]) {
+			if (keys[DIK_D]) { angle += XMConvertToRadians(1.0f); }
+			else if (DIK_A) { angle -= XMConvertToRadians(1.0f); }
+
+			//angleラジアンだけy軸まわりに回転
+			eye.x = -100 * sinf(angle);
+			eye.z = -100 * cosf(angle);
+			matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
+
+		}
+
+		//定数バッファに転送
+		constMapTransform->mat = matView * matProjection;
 		
 
 		//4.描画コマンドここから

@@ -19,12 +19,13 @@
 #include<DirectXMath.h>
 #include <math.h>
 #include <DirectXTex.h>
+#include<wrl.h>
 
 
 
 using namespace DirectX;
 using namespace std;
-
+using namespace Microsoft::WRL;
 
 #pragma endregion
 const float PI = 3.141592f;
@@ -112,12 +113,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #endif
 
 	HRESULT result;
-	ID3D12Device* device = nullptr;
-	IDXGIFactory6* dxgiFactory = nullptr;
-	IDXGISwapChain4* swapChain = nullptr;
+	ComPtr<ID3D12Device> device;
+	ComPtr<IDXGIFactory6> dxgiFactory;
+	ComPtr<IDXGISwapChain4> swapChain = nullptr;
 	ID3D12CommandAllocator* commandAllocator = nullptr;
 	ID3D12GraphicsCommandList* commandList = nullptr;
-	ID3D12CommandQueue* commandQueue = nullptr;
+	ComPtr<ID3D12CommandQueue> commandQueue = nullptr;
 	ID3D12DescriptorHeap* rtvHeap = nullptr;
 
 	//DXGIファクトリーの生成
@@ -125,7 +126,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	assert(SUCCEEDED(result));
 
 	//アダプターの列挙用
-	std::vector<IDXGIAdapter4*>adapters;
+	std::vector<ComPtr<IDXGIAdapter4>>adapters;
 	//ここに特定の名前を持つアダプターオブジェクトが入る
 	IDXGIAdapter4* tmpAdapter = nullptr;
 
@@ -143,7 +144,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//ソフトウェアデバイスを回避
 		if (!(adapterDesc.Flags & DXGI_ADAPTER_FLAG3_SOFTWARE)) {
 			//デバイスを採用してループを抜ける
-			tmpAdapter = adapters[i];
+			tmpAdapter = adapters[i].Get();
 			break;
 		}
 	}
@@ -191,9 +192,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	swapChainDesc.BufferCount = 2;								//バッファ数を2つに設定
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;	//フリップ後は破壊
 	swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+
+	ComPtr<IDXGISwapChain1> swapchain1;
+
 	//スワップチェーンの生成
-	result = dxgiFactory->CreateSwapChainForHwnd(commandQueue, hwnd, &swapChainDesc, nullptr, nullptr, (IDXGISwapChain1**)&swapChain);
-	assert(SUCCEEDED(result));
+	result = dxgiFactory->CreateSwapChainForHwnd(
+		commandQueue.Get(),
+		hwnd,
+		&swapChainDesc,
+		nullptr,
+		nullptr,
+		&swapchain1);
+
+	//生成したIDXGIswapChainのオブジェクトをIDXGISwapChain4に変換する
+	swapchain1.As(&swapChain);
 
 	//デスクリプタヒープの設定
 	D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc{};
@@ -206,7 +218,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 
 	//バックバッファ
-	std::vector<ID3D12Resource*>backBuffers;
+	std::vector<ComPtr<ID3D12Resource>>backBuffers(2);
 	backBuffers.resize(swapChainDesc.BufferCount);
 
 	//スワップチェーンの全てのバッファについて処理する
@@ -223,7 +235,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 		rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
 		//レンダーターゲットビューの生成
-		device->CreateRenderTargetView(backBuffers[i], &rtvDesc, rtvHandle);
+		device->CreateRenderTargetView(backBuffers[i].Get(), &rtvDesc, rtvHandle);
 	}
 
 	//フェンスの生成
@@ -613,8 +625,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	struct ConstBufferDataTransform {
 		XMMATRIX mat;
 	};
-	ID3D12Resource* constBuffTransform = nullptr;
-	ConstBufferDataTransform* constMapTransform = nullptr;
+	ID3D12Resource* constBuffTransform0 = nullptr;
+	ConstBufferDataTransform* constMapTransform0 = nullptr;
+
+	ID3D12Resource* constBuffTransform1 = nullptr;
+	ConstBufferDataTransform* constMapTransform1 = nullptr;
 
 	//スケーリング倍率
 	XMFLOAT3 scale = { 1.0f,1.0f,1.0f };
@@ -655,11 +670,31 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			&cbResourceDesc, // リソース設定
 			D3D12_RESOURCE_STATE_GENERIC_READ,
 			nullptr,
-			IID_PPV_ARGS(&constBuffTransform));
+			IID_PPV_ARGS(&constBuffTransform0));
 		assert(SUCCEEDED(result));
 		// 定数バッファのマッピング
-		result = constBuffTransform->Map(0, nullptr, (void**)&constMapTransform); // マッピング
+		result = constBuffTransform0->Map(0,
+			nullptr,
+			(void**)&constMapTransform0); // マッピング
 		assert(SUCCEEDED(result));
+
+
+
+		// 定数バッファの生成
+		result = device->CreateCommittedResource(
+			&cbHeapProp, // ヒープ設定
+			D3D12_HEAP_FLAG_NONE,
+			&cbResourceDesc, // リソース設定
+			D3D12_RESOURCE_STATE_GENERIC_READ,
+			nullptr,
+			IID_PPV_ARGS(&constBuffTransform1));
+		assert(SUCCEEDED(result));
+		// 定数バッファのマッピング
+		result = constBuffTransform1->Map(0,
+			nullptr,
+			(void**)&constMapTransform1); // マッピング
+		assert(SUCCEEDED(result));
+
 	}
 	//単位行列を代入
 	/*constMapTransform->mat = XMMatrixIdentity();
@@ -668,7 +703,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	constMapTransform->mat.r[3].m128_f32[0] = -1.0f;
 	constMapTransform->mat.r[3].m128_f32[1] = 1.0f;*/
 	//平行
-	constMapTransform->mat = XMMatrixOrthographicOffCenterLH(
+	constMapTransform0->mat = XMMatrixOrthographicOffCenterLH(
 		//左端			//右端    
 		0.0f, window_width,
 
@@ -693,7 +728,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	XMFLOAT3 up(0, 1, 0);
 	matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
 
-	constMapTransform->mat = matWorld * matView * matProjection;
+	constMapTransform0->mat = matWorld * matView * matProjection;
 
 
 
@@ -1023,7 +1058,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//1.リソースバリアで書き込み可能に変更
 		D3D12_RESOURCE_BARRIER barrierDesc{};
-		barrierDesc.Transition.pResource = backBuffers[bbIndex];
+		barrierDesc.Transition.pResource = backBuffers[bbIndex].Get();
 		barrierDesc.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
 		barrierDesc.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
 		commandList->ResourceBarrier(1, &barrierDesc);
@@ -1046,6 +1081,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			FLOAT clearColor[] = { 11.1f,0.25f, 0.5f,0.0f }; // ピンクっぽい色
 			commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 		}
+
+		
 
 
 		if (key[DIK_D] || key[DIK_A] || key[DIK_W] || key[DIK_S]) {
@@ -1101,8 +1138,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		matWorld *= matTrans;
 
 		//定数バッファに転送
-		constMapTransform->mat = matWorld * matView * matProjection;
+		constMapTransform0->mat = matWorld * matView * matProjection;
 
+
+		//ワールド変換行列
+		XMMATRIX matWorld1;
+		matWorld1 = XMMatrixIdentity();
+		//各種変形行列を計算
+		XMMATRIX matScale1 = XMMatrixScaling(1.0f, 1.0f, 1.0f);
+		XMMATRIX matRot1 = XMMatrixRotationY(XM_PI / 4.0f);
+		XMMATRIX matTrans1 = XMMatrixTranslation(-20.0f, 0.0f, 0.0f);
+		//ワールド行列を合成
+		matWorld1 = matScale1 * matRot1 * matTrans1;
+		//ワールド,ビュー,射影行列を合成してシェーダーに転送
+		constMapTransform1->mat = matWorld1 * matView * matProjection;
 
 
 		////トリガー処理
@@ -1168,15 +1217,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		D3D12_GPU_DESCRIPTOR_HANDLE srvGpuHandle = srvHeap->GetGPUDescriptorHandleForHeapStart();
 		// SRVヒープの先頭にあるSRVをルートパラメータ1番に設定
 		commandList->SetGraphicsRootDescriptorTable(1, srvGpuHandle);
-		// 定数バッファビュー(CBV)の設定コマンド
-		commandList->SetGraphicsRootConstantBufferView(2, constBuffTransform->GetGPUVirtualAddress());
-
 		// インデックスバッファビューの設定コマンド
 		commandList->IASetIndexBuffer(&ibView);
 
+
+		// 0番目定数バッファビュー(CBV)の設定コマンド
+		commandList->SetGraphicsRootConstantBufferView(2, constBuffTransform0->GetGPUVirtualAddress());
 		// 描画コマンド
 		commandList->DrawIndexedInstanced(_countof(indices), 1, 0, 0, 0);
+		// 1番目定数バッファビュー(CBV)の設定コマンド
+		commandList->SetGraphicsRootConstantBufferView(2, constBuffTransform1->GetGPUVirtualAddress());
+		// 描画コマンド
+		commandList->DrawIndexedInstanced(_countof(indices), 1, 0, 0, 0);
+		
 
+		
 
 		//4.描画コマンドここまで
 

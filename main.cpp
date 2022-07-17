@@ -71,7 +71,7 @@ LRESULT WindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 struct Object3d {
 
 	//定数バッファ(行列用)
-	ID3D12Resource* constBuffTransform;
+	ComPtr<ID3D12Resource> constBuffTransform;
 	//定数バッファマップ(行列用)
 	struct ConstBufferDataTransform* constMapTransform;
 
@@ -222,9 +222,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ComPtr<IDXGIFactory6> dxgiFactory;
 	ComPtr<IDXGISwapChain4> swapChain = nullptr;
 	ComPtr<ID3D12CommandAllocator> commandAllocator = nullptr;
-	ID3D12GraphicsCommandList* commandList = nullptr;
+	ComPtr<ID3D12GraphicsCommandList> commandList = nullptr;
 	ComPtr<ID3D12CommandQueue> commandQueue = nullptr;
-	ID3D12DescriptorHeap* rtvHeap = nullptr;
+	ComPtr<ID3D12DescriptorHeap> rtvHeap = nullptr;
 
 	//DXGIファクトリーの生成
 	result = CreateDXGIFactory(IID_PPV_ARGS(&dxgiFactory));
@@ -233,7 +233,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//アダプターの列挙用
 	std::vector<ComPtr<IDXGIAdapter4>>adapters;
 	//ここに特定の名前を持つアダプターオブジェクトが入る
-	IDXGIAdapter4* tmpAdapter = nullptr;
+	ComPtr<IDXGIAdapter4> tmpAdapter = nullptr;
 
 	//パフォーマンスが高い物から順に、全てのアダプターを列挙する
 	for (UINT i = 0; dxgiFactory->EnumAdapterByGpuPreference(i, DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&tmpAdapter)) != DXGI_ERROR_NOT_FOUND; i++) {
@@ -265,7 +265,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	for (size_t i = 0; i < _countof(levels); i++) {
 		//採用したアダプターでデバイスを生成
-		result = D3D12CreateDevice(tmpAdapter, levels[i], IID_PPV_ARGS(&device));
+		result = D3D12CreateDevice(tmpAdapter.Get(), levels[i], IID_PPV_ARGS(&device));
 		if (result == S_OK) {
 			//デバイスを生成できた時点でループを抜ける
 			featureLevel = levels[i];
@@ -344,7 +344,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	}
 
 	//フェンスの生成
-	ID3D12Fence* fence = nullptr;
+	ComPtr<ID3D12Fence> fence = nullptr;
 	UINT64 fenceVal = 0;
 
 	result = device->CreateFence(fenceVal, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
@@ -458,7 +458,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 
 	// テクスチャバッファの生成
-	ID3D12Resource* texBuff = nullptr;
+	ComPtr<ID3D12Resource> texBuff = nullptr;
 	result = device->CreateCommittedResource(
 		&textureHeapProp,
 		D3D12_HEAP_FLAG_NONE,
@@ -468,7 +468,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		IID_PPV_ARGS(&texBuff));
 
 	// テクスチャバッファの生成
-	ID3D12Resource* texBuff2 = nullptr;
+	ComPtr<ID3D12Resource> texBuff2 = nullptr;
 	result = device->CreateCommittedResource(
 		&textureHeapProp,
 		D3D12_HEAP_FLAG_NONE,
@@ -640,7 +640,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	resDesc.SampleDesc.Count = 1;
 	resDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 	// 頂点バッファの生成
-	ID3D12Resource* vertBuff = nullptr;
+	ComPtr<ID3D12Resource> vertBuff = nullptr;
 	result = device->CreateCommittedResource(
 		&heapProp, // ヒープ設定
 		D3D12_HEAP_FLAG_NONE,
@@ -663,7 +663,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	resDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
 	// インデックスバッファの生成
-	ID3D12Resource* indexBuff = nullptr;
+	ComPtr<ID3D12Resource> indexBuff = nullptr;
 	result = device->CreateCommittedResource(
 		&heapProp, // ヒープ設定
 		D3D12_HEAP_FLAG_NONE,
@@ -714,8 +714,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		XMStoreFloat3(&vertices[indices_2].normal, normal);
 
 	}
-
-
 	
 
 	// GPU上のバッファに対応した仮想メモリ(メインメモリ上)を取得
@@ -749,7 +747,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	srvDesc.Texture2D.MipLevels = resDesc.MipLevels;
 
 	// ハンドルの指す位置にシェーダーリソースビュー作成
-	device->CreateShaderResourceView(texBuff, &srvDesc, srvHandle);
+	device->CreateShaderResourceView(texBuff.Get(), &srvDesc, srvHandle);
 
 	// CBV,SRV,UAVの1個分のサイズを取得
 	UINT descriptorSize = 
@@ -770,7 +768,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	srvDesc2.Texture2D.MipLevels = textureResourceDesc2.MipLevels;
 
 	// ハンドルの指す位置にシェーダーリソースビュー作成
-	device->CreateShaderResourceView(texBuff2, &srvDesc2, srvHandle);
+	device->CreateShaderResourceView(texBuff2.Get(), &srvDesc2, srvHandle);
 
 
 	// ハンドルを1つ進める（SRVの位置）
@@ -941,7 +939,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	cbResourceDesc.SampleDesc.Count = 1;
 	cbResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
-	ID3D12Resource* constBuffMaterial = nullptr;
+	ComPtr<ID3D12Resource> constBuffMaterial = nullptr;
 	// 定数バッファの生成
 	result = device->CreateCommittedResource(
 		&cbHeapProp, // ヒープ設定
@@ -1084,7 +1082,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	depthClearValue.Format = DXGI_FORMAT_D32_FLOAT;
 
 	//リソース生成
-	ID3D12Resource* depthBuff = nullptr;
+	ComPtr<ID3D12Resource> depthBuff = nullptr;
 	result = device->CreateCommittedResource(
 		&depthHeapProp,
 		D3D12_HEAP_FLAG_NONE,
@@ -1105,7 +1103,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	dsvDesc.Format = DXGI_FORMAT_D32_FLOAT;//深度値フォーマット
 	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
 	device->CreateDepthStencilView(
-		depthBuff,
+		depthBuff.Get(),
 		&dsvDesc,
 		dsvHeap->GetCPUDescriptorHandleForHeapStart()
 	);
@@ -1185,7 +1183,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	pipelineDesc.SampleDesc.Count = 1; // 1ピクセルにつき1回サンプリング
 
 	// ルートシグネチャ
-	ID3D12RootSignature* rootSignature;
+	ComPtr<ID3D12RootSignature> rootSignature;
 
 	// ルートシグネチャの設定
 	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc{};
@@ -1207,10 +1205,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	assert(SUCCEEDED(result));
 	rootSigBlob->Release();
 	// パイプラインにルートシグネチャをセット
-	pipelineDesc.pRootSignature = rootSignature;
+	pipelineDesc.pRootSignature = rootSignature.Get();
 
 	//πプランステートの生成
-	ID3D12PipelineState* pipelineStage = nullptr;
+	ComPtr<ID3D12PipelineState> pipelineStage = nullptr;
 
 	result = device->CreateGraphicsPipelineState(&pipelineDesc, IID_PPV_ARGS(&pipelineStage));
 	assert(SUCCEEDED(result));
@@ -1417,8 +1415,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		commandList->RSSetScissorRects(1, &scissorRect);
 
 		//パイプライン巣チートと√シグネチャの設定コマンド
-		commandList->SetPipelineState(pipelineStage);
-		commandList->SetGraphicsRootSignature(rootSignature);
+		commandList->SetPipelineState(pipelineStage.Get());
+		commandList->SetGraphicsRootSignature(rootSignature.Get());
 
 		// プリミティブ形状の設定コマンド
 		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); // 三角形リスト
@@ -1446,7 +1444,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//全オブジェクトについて処理
 		for (int i = 0; i < _countof(object3ds); i++) {
-			DrawObject3d(&object3ds[i], commandList, vbView, ibView, _countof(indices));
+			DrawObject3d(&object3ds[i], commandList.Get(), vbView, ibView, _countof(indices));
 		}
 
 		//// 0番目定数バッファビュー(CBV)の設定コマンド
@@ -1477,7 +1475,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		result = commandList->Close();
 		assert(SUCCEEDED(result));
 		//コマンドリストの実行
-		ID3D12CommandList* commandLists[] = { commandList };
+		ID3D12CommandList* commandLists[] = { commandList.Get()};
 		commandQueue->ExecuteCommandLists(1, commandLists);
 
 		//画面に表示するバッファをフリップ(裏表の入れ替え)
@@ -1485,7 +1483,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		assert(SUCCEEDED(result));
 
 		//コマンドの実行完了を待つ
-		commandQueue->Signal(fence, ++fenceVal);
+		commandQueue->Signal(fence.Get(), ++fenceVal);
 		if (fence->GetCompletedValue() != fenceVal) {
 			HANDLE event = CreateEvent(nullptr, false, false, nullptr);
 			fence->SetEventOnCompletion(fenceVal, event);

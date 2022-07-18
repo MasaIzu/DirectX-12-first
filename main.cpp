@@ -73,7 +73,7 @@ struct Object3d {
 	//定数バッファ(行列用)
 	ComPtr<ID3D12Resource> constBuffTransform;
 	//定数バッファマップ(行列用)
-	struct ConstBufferDataTransform* constMapTransform;
+	struct ConstBufferDataTransform* constMapTransform = nullptr;
 
 	//アフィン変換情報
 	XMFLOAT3 scale = { 1,1,1 };
@@ -81,7 +81,7 @@ struct Object3d {
 	XMFLOAT3 position = { 0,0,0 };
 
 	//ワールド変換行列
-	XMMATRIX matWorld;
+	XMMATRIX matWorld{};
 	//親オブジェクトへのポインタ
 	Object3d* parent = nullptr;
 
@@ -146,7 +146,7 @@ void UpdateObject3d(Object3d* object, XMMATRIX& matView, XMMATRIX& matProjection
 
 }
 
-void DrawObject3d(Object3d* object, ID3D12GraphicsCommandList* commandlist, D3D12_VERTEX_BUFFER_VIEW& vbView, D3D12_INDEX_BUFFER_VIEW& ibView, UINT numIndices) {
+void DrawObject3d(Object3d* object, ComPtr<ID3D12GraphicsCommandList> commandlist, D3D12_VERTEX_BUFFER_VIEW& vbView, D3D12_INDEX_BUFFER_VIEW& ibView, UINT numIndices) {
 	//頂点バッファの設定
 	commandlist->IASetVertexBuffers(0, 1, &vbView);
 	//インデックスバッファの設定
@@ -159,7 +159,7 @@ void DrawObject3d(Object3d* object, ID3D12GraphicsCommandList* commandlist, D3D1
 }
 
 
-int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
+int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 #pragma region WindowsAPI初期化処理
 
@@ -211,7 +211,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 #ifdef _DEBUG
 //デバッグレイヤーをオンに
-	ID3D12Debug* debugController;
+	ComPtr<ID3D12Debug> debugController;
 	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) {
 		debugController->EnableDebugLayer();
 	}
@@ -525,7 +525,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	srvHeapDesc.NumDescriptors = kMaxSRVCount;
 
 	// 設定を元にSRV用デスクリプタヒープを生成
-	ID3D12DescriptorHeap* srvHeap = nullptr;
+	ComPtr<ID3D12DescriptorHeap> srvHeap = nullptr;
 	result = device->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&srvHeap));
 	assert(SUCCEEDED(result));
 
@@ -1095,7 +1095,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc{};
 	dsvHeapDesc.NumDescriptors = 1;//深度ビューは1つ
 	dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;//デプスステンシルビュー
-	ID3D12DescriptorHeap* dsvHeap = nullptr;
+	ComPtr<ID3D12DescriptorHeap> dsvHeap = nullptr;
 	result = device->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&dsvHeap));
 
 	//深度ビュー作成
@@ -1427,7 +1427,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// 定数バッファビュー(CBV)の設定コマンド
 		commandList->SetGraphicsRootConstantBufferView(0, constBuffMaterial->GetGPUVirtualAddress());
 		// SRVヒープの設定コマンド
-		commandList->SetDescriptorHeaps(1, &srvHeap);
+		commandList->SetDescriptorHeaps(1, srvHeap.GetAddressOf());
 
 		// SRVヒープの先頭ハンドルを取得（SRVを指しているはず）
 		D3D12_GPU_DESCRIPTOR_HANDLE srvGpuHandle = srvHeap->GetGPUDescriptorHandleForHeapStart();
@@ -1487,8 +1487,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		if (fence->GetCompletedValue() != fenceVal) {
 			HANDLE event = CreateEvent(nullptr, false, false, nullptr);
 			fence->SetEventOnCompletion(fenceVal, event);
-			WaitForSingleObject(event, INFINITE);
-			CloseHandle(event);
+			if (event != 0) {
+				WaitForSingleObject(event, INFINITE);
+				CloseHandle(event);
+			}
 		}
 
 		//キューをクリア

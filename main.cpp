@@ -20,7 +20,8 @@
 #include <math.h>
 #include <DirectXTex.h>
 #include<wrl.h>
-
+#include"WinApi.h"
+#include"Vector3.h"
 
 
 using namespace DirectX;
@@ -43,29 +44,6 @@ struct ConstBufferDataTransform {
 	XMMATRIX mat;
 };
 
-#pragma region おまじない
-// @brief コンソール画面にフォーマット付き文字列の表示
-// @param format フォーマット(%dとか%fとかの)
-// @param 可変長引数
-// @remarks この関数はデバック用です。デバッグ時にしか動作しません
-void DebugOutputFormatString(const char* format, ...) {
-#ifdef _DEBUG
-	va_list valist;
-	va_start(valist, format);
-	vprintf(format, valist);
-	va_end(valist);
-#endif
-}
-
-LRESULT WindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
-	//ウィンドウが破壊されたら呼ばれる
-	if (msg == WM_DESTROY) {
-		PostQuitMessage(0);//OSに対して「このアプリはもう終わる」と伝える
-		return 0;
-	}
-	return DefWindowProc(hwnd, msg, wparam, lparam);
-}
-#pragma endregion
 
 //3Dオブジェクト型
 struct Object3d {
@@ -161,46 +139,13 @@ void DrawObject3d(Object3d* object, ComPtr<ID3D12GraphicsCommandList> commandlis
 
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
+	WinApi* winApi = new WinApi;
+
+
 #pragma region WindowsAPI初期化処理
 
-	// ウィンドウ横幅
-	const int window_width = 1280;
-	// ウィンドウ縦幅
-	const int window_height = 720;
-
-
-	WNDCLASSEX w = {};
-	w.cbSize = sizeof(WNDCLASSEX);
-	w.lpfnWndProc = (WNDPROC)WindowProcedure;	//ウィンドウプロシージャを設定
-	w.lpszClassName = _T("DX12Sample");			//ウィンドウクラス名
-	w.hInstance = GetModuleHandle(nullptr);		//ウィンドウハンドル
-	w.hCursor = LoadCursor(NULL, IDC_ARROW);	//カーソル指定
-
-	//ウィンドウクラスをOSに登録する
-	RegisterClassEx(&w);
-	//ウィンドウサイズ{X座標　Y座標　横幅　縦幅}
-	RECT wrc = { 0,0,window_width,window_height };
-	//関数を使ってウィンドウのサイズを自動で補正する
-	AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
-
-	//ウィンドウオブジェクトの生成
-	HWND hwnd = CreateWindow(w.lpszClassName,//クラス名指定
-		_T("LE2B_16_イズミダ_マサト_AL3"),					//タイトルバーの文字
-		WS_OVERLAPPEDWINDOW,			//タイトルバーと境界線があるウィンドウ
-		CW_USEDEFAULT,					//表示x座標はOSにお任せ
-		CW_USEDEFAULT,					//表示y座標はOSにお任せ
-		wrc.right - wrc.left,			//ウィンドウ幅
-		wrc.bottom - wrc.top,			//ウィンドウ高
-		nullptr,						//親ウィンドウハンドル
-		nullptr,						//メニューハンドル
-		w.hInstance,					//呼び出しアプリケーションハンドル
-		nullptr);						//追加パラメーター(オプション)
-
-	//ウィンドウ表示
-	ShowWindow(hwnd, SW_SHOW);
-
-	MSG msg = {};
-
+	winApi->WinApiInitialize();
+	
 #pragma endregion
 
 #pragma region DirectX初期化処理
@@ -303,7 +248,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	//スワップチェーンの生成
 	result = dxgiFactory->CreateSwapChainForHwnd(
 		commandQueue.Get(),
-		hwnd,
+		winApi->hwnd,
 		&swapChainDesc,
 		nullptr,
 		nullptr,

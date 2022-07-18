@@ -10,9 +10,10 @@ class WinApi {
 
 public:
 	WinApi();
+	void WinApiInitialize();
 
 	void DebugOutputFormatString(const char* format, ...);
-	LRESULT WindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+	static LRESULT WindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
 private:
 	// ウィンドウ横幅
@@ -20,5 +21,8 @@ private:
 	// ウィンドウ縦幅
 	const int window_height = 720;
 
-
+	WNDCLASSEX w;
+	RECT wrc;
+	HWND hwnd;
+	MSG msg;
 };

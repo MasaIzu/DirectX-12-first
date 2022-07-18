@@ -248,7 +248,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	//スワップチェーンの生成
 	result = dxgiFactory->CreateSwapChainForHwnd(
 		commandQueue.Get(),
-		winApi->hwnd,
+		hwnd,
 		&swapChainDesc,
 		nullptr,
 		nullptr,

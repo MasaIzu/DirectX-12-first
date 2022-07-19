@@ -141,6 +141,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DirectX.cpp" />
+    <ClCompile Include="Key.cpp" />
     <ClCompile Include="WinApi.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Vector3.cpp" />
@@ -168,6 +170,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DirectX.h" />
+    <ClInclude Include="Key.h" />
     <ClInclude Include="WinApi.h" />
     <ClInclude Include="Vector3.h" />
   </ItemGroup>

@@ -23,6 +23,31 @@ LRESULT WinApi::WindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
 	return DefWindowProc(hwnd, msg, wparam, lparam);
 }
 
+WNDCLASSEX WinApi::W()
+{
+	return this->w;
+}
+
+HWND WinApi::Hwnd()
+{
+	return this->hwnd;
+}
+
+MSG WinApi::Msg()
+{
+	return this->msg;
+}
+
+int WinApi::Window_width()
+{
+	return window_width;
+}
+
+int WinApi::Window_height()
+{
+	return window_height;
+}
+
 
 WinApi::WinApi() {
 
@@ -67,5 +92,14 @@ void WinApi::WinApiInitialize()
 	msg = {};
 
 #pragma endregion
+
+}
+
+void WinApi::Updata() {
+
+	if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
 
 }

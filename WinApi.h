@@ -15,6 +15,13 @@ public:
 	void DebugOutputFormatString(const char* format, ...);
 	static LRESULT WindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
+	WNDCLASSEX W();
+	HWND Hwnd();
+	MSG Msg();
+	int Window_width();
+	int Window_height();
+
+	void Updata();
 private:
 	// ウィンドウ横幅
 	const int window_width = 1280;

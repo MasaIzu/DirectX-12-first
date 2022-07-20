@@ -24,12 +24,6 @@ LRESULT WinApp::WindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
 }
 
 
-MSG WinApp::Msg()
-{
-	return this->msg;
-}
-
-
 
 WinApp::WinApp() {
 
@@ -71,18 +65,24 @@ void WinApp::WinApiInitialize()
 	//ウィンドウ表示
 	ShowWindow(hwnd_, SW_SHOW);
 
-	msg = {};
+	
 
 #pragma endregion
 
 }
 
-void WinApp::Updata() {
-
+bool WinApp::ProcessMessage() {
+	MSG msg{};
 	if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
+	if (msg.message == WM_QUIT) // 終了メッセージが来たらループを抜ける
+	{
+		return true;
+	}
+
+	return false;
 
 }
 

@@ -1099,14 +1099,14 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	blenddesc.SrcBlendAlpha = D3D12_BLEND_ONE; //ソースの値を100%使う
 	blenddesc.DestBlendAlpha = D3D12_BLEND_ZERO; //デストの値を0%使う
 	////加算合成
-	//blenddesc.BlendOp = D3D12_BLEND_OP_ADD; //加算
-	//blenddesc.SrcBlend = D3D12_BLEND_ONE; //ソースの値を100%使う
-	//blenddesc.DestBlend = D3D12_BLEND_ONE; //デストの値を100%使う
+	//blenddesc.BlendOp = D3D12_BLEND_OP_ADD; ////加算
+	//blenddesc.SrcBlend = D3D12_BLEND_ONE; ////ソースの値を100%使う
+	//blenddesc.DestBlend = D3D12_BLEND_ONE; ////デストの値を100%使う
 	////減算合成
 	//blenddesc.BlendOp = D3D12_BLEND_OP_REV_SUBTRACT; //デストからソースを減算
 	//blenddesc.SrcBlend = D3D12_BLEND_ONE; //ソースの値を100%使う
 	//blenddesc.DestBlend = D3D12_BLEND_ONE;              // デストの値を100% 使う
-	//// 色反転
+	////色反転
 	//blenddesc.BlendOp = D3D12_BLEND_OP_ADD;             // 加算
 	//blenddesc.SrcBlend = D3D12_BLEND_INV_DEST_COLOR;    // 1.0f-デストカラーの値
 	//blenddesc.DestBlend = D3D12_BLEND_ZERO;             // 使わない
@@ -1161,11 +1161,22 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma endregion
 
 	XMFLOAT3 angle(0.0f, 0.0f, 0.0f); //カメラの回転
+
+	float Red = 1.0f;
+	float Green = 1.0f;
+	float Blue = 1.0f;
+	float Alpha = 1.0f;
+
+	int Switch = 0;
+	int changeColor = 0;
+
 	//ゲームループ
 	while (true) {
 #pragma region ウィンドウメッセージ処理
-		
-		winApp_->Updata();
+
+		if (winApp_->ProcessMessage()) {
+			break;
+		}
 
 #pragma endregion
 
@@ -1266,6 +1277,126 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		for (size_t i = 0; i < _countof(object3ds); i++) {
 			UpdateObject3d(&object3ds[i], matView, matProjection);
 		}
+
+		if (Switch == 0) {
+
+			if (key[DIK_Y]) {
+				if (Red < 1) {
+					Red += 0.01f;
+				}
+			}
+			else if (key[DIK_H]) {
+				if (Red > 0) {
+					Red -= 0.01f;
+				}
+			}
+
+			if (key[DIK_U]) {
+				if (Green < 1) {
+					Green += 0.01f;
+				}
+			}
+			else if (key[DIK_J]) {
+				if (Green > 0) {
+					Green -= 0.01f;
+				}
+			}
+
+			if (key[DIK_I]) {
+				if (Blue < 1) {
+					Blue += 0.01f;
+				}
+			}
+			else if (key[DIK_K]) {
+				if (Blue > 0) {
+					Blue -= 0.01f;
+				}
+			}
+
+			if (key[DIK_O]) {
+				if (Alpha < 1) {
+					Alpha += 0.01f;
+				}
+			}
+			else if (key[DIK_L]) {
+				if (Alpha > 0) {
+					Alpha -= 0.01f;
+				}
+			}
+			if (key[DIK_Z]) {
+				Switch = 1;
+				Red = 1;
+				Green = 1;
+				Blue = 0;
+			}
+
+		}
+		else {
+
+			if (changeColor == 0) {
+
+				Green -= 0.001;
+				if (Green <= 0) {
+					changeColor = 1;
+					Green = 0;
+				}
+			}
+			else if (changeColor == 1) {
+				Blue += 0.001;
+				if (Blue >= 1) {
+					changeColor = 2;
+					Blue = 1;
+				}
+			}
+			else if (changeColor == 2) {
+				Red -= 0.001;
+				if (Red <= 0) {
+					changeColor = 3;
+					Red = 0;
+				}
+			}
+			else if (changeColor == 3) {
+				Green += 0.001;
+				if (Green >= 1) {
+					changeColor = 4;
+					Green = 1;
+				}
+			}
+			else if (changeColor == 4) {
+				Blue -= 0.001;
+				if (Blue <= 0) {
+					changeColor = 5;
+					Blue = 0;
+				}
+			}
+			else if (changeColor == 5) {
+				Red += 0.001;
+				if (Red >= 1) {
+					changeColor = 0;
+					Red = 1;
+				}
+			}
+
+
+			if (key[DIK_O]) {
+				if (Alpha < 1) {
+					Alpha += 0.01f;
+				}
+			}
+			else if (key[DIK_L]) {
+				if (Alpha > 0) {
+					Alpha -= 0.01f;
+				}
+			}
+
+			if (key[DIK_C]) {
+				Switch = 0;
+			}
+		}
+
+
+		// 値を書き込むと自動的に転送される
+		constMapMaterial->color = XMFLOAT4(Red, Green, Blue, Alpha);              // RGBAで半透明の赤
 
 
 		////回転

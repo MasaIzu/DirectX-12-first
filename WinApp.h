@@ -24,7 +24,7 @@ public:
 public://GetterSettterìoò^
 	HINSTANCE GetHInstance() const { return wndClass_.hInstance; };
 	HWND GetHwnd() const { return hwnd_; };
-	MSG Msg();
+	
 
 public://ä÷êîåQ
 	WinApp();
@@ -32,7 +32,7 @@ public://ä÷êîåQ
 
 	void DebugOutputFormatString(const char* format, ...);
 	static LRESULT WindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
-	void Updata();
+	bool ProcessMessage();
 
 	void WinAppFinish();
 

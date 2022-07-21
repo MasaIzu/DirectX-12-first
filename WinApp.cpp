@@ -29,6 +29,10 @@ WinApp::WinApp() {
 
 }
 
+WinApp::~WinApp()
+{
+}
+
 void WinApp::WinApiInitialize()
 {
 
@@ -69,6 +73,11 @@ void WinApp::WinApiInitialize()
 
 #pragma endregion
 
+}
+
+WinApp* WinApp::GetInstance() {
+	static WinApp instance;
+	return &instance;
 }
 
 bool WinApp::ProcessMessage() {

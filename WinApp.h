@@ -22,19 +22,24 @@ public:
 	};
 
 public://GetterSettterìoò^
-	HINSTANCE GetHInstance() const { return wndClass_.hInstance; };
-	HWND GetHwnd() const { return hwnd_; };
+	HWND GetHwnd() const { return hwnd_; }
+
+	HINSTANCE GetHInstance() const { return wndClass_.hInstance; }
 	
 
 public://ä÷êîåQ
-	WinApp();
 	void WinApiInitialize();
+
+	static WinApp* GetInstance();
 
 	void DebugOutputFormatString(const char* format, ...);
 	static LRESULT WindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 	bool ProcessMessage();
-
 	void WinAppFinish();
+
+private:
+	WinApp();
+	~WinApp();
 
 private:
 	

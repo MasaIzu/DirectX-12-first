@@ -22,6 +22,7 @@
 #include<wrl.h>
 #include"WinApp.h"
 #include"Vector3.h"
+#include"Input.h"
 
 
 using namespace DirectX;
@@ -139,7 +140,8 @@ void DrawObject3d(Object3d* object, ComPtr<ID3D12GraphicsCommandList> commandlis
 
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
-	WinApp* winApp_ = new WinApp;
+	WinApp* winApp_ = WinApp::GetInstance();
+	Input* input_ = Input::GetInstance();
 
 
 #pragma region WindowsAPI初期化処理
@@ -294,21 +296,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 	result = device->CreateFence(fenceVal, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
 
-	//DirectInputの初期化
-	IDirectInput8* directInput = nullptr;
-	result = DirectInput8Create(
-		winApp_->GetHInstance(), DIRECTINPUT_VERSION, IID_IDirectInput8,
-		(void**)&directInput, nullptr);
-	assert(SUCCEEDED(result));
-
-	//キーボードデバイスの生成
-	IDirectInputDevice8* keyboard = nullptr;
-	result = directInput->CreateDevice(GUID_SysKeyboard, &keyboard, NULL);
-	assert(SUCCEEDED(result));
-
-	//入力データ形式のセット
-	result = keyboard->SetDataFormat(&c_dfDIKeyboard);//標準形式
-	assert(SUCCEEDED(result));
+	input_->Initialize();
 
 
 
@@ -1185,16 +1173,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		//----------DireceX毎フレーム処理　ここから------------//
 		///////////////////////////////////////////////////
 
-		// キーボード情報の取得開始
-		keyboard->Acquire();
-		// 全キーの入力状態を取得する
-		BYTE key[256] = {};
-		keyboard->GetDeviceState(sizeof(key), key);
-		// 数字の0キーが押されていたら
-		if (key[DIK_0])
-		{
-			OutputDebugStringA("Hit 0\n");  // 出力ウィンドウに「Hit 0」と表示
-		}
+		input_->Updata();
 
 		//バックバッファの番号を取得(2つなので0番か1番)
 		UINT bbIndex = swapChain->GetCurrentBackBufferIndex();
@@ -1218,7 +1197,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		FLOAT clearColor[] = { 0.1f,0.25f,0.5f,0.0f };//青っぽい色
 		commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 		commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
-		if (key[DIK_SPACE])     // スペースキーが押されていたら
+		if (input_->PushKey(DIK_SPACE))     // スペースキーが押されていたら
 		{
 			//画面クリアカラーの数値を書き換える
 			FLOAT clearColor[] = { 11.1f,0.25f, 0.5f,0.0f }; // ピンクっぽい色
@@ -1228,26 +1207,26 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 
 
-		if (key[DIK_D] || key[DIK_A] || key[DIK_W] || key[DIK_S]) {
-			if (key[DIK_D]) {
+		if (input_->PushKey(DIK_D) || input_->PushKey(DIK_A) || input_->PushKey(DIK_W) || input_->PushKey(DIK_S)) {
+			if (input_->PushKey(DIK_D)) {
 				angle.x += XMConvertToRadians(1.0f);
 				//angleラジアンだけy軸まわりに回転
 				eye.x = -100 * sinf(angle.x);
 				eye.z = -100 * cosf(angle.x);
 			}
-			else if (key[DIK_A]) {
+			else if (input_->PushKey(DIK_A)) {
 				angle.x -= XMConvertToRadians(1.0f);
 				//angleラジアンだけy軸まわりに回転
 				eye.x = -100 * sinf(angle.x);
 				eye.z = -100 * cosf(angle.x);
 			}
-			else if (key[DIK_W]) {
+			else if (input_->PushKey(DIK_W)) {
 				angle.y += XMConvertToRadians(1.0f);
 				//angleラジアンだけy軸まわりに回転
 				eye.y = -100 * sinf(angle.y);
 				eye.z = -100 * cosf(angle.y);
 			}
-			else if (key[DIK_S]) {
+			else if (input_->PushKey(DIK_S)) {
 				angle.y -= XMConvertToRadians(1.0f);
 				//angleラジアンだけy軸まわりに回転
 				eye.y = -100 * sinf(angle.y);
@@ -1259,17 +1238,17 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		}
 
 		//座標操作
-		if (key[DIK_UP] || key[DIK_DOWN] || key[DIK_RIGHT] || key[DIK_LEFT]) {
-			if (key[DIK_UP]) {
+		if (input_->PushKey(DIK_UP) || input_->PushKey(DIK_DOWN) || input_->PushKey(DIK_RIGHT) || input_->PushKey(DIK_LEFT)) {
+			if (input_->PushKey(DIK_UP)) {
 				object3ds[0].position.y += 1.0f;
 			}
-			else if (key[DIK_DOWN]) {
+			else if (input_->PushKey(DIK_DOWN)) {
 				object3ds[0].position.y -= 1.0f;
 			}
-			if (key[DIK_RIGHT]) {
+			if (input_->PushKey(DIK_RIGHT)) {
 				object3ds[0].position.x += 1.0f;
 			}
-			else if (key[DIK_LEFT]) {
+			else if (input_->PushKey(DIK_LEFT)) {
 				object3ds[0].position.x -= 1.0f;
 			}
 		}
@@ -1280,50 +1259,17 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 		if (Switch == 0) {
 
-			if (key[DIK_Y]) {
-				if (Red < 1) {
-					Red += 0.01f;
-				}
-			}
-			else if (key[DIK_H]) {
-				if (Red > 0) {
-					Red -= 0.01f;
-				}
-			}
-
-			if (key[DIK_U]) {
-				if (Green < 1) {
-					Green += 0.01f;
-				}
-			}
-			else if (key[DIK_J]) {
-				if (Green > 0) {
-					Green -= 0.01f;
-				}
-			}
-
-			if (key[DIK_I]) {
-				if (Blue < 1) {
-					Blue += 0.01f;
-				}
-			}
-			else if (key[DIK_K]) {
-				if (Blue > 0) {
-					Blue -= 0.01f;
-				}
-			}
-
-			if (key[DIK_O]) {
+			if (input_->PushKey(DIK_O)) {
 				if (Alpha < 1) {
 					Alpha += 0.01f;
 				}
 			}
-			else if (key[DIK_L]) {
+			else if (input_->PushKey(DIK_L)) {
 				if (Alpha > 0) {
 					Alpha -= 0.01f;
 				}
 			}
-			if (key[DIK_Z]) {
+			if (input_->PushKey(DIK_Z)) {
 				Switch = 1;
 				Red = 1;
 				Green = 1;
@@ -1378,18 +1324,18 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 			}
 
 
-			if (key[DIK_O]) {
+			if (input_->PushKey(DIK_O)) {
 				if (Alpha < 1) {
 					Alpha += 0.01f;
 				}
 			}
-			else if (key[DIK_L]) {
+			else if (input_->PushKey(DIK_L)) {
 				if (Alpha > 0) {
 					Alpha -= 0.01f;
 				}
 			}
 
-			if (key[DIK_C]) {
+			if (input_->PushKey(DIK_C)) {
 				Switch = 0;
 			}
 		}

@@ -13,7 +13,7 @@
 class Input {
 public://ƒƒ“ƒoŠÖ”
 	static Input* GetInstance();
-	
+
 	void Initialize();
 	void Updata();
 
@@ -26,7 +26,7 @@ public://ƒƒ“ƒoŠÖ”
 	/// <returns>‰Ÿ‚³‚ê‚Ä‚¢‚é‚©</returns>
 	bool PushKey(BYTE keyNumber) const;
 private:
-	Input();
+	Input() = default;
 	~Input();
 
 private://ƒƒ“ƒo•Ï”

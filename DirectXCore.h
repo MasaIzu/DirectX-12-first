@@ -26,6 +26,18 @@ public://メンバ関数
 	void CreateDepthBuffer();/// 深度バッファ生成
 	void CreateFence();/// フェンス生成
 
+	
+	void PreDraw();/// 描画前処理
+	void PostDraw();/// 描画後処理
+	void ClearRenderTarget();/// レンダーターゲットのクリア
+	void ClearDepthBuffer();/// 深度バッファのクリア
+
+	int32_t GetBackBufferWidth() const;/// バックバッファの幅取得
+	int32_t GetBackBufferHeight() const;/// バックバッファの高さ取得
+
+	ID3D12Device* GetDevice() { return device_.Get(); }/// デバイスの取得
+	ID3D12GraphicsCommandList* GetCommandList() { return commandList_.Get(); }/// 描画コマンドリストの取得
+
 private: // メンバ変数
 // ウィンドウズアプリケーション管理
 	WinApp* winApp_;

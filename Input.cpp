@@ -1,9 +1,6 @@
 #include "Input.h"
 
-Input* Input::GetInstance() {
-	static Input instance;
-	return &instance;
-}
+
 
 Input::~Input() {
 	if (devKeyboard_) {
@@ -42,6 +39,10 @@ void Input::Updata(){
 
 }
 
+Input* Input::GetInstance() {
+	static Input instance;
+	return &instance;
+}
 
 
 bool Input::PushKey(BYTE keyNumber) const {

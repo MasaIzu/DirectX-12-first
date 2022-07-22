@@ -9,9 +9,9 @@
 
 using namespace Microsoft::WRL;
 
-DirectXCore* DirectXCore::GetInstance()
-{
-	return nullptr;
+DirectXCore* DirectXCore::GetInstance() {
+	static DirectXCore instance;
+	return &instance;
 }
 
 void DirectXCore::Initialize(WinApp* winApp, int32_t backBufferWidth, int32_t backBufferHeight) {
@@ -35,8 +35,130 @@ void DirectXCore::Initialize(WinApp* winApp, int32_t backBufferWidth, int32_t ba
 	CreateFinalRenderTargets();
 	// 深度バッファ生成
 	CreateDepthBuffer();
+	// フェンス生成
+	CreateFence();
 
 }
+
+void DirectXCore::PreDraw() {
+
+	// バックバッファの番号を取得（2つなので0番か1番）
+	UINT bbIndex = swapChain_->GetCurrentBackBufferIndex();
+
+	// リソースバリアを変更（表示状態→描画対象）
+	CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
+	  backBuffers_[bbIndex].Get(), D3D12_RESOURCE_STATE_PRESENT,
+	  D3D12_RESOURCE_STATE_RENDER_TARGET);
+	commandList_->ResourceBarrier(1, &barrier);
+
+	// レンダーターゲットビュー用ディスクリプタヒープのハンドルを取得
+	CD3DX12_CPU_DESCRIPTOR_HANDLE rtvH = CD3DX12_CPU_DESCRIPTOR_HANDLE(
+	  rtvHeap_->GetCPUDescriptorHandleForHeapStart(), bbIndex,
+	  device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV));
+	// 深度ステンシルビュー用デスクリプタヒープのハンドルを取得
+	CD3DX12_CPU_DESCRIPTOR_HANDLE dsvH =
+	  CD3DX12_CPU_DESCRIPTOR_HANDLE(dsvHeap_->GetCPUDescriptorHandleForHeapStart());
+	// レンダーターゲットをセット
+	commandList_->OMSetRenderTargets(1, &rtvH, false, &dsvH);
+
+	// 全画面クリア
+	ClearRenderTarget();
+	// 深度バッファクリア
+	ClearDepthBuffer();
+
+
+	// ビューポート設定コマンド
+	D3D12_VIEWPORT viewport{};
+	viewport.Width = winApp_->kWindowWidth;   //よこ 最大1280
+	viewport.Height = winApp_->kWindowHeight;  //たて 最大720
+	viewport.TopLeftX = 0;  //左上X
+	viewport.TopLeftY = 0;  //左上Y
+	viewport.MinDepth = 0.0f; //最小頻度
+	viewport.MaxDepth = 1.0f; //最大頻度
+	// ビューポート設定コマンドを、コマンドリストに積む
+	commandList_->RSSetViewports(1, &viewport);
+
+	//シザー矩形
+	D3D12_RECT scissorRect{};
+	scissorRect.left = 0; // 切り抜き座標左
+	scissorRect.right = scissorRect.left + winApp_->kWindowWidth; // 切り抜き座標右
+	scissorRect.top = 0; // 切り抜き座標上
+	scissorRect.bottom = scissorRect.top + winApp_->kWindowHeight; // 切り抜き座標下
+	// シザー矩形設定コマンドを、コマンドリストに積む
+	commandList_->RSSetScissorRects(1, &scissorRect);
+
+}
+
+void DirectXCore::PostDraw() {
+	HRESULT result;
+
+	// リソースバリアを変更（描画対象→表示状態）
+	UINT bbIndex = swapChain_->GetCurrentBackBufferIndex();
+	CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
+		backBuffers_[bbIndex].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET,
+		D3D12_RESOURCE_STATE_PRESENT);
+	commandList_->ResourceBarrier(1, &barrier);
+
+	// 命令のクローズ
+	commandList_->Close();
+
+	// コマンドリストの実行
+	ID3D12CommandList* cmdLists[] = { commandList_.Get() }; // コマンドリストの配列
+	commandQueue_->ExecuteCommandLists(1, cmdLists);
+
+	// バッファをフリップ
+	result = swapChain_->Present(1, 0);
+#ifdef _DEBUG
+	if (FAILED(result)) {
+		ComPtr<ID3D12DeviceRemovedExtendedData> dred;
+
+		result = device_->QueryInterface(IID_PPV_ARGS(&dred));
+		assert(SUCCEEDED(result));
+
+		// 自動パンくず取得
+		D3D12_DRED_AUTO_BREADCRUMBS_OUTPUT autoBreadcrumbsOutput{};
+		result = dred->GetAutoBreadcrumbsOutput(&autoBreadcrumbsOutput);
+		assert(SUCCEEDED(result));
+	}
+#endif
+
+	// コマンドリストの実行完了を待つ
+	commandQueue_->Signal(fence_.Get(), ++fenceVal_);
+	if (fence_->GetCompletedValue() != fenceVal_) {
+		HANDLE event = CreateEvent(nullptr, false, false, nullptr);
+		fence_->SetEventOnCompletion(fenceVal_, event);
+		WaitForSingleObject(event, INFINITE);
+		CloseHandle(event);
+	}
+
+	commandAllocator_->Reset(); // キューをクリア
+	commandList_->Reset(commandAllocator_.Get(),
+		nullptr); // 再びコマンドリストを貯める準備
+}
+
+void DirectXCore::ClearRenderTarget() {
+	UINT bbIndex = swapChain_->GetCurrentBackBufferIndex();
+
+	// レンダーターゲットビュー用ディスクリプタヒープのハンドルを取得
+	CD3DX12_CPU_DESCRIPTOR_HANDLE rtvH = CD3DX12_CPU_DESCRIPTOR_HANDLE(
+		rtvHeap_->GetCPUDescriptorHandleForHeapStart(), bbIndex,
+		device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV));
+
+	// 全画面クリア        Red   Green Blue  Alpha
+	float clearColor[] = { 0.1f, 0.25f, 0.5f, 0.0f }; // 青っぽい色
+	commandList_->ClearRenderTargetView(rtvH, clearColor, 0, nullptr);
+}
+
+void DirectXCore::ClearDepthBuffer() {
+	// 深度ステンシルビュー用デスクリプタヒープのハンドルを取得
+	CD3DX12_CPU_DESCRIPTOR_HANDLE dsvH =
+		CD3DX12_CPU_DESCRIPTOR_HANDLE(dsvHeap_->GetCPUDescriptorHandleForHeapStart());
+	// 深度バッファのクリア
+	commandList_->ClearDepthStencilView(dsvH, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+}
+
+int32_t DirectXCore::GetBackBufferWidth() const { return backBufferWidth_; }
+int32_t DirectXCore::GetBackBufferHeight() const { return backBufferHeight_; }
 
 void DirectXCore::InitializeDXGIDevice()
 {
@@ -94,7 +216,7 @@ void DirectXCore::InitializeDXGIDevice()
 
 }
 
-void DirectXCore::InitializeCommand(){
+void DirectXCore::InitializeCommand() {
 	HRESULT result = S_FALSE;
 
 	//コマンドアローケータを生成
@@ -113,7 +235,7 @@ void DirectXCore::InitializeCommand(){
 
 }
 
-void DirectXCore::CreateSwapChain(){
+void DirectXCore::CreateSwapChain() {
 	HRESULT result = S_FALSE;
 
 	//スワップチェーンの設定
@@ -149,7 +271,7 @@ void DirectXCore::CreateSwapChain(){
 
 }
 
-void DirectXCore::CreateFinalRenderTargets(){
+void DirectXCore::CreateFinalRenderTargets() {
 	HRESULT result = S_FALSE;
 
 	DXGI_SWAP_CHAIN_DESC swcDesc = {};
@@ -210,20 +332,16 @@ void DirectXCore::CreateDepthBuffer() {
 	dsvHeapDesc.NumDescriptors = 1;//深度ビューは1つ
 	dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;//デプスステンシルビュー
 	ComPtr<ID3D12DescriptorHeap> dsvHeap = nullptr;
-	result = device_->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&dsvHeap));
+	result = device_->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&dsvHeap_));
 
 	//深度ビュー作成
 	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
 	dsvDesc.Format = DXGI_FORMAT_D32_FLOAT;//深度値フォーマット
 	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
-	device_->CreateDepthStencilView(
-		depthBuffer_.Get(),
-		&dsvDesc,
-		dsvHeap->GetCPUDescriptorHandleForHeapStart()
-	);
+	device_->CreateDepthStencilView(depthBuffer_.Get(),&dsvDesc,dsvHeap_->GetCPUDescriptorHandleForHeapStart());
 }
 
-void DirectXCore::CreateFence(){
+void DirectXCore::CreateFence() {
 	HRESULT result = S_FALSE;
 
 	result = device_->CreateFence(fenceVal_, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence_));

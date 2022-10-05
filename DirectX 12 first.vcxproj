@@ -144,10 +144,12 @@
   <ItemGroup>
     <ClCompile Include="DirectXCore.cpp" />
     <ClCompile Include="Input.cpp" />
+    <ClCompile Include="Matrix4.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="WinApp.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Vector3.cpp" />
+    <ClCompile Include="WorldTransform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
@@ -157,9 +159,11 @@
   <ItemGroup>
     <ClInclude Include="DirectXCore.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="Matrix4.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="WinApp.h" />
     <ClInclude Include="Vector3.h" />
+    <ClInclude Include="worldTransform.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\Basic.hlsli" />

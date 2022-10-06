@@ -1,5 +1,5 @@
 #pragma once
-
+#include <DirectXMath.h>
 #include "Vector3.h"
 #include "Matrix4.h"
 #include <d3d12.h>
@@ -7,7 +7,7 @@
 
 // 定数バッファ用データ構造体
 struct ConstBufferDataWorldTransform {
-	Matrix4 matWorld;           // ローカル → ワールド変換行列
+	DirectX::XMMATRIX matWorld;           // ローカル → ワールド変換行列
 };
 
 /// <summary>
@@ -25,7 +25,7 @@ struct WorldTransform {
 	// ローカル座標
 	Vector3 translation_ = { 0, 0, 0 };
 	// ローカル → ワールド変換行列
-	Matrix4 matWorld_;
+	DirectX::XMMATRIX matWorld_;
 	// 親となるワールド変換へのポインタ
 	const WorldTransform* parent_ = nullptr;
 

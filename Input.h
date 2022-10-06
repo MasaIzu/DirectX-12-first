@@ -11,6 +11,10 @@
 #include"WinApp.h"
 
 class Input {
+public:
+	//namespace(Microsoft::WRL)省略
+	template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+
 public://メンバ関数
 	static Input* GetInstance();
 
@@ -25,16 +29,26 @@ public://メンバ関数
 	/// <param name="keyNumber">キー番号( DIK_0 等)</param>
 	/// <returns>押されているか</returns>
 	bool PushKey(BYTE keyNumber) const;
+
+	/// <summary>
+	/// キーのトリガーをチェック
+	/// </summary>
+	/// <param name="keyNumber">キー番号( DIK_0 等)</param>
+	/// <returns>トリガーか</returns>
+	bool TriggerKey(BYTE keyNumber) const;
+
 private:
 	Input() = default;
 	~Input();
 
 private://メンバ変数
-	Microsoft::WRL::ComPtr<IDirectInput8> dInput_;
-	Microsoft::WRL::ComPtr<IDirectInputDevice8> devKeyboard_;
+	ComPtr<IDirectInput8> directInput_;
+	ComPtr<IDirectInputDevice8> devKeyboard_;
 	// 全キーの入力状態を取得する
 	HWND hwnd_;
-	std::array<BYTE, 256> key_;
-	std::array<BYTE, 256> keyPre_;
+	//今の全キーの状態
+	BYTE key_[256] = {};
+	//前回の全キーの状態
+	BYTE keyPre_[256] = {};
 
 };

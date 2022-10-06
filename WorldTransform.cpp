@@ -5,7 +5,7 @@
 void WorldTransform::Initialize(){
 	CreateConstBuffer();
 	Map();
-
+	TransferMatrix();
 }
 
 void WorldTransform::CreateConstBuffer(){
@@ -47,28 +47,28 @@ void WorldTransform::Map(){
 
 void WorldTransform::TransferMatrix(){
 
-	Matrix4 matScale, matRot, matTrans;
+	DirectX::XMMATRIX matScale, matRot, matTrans;
 
 	//スケール、回転、平行移動行列の計算
-	matScale = Matrix4::scale;
-	matRot = XMMatrixIdentity();
-	matRot *= XMMatrixRotationX(object->rotation.x);
-	matRot *= XMMatrixRotationY(object->rotation.y);
-	matRot *= XMMatrixRotationZ(object->rotation.z);
-	matTrans = XMMatrixTranslation(object->position.x, object->position.y, object->position.z);
+	matScale = DirectX::XMMatrixScaling(scale_.x, scale_.y, scale_.z);
+	matRot = DirectX::XMMatrixIdentity();
+	matRot *= DirectX::XMMatrixRotationX(rotation_.x);
+	matRot *= DirectX::XMMatrixRotationY(rotation_.y);
+	matRot *= DirectX::XMMatrixRotationZ(rotation_.z);
+	matTrans = DirectX::XMMatrixTranslation(translation_.x, translation_.y, translation_.z);
 
 	//ワールド行列の合成
-	object->matWorld = XMMatrixIdentity();//変形をリセット
-	object->matWorld *= matScale;//ワールド行列にスケーリングを反映
-	object->matWorld *= matRot;//ワールド行列に回転を反映
-	object->matWorld *= matTrans;//ワールド行列に平行移動を反映
+	matWorld_ = DirectX::XMMatrixIdentity();//変形をリセット
+	matWorld_ *= matScale;//ワールド行列にスケーリングを反映
+	matWorld_ *= matRot;//ワールド行列に回転を反映
+	matWorld_ *= matTrans;//ワールド行列に平行移動を反映
 
 	//親オブジェクトがあれば
-	if (object->parent != nullptr) {
+	if (parent_ != nullptr) {
 		//親オブジェクトのワールド行列を掛ける
-		object->matWorld *= object->parent->matWorld;
+		matWorld_ *= parent_->matWorld_;
 	}
 	//定数バッファへのデータ転送
-	object->constMapTransform->mat = object->matWorld * matView * matProjection;
+	constMap->matWorld = matWorld_;
 
 }

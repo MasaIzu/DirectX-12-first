@@ -1,7 +1,5 @@
 #include "Input.h"
 
-
-
 Input::~Input() {
 	if (devKeyboard_) {
 		devKeyboard_->Unacquire();
@@ -16,11 +14,11 @@ void Input::Initialize() {
 
 	// DirectInputオブジェクトの生成
 	result = DirectInput8Create(
-		winApp->GetHInstance(), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&dInput_, nullptr);
+		winApp->GetHInstance(), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput_, nullptr);
 	assert(SUCCEEDED(result));
 
 	// キーボードデバイスの生成
-	result = dInput_->CreateDevice(GUID_SysKeyboard, &devKeyboard_, NULL);
+	result = directInput_->CreateDevice(GUID_SysKeyboard, &devKeyboard_, NULL);
 	assert(SUCCEEDED(result));
 
 	// 入力データ形式のセット
@@ -29,13 +27,15 @@ void Input::Initialize() {
 
 }
 
-void Input::Updata(){
+void Input::Updata() {
+	HRESULT result;
+
+	//前回のキー入力を保存
+	memcpy(keyPre_, key_, sizeof(key_));
 
 	// キーボード情報の取得開始
-	devKeyboard_->Acquire();
-	// キーの入力
-	key_.fill(0);
-	devKeyboard_->GetDeviceState((DWORD)size(key_), key_.data());
+	result = devKeyboard_->Acquire();
+	result = devKeyboard_->GetDeviceState(sizeof(key_), key_);
 
 }
 
@@ -56,3 +56,12 @@ bool Input::PushKey(BYTE keyNumber) const {
 	return false;
 }
 
+bool Input::TriggerKey(BYTE keyNumber) const {
+	// 0でなければ押している
+	if (keyPre_[keyNumber]) {
+		return false;
+	}
+
+	// 押していない
+	return true;
+}

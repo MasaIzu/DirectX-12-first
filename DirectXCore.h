@@ -16,8 +16,8 @@ public://メンバ関数
 	static DirectXCore* GetInstance();
 	//イニシャライズ
 	void Initialize(
-		WinApp* win, int32_t backBufferWidth = WinApp::kWindowWidth,
-		int32_t backBufferHeight = WinApp::kWindowHeight);
+		WinApp* win, int32_t backBufferWidth = WinApp::window_width,
+		int32_t backBufferHeight = WinApp::window_height);
 
 	void InitializeDXGIDevice();/// DXGIデバイス初期化
 	void InitializeCommand();/// コマンド関連初期化

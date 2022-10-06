@@ -9,33 +9,27 @@
 class WinApp {
 
 public:
-	// ウィンドウサイズ
-	static const int kWindowWidth = 1280; // 横幅
-	static const int kWindowHeight = 720; // 縦幅
-	// ウィンドウクラス名
-	static const wchar_t kWindowClassName[];
-
-	enum class SizeChangeMode {
-		kNone,        //!< サイズ変更不可
-		kNormal,      //!< 自由変更
-		kFixedAspect, //!< アスペクト比一定
-	};
-
-public://GetterSettter登録
-	HWND GetHwnd() const { return hwnd_; }
-
-	HINSTANCE GetHInstance() const { return wndClass_.hInstance; }
-	
-
-public://関数群
-	void WinApiInitialize();
-
 	static WinApp* GetInstance();
 
-	void DebugOutputFormatString(const char* format, ...);
+	// ウィンドウサイズ
+	static const int window_width = 1280; // 横幅
+	static const int window_height = 720; // 縦幅
+
+	
+public://静的メンバ関数
 	static LRESULT WindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+
+public:
+	//関数群
+	void WinApiInitialize();
+
+	void DebugOutputFormatString(const char* format, ...);
 	bool ProcessMessage();
-	void WinAppFinish();
+	void Finalize();
+
+	//Getter登録
+	HWND GetHwnd() const { return hwnd_; }
+	HINSTANCE GetHInstance() const { return w_.hInstance; }
 
 private:
 	WinApp();
@@ -44,8 +38,8 @@ private:
 private:
 	
 
-	WNDCLASSEX wndClass_{};
+	WNDCLASSEX w_{};
 	RECT wrc;
-	HWND hwnd_;
+	HWND hwnd_ = nullptr;
 	MSG msg;
 };

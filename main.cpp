@@ -706,7 +706,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	//透視投影行列の計算
 	XMMATRIX matProjection = XMMatrixPerspectiveFovLH(
 		XMConvertToRadians(45.0f),
-		(float)winApp_->kWindowWidth / winApp_->kWindowHeight,
+		(float)winApp_->window_width / winApp_->window_height,
 		0.1f, 1000.0f
 	);
 
@@ -851,8 +851,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	//リソース設定
 	D3D12_RESOURCE_DESC depthResourceDesc{};
 	depthResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-	depthResourceDesc.Width = winApp_->kWindowWidth;//レンダーターゲットに合わせる
-	depthResourceDesc.Height = winApp_->kWindowHeight;//レンダーターゲットに合わせる
+	depthResourceDesc.Width = winApp_->window_width;//レンダーターゲットに合わせる
+	depthResourceDesc.Height = winApp_->window_height;//レンダーターゲットに合わせる
 	depthResourceDesc.DepthOrArraySize = 1;
 	depthResourceDesc.Format = DXGI_FORMAT_D32_FLOAT;//深度値のフォーマット
 	depthResourceDesc.SampleDesc.Count = 1;
@@ -1130,7 +1130,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 #pragma region  WindowsAPI後始末
 
 	//もうクラスは使わないので登録を解除する
-	winApp_->WinAppFinish();
+	winApp_->Finalize();
 
 #pragma endregion
 	return 0;

@@ -7,14 +7,14 @@ Input::~Input() {
 }
 
 void Input::Initialize() {
-	WinApp* winApp = WinApp::GetInstance();
+	WinApp* winApp_ = WinApp::GetInstance();
 
-	hwnd_ = winApp->GetHwnd();
+	hwnd_ = winApp_->GetHwnd();
 	HRESULT result = S_FALSE;
 
 	// DirectInputオブジェクトの生成
 	result = DirectInput8Create(
-		winApp->GetHInstance(), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput_, nullptr);
+		winApp_->GetHInstance(), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput_, nullptr);
 	assert(SUCCEEDED(result));
 
 	// キーボードデバイスの生成
@@ -24,6 +24,9 @@ void Input::Initialize() {
 	// 入力データ形式のセット
 	result = devKeyboard_->SetDataFormat(&c_dfDIKeyboard); // 標準形式
 	assert(SUCCEEDED(result));
+
+	// 排他制御レベルのセット
+	result = devKeyboard_->SetCooperativeLevel(winApp_->GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
 
 }
 

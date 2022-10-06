@@ -15,9 +15,10 @@ void WinApp::DebugOutputFormatString(const char* format, ...) {
 }
 
 LRESULT WinApp::WindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
-	//ウィンドウが破壊されたら呼ばれる
-	if (msg == WM_DESTROY) {
-		PostQuitMessage(0);//OSに対して「このアプリはもう終わる」と伝える
+	//メッセージで分岐
+	switch (msg){
+	case WM_DESTROY://ウィンドウが破壊された
+		PostQuitMessage(0);//OSに対して、アプリの終了を伝える
 		return 0;
 	}
 	return DefWindowProc(hwnd, msg, wparam, lparam);
@@ -39,22 +40,22 @@ void WinApp::WinApiInitialize()
 #pragma region WindowsAPI初期化処理
 
 
-	wndClass_ = {};
-	wndClass_.cbSize = sizeof(WNDCLASSEX);
-	wndClass_.lpfnWndProc = (WNDPROC)WinApp::WindowProcedure;	//ウィンドウプロシージャを設定
-	wndClass_.lpszClassName = _T("DX12Sample");			//ウィンドウクラス名
-	wndClass_.hInstance = GetModuleHandle(nullptr);		//ウィンドウハンドル
-	wndClass_.hCursor = LoadCursor(NULL, IDC_ARROW);	//カーソル指定
+	w_ = {};
+	w_.cbSize = sizeof(WNDCLASSEX);
+	w_.lpfnWndProc = (WNDPROC)WinApp::WindowProcedure;	//ウィンドウプロシージャを設定
+	w_.lpszClassName = _T("DX12Sample");			//ウィンドウクラス名
+	w_.hInstance = GetModuleHandle(nullptr);		//ウィンドウハンドル
+	w_.hCursor = LoadCursor(NULL, IDC_ARROW);	//カーソル指定
 
 	//ウィンドウクラスをOSに登録する
-	RegisterClassEx(&wndClass_);
+	RegisterClassEx(&w_);
 	//ウィンドウサイズ{X座標　Y座標　横幅　縦幅}
-	wrc = { 0,0,kWindowWidth,kWindowHeight };
+	wrc = { 0,0,window_width,window_height };
 	//関数を使ってウィンドウのサイズを自動で補正する
 	AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
 
 	//ウィンドウオブジェクトの生成
-	hwnd_ = CreateWindow(wndClass_.lpszClassName,//クラス名指定
+	hwnd_ = CreateWindow(w_.lpszClassName,//クラス名指定
 		_T("LE2B_16_イズミダ_マサト_AL3"),					//タイトルバーの文字
 		WS_OVERLAPPEDWINDOW,			//タイトルバーと境界線があるウィンドウ
 		CW_USEDEFAULT,					//表示x座標はOSにお任せ
@@ -63,7 +64,7 @@ void WinApp::WinApiInitialize()
 		wrc.bottom - wrc.top,			//ウィンドウ高
 		nullptr,						//親ウィンドウハンドル
 		nullptr,						//メニューハンドル
-		wndClass_.hInstance,					//呼び出しアプリケーションハンドル
+		w_.hInstance,					//呼び出しアプリケーションハンドル
 		nullptr);						//追加パラメーター(オプション)
 
 	//ウィンドウ表示
@@ -95,13 +96,13 @@ bool WinApp::ProcessMessage() {
 
 }
 
-void WinApp::WinAppFinish()
+void WinApp::Finalize()
 {
 
 #pragma region  WindowsAPI後始末
 
 	//もうクラスは使わないので登録を解除する
-	UnregisterClass(wndClass_.lpszClassName, wndClass_.hInstance);
+	UnregisterClass(w_.lpszClassName, w_.hInstance);
 
 #pragma endregion
 

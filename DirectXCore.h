@@ -19,12 +19,12 @@ public://メンバ関数
 		WinApp* win, int32_t backBufferWidth = WinApp::window_width,
 		int32_t backBufferHeight = WinApp::window_height);
 
-	void InitializeDXGIDevice();/// DXGIデバイス初期化
+	void InitializeDevice();/// デバイス初期化
 	void InitializeCommand();/// コマンド関連初期化
-	void CreateSwapChain();/// スワップチェーンの生成
-	void CreateFinalRenderTargets();/// レンダーターゲット生成
-	void CreateDepthBuffer();/// 深度バッファ生成
-	void CreateFence();/// フェンス生成
+	void InitializeSwapChain();/// スワップチェーンの生成
+	void InitializeRenderTargetView();/// レンダーターゲット生成
+	void InitializeDepthBuffer();/// 深度バッファ生成
+	void InitializeFence();/// フェンス生成
 
 	
 	void PreDraw();/// 描画前処理

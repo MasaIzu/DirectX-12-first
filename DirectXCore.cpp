@@ -25,18 +25,18 @@ void DirectXCore::Initialize(WinApp* winApp, int32_t backBufferWidth, int32_t ba
 	backBufferWidth_ = backBufferWidth;
 	backBufferHeight_ = backBufferHeight;
 
-	// DXGIデバイス初期化
-	InitializeDXGIDevice();
+	// デバイス初期化
+	InitializeDevice();
 	// コマンド関連初期化
 	InitializeCommand();
 	// スワップチェーンの生成
-	CreateSwapChain();
+	InitializeSwapChain();
 	// レンダーターゲット生成
-	CreateFinalRenderTargets();
+	InitializeRenderTargetView();
 	// 深度バッファ生成
-	CreateDepthBuffer();
+	InitializeDepthBuffer();
 	// フェンス生成
-	CreateFence();
+	InitializeFence();
 
 }
 
@@ -160,7 +160,7 @@ void DirectXCore::ClearDepthBuffer() {
 int32_t DirectXCore::GetBackBufferWidth() const { return backBufferWidth_; }
 int32_t DirectXCore::GetBackBufferHeight() const { return backBufferHeight_; }
 
-void DirectXCore::InitializeDXGIDevice()
+void DirectXCore::InitializeDevice()
 {
 	HRESULT result = S_FALSE;
 #ifdef _DEBUG
@@ -235,7 +235,7 @@ void DirectXCore::InitializeCommand() {
 
 }
 
-void DirectXCore::CreateSwapChain() {
+void DirectXCore::InitializeSwapChain() {
 	HRESULT result = S_FALSE;
 
 	//スワップチェーンの設定
@@ -271,7 +271,7 @@ void DirectXCore::CreateSwapChain() {
 
 }
 
-void DirectXCore::CreateFinalRenderTargets() {
+void DirectXCore::InitializeRenderTargetView() {
 	HRESULT result = S_FALSE;
 
 	DXGI_SWAP_CHAIN_DESC swcDesc = {};
@@ -309,7 +309,7 @@ void DirectXCore::CreateFinalRenderTargets() {
 
 }
 
-void DirectXCore::CreateDepthBuffer() {
+void DirectXCore::InitializeDepthBuffer() {
 	HRESULT result = S_FALSE;
 
 	// ヒーププロパティ
@@ -341,7 +341,7 @@ void DirectXCore::CreateDepthBuffer() {
 	device_->CreateDepthStencilView(depthBuffer_.Get(),&dsvDesc,dsvHeap_->GetCPUDescriptorHandleForHeapStart());
 }
 
-void DirectXCore::CreateFence() {
+void DirectXCore::InitializeFence() {
 	HRESULT result = S_FALSE;
 
 	result = device_->CreateFence(fenceVal_, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence_));

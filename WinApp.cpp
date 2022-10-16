@@ -25,7 +25,6 @@ LRESULT WinApp::WindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
 }
 
 
-
 WinApp::WinApp() {
 
 }

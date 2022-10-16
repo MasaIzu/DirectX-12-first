@@ -142,9 +142,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Affin.cpp" />
     <ClCompile Include="DirectXCore.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Matrix4.cpp" />
+    <ClCompile Include="Obj.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="WinApp.cpp" />
     <ClCompile Include="main.cpp" />
@@ -157,9 +159,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Affin.h" />
     <ClInclude Include="DirectXCore.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Matrix4.h" />
+    <ClInclude Include="Obj.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="WinApp.h" />
     <ClInclude Include="Vector3.h" />

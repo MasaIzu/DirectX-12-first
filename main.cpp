@@ -224,15 +224,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	textureHeapProp.Type = D3D12_HEAP_TYPE_CUSTOM;
 	textureHeapProp.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;
 	textureHeapProp.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;
-	//// リソース設定
-	//D3D12_RESOURCE_DESC textureResourceDesc{};
-	//textureResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D; 
-	//textureResourceDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT; 
-	//textureResourceDesc.Width = textureWidth;  // 幅
-	//textureResourceDesc.Height = textureWidth; // 高さ
-	//textureResourceDesc.DepthOrArraySize = 1;
-	//textureResourceDesc.MipLevels = 1;
-	//textureResourceDesc.SampleDesc.Count = 1;
 
 	D3D12_RESOURCE_DESC textureResourceDesc{};
 	textureResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
@@ -328,13 +319,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	//SRVヒープの先頭ハンドルを取得
 	D3D12_CPU_DESCRIPTOR_HANDLE srvHandle = srvHeap->GetCPUDescriptorHandleForHeapStart();
 
-	//// 頂点データ
-//XMFLOAT3 vertices[] = {
-//{ -0.5f, -0.5f, 0.0f }, // 左下 インデックス0
-//{ -0.5f, +0.5f, 0.0f }, // 左上 インデックス1
-//{ +0.5f, -0.5f, 0.0f }, // 右下 インデックス2
-//{ +0.5f, +0.5f, 0.0f }, // 右上 インデックス3
-//};
 
 // 頂点データ構造体
 	struct Vertex
@@ -378,12 +362,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		{{5.0f, 5.0f, 5.0f},{0,0,0} , {1.0f, 0.0f}}, // 右上
 	};
 
-	//// インデックスデータ
-	//uint16_t indices[] =
-	//{
-	//	0, 1, 2, // 三角形1つ目
-	//	1, 2, 3, // 三角形2つ目
-	//};
 
 	// インデックスデータ
 	unsigned short indices[] = {
@@ -407,17 +385,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		23, 22, 21, // 三角形12つ目
 	};
 
-
-	/*float transformX = 0.0f;
-	float transformY = 0.0f;
-	float rotation = 0.0f;
-	float scale = 1.0f;
-
-	float affin[3][3] = {
-		{1.0f, 0.0f, 0.0f},
-		{0.0f, 1.0f, 0.0f},
-		{0.0f, 0.0f, 1.0f}
-	};*/
 
 
 	// 頂点データ全体のサイズ = 頂点データ一つ分のサイズ * 頂点データの要素数
@@ -585,30 +552,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
 
 
-	/*ID3D12Resource* constBuffTransform0 = nullptr;
-	ConstBufferDataTransform* constMapTransform0 = nullptr;*/
-
-	//ID3D12Resource* constBuffTransform1 = nullptr;
-	//ConstBufferDataTransform* constMapTransform1 = nullptr;
-
-	////スケーリング倍率
-	//XMFLOAT3 scale = { 1.0f,1.0f,1.0f };
-	////回転角
-	//XMFLOAT3 rotation = { 0.0f,0.0f,0.0f };
-	////座標
-	//XMFLOAT3 position = { 0.0f,0.0f,0.0f };
-
-	////ワールド変換行列
-	//XMMATRIX matWorld;
-	////単位行列を代入
-	//matWorld = XMMatrixIdentity();
-
-	//XMMATRIX matScale; //スケーリング行列
-	//XMMATRIX matRot;
-	//XMMATRIX matTrans;
-
-	//matTrans = XMMatrixTranslation(-50.0f, 0.0f, 0.0f);
-	//matWorld *= matTrans;
 
 	//3Dオブジェクトの数
 	const size_t kObjectCount = 50;
@@ -631,56 +574,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		cbResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
 
-		//// 定数バッファの生成				6-5より
-		//result = device->CreateCommittedResource(
-		//	&cbHeapProp, // ヒープ設定
-		//	D3D12_HEAP_FLAG_NONE,
-		//	&cbResourceDesc, // リソース設定
-		//	D3D12_RESOURCE_STATE_GENERIC_READ,
-		//	nullptr,
-		//	IID_PPV_ARGS(&constBuffTransform0));
-		//assert(SUCCEEDED(result));
-		//// 定数バッファのマッピング
-		//result = constBuffTransform0->Map(0,
-		//	nullptr,
-		//	(void**)&constMapTransform0); // マッピング
-		//assert(SUCCEEDED(result));
-
-
-
-		//// 定数バッファの生成
-		//result = device->CreateCommittedResource(
-		//	&cbHeapProp, // ヒープ設定
-		//	D3D12_HEAP_FLAG_NONE,
-		//	&cbResourceDesc, // リソース設定
-		//	D3D12_RESOURCE_STATE_GENERIC_READ,
-		//	nullptr,
-		//	IID_PPV_ARGS(&constBuffTransform1));
-		//assert(SUCCEEDED(result));
-		//// 定数バッファのマッピング
-		//result = constBuffTransform1->Map(0,
-		//	nullptr,
-		//	(void**)&constMapTransform1); // マッピング
-		//assert(SUCCEEDED(result));
-
 	}
-	//単位行列を代入
-	/*constMapTransform->mat = XMMatrixIdentity();
-	constMapTransform->mat.r[0].m128_f32[0] = 2.0f / window_width;
-	constMapTransform->mat.r[1].m128_f32[1] = -2.0f / window_height;
-	constMapTransform->mat.r[3].m128_f32[0] = -1.0f;
-	constMapTransform->mat.r[3].m128_f32[1] = 1.0f;*/
-	////平行
-	//constMapTransform0->mat = XMMatrixOrthographicOffCenterLH(
-	//	//左端			//右端    
-	//	0.0f, window_width,
-
-	//	//下端			//上端
-	//	window_height, 0.0f,
-
-	//	//前端			//奥端
-	//	0.0f, 1.0f
-	//);
+	
 
 	//配列内の全オブジェクトに対して
 	for (int i = 0; i < _countof(object3ds); i++) {
@@ -1009,56 +904,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		for (size_t i = 0; i < _countof(object3ds); i++) {
 			UpdateObject3d(&object3ds[i], matView, matProjection);
 		}
-
-
-
-
-		////回転
-		//if (key[DIK_UP] || key[DIK_DOWN] || key[DIK_RIGHT] || key[DIK_LEFT]) {
-		//	if (key[DIK_UP]) { position.z += 1.0f; }
-		//	else if (key[DIK_DOWN]) { position.z -= 1.0f; }
-		//	if (key[DIK_RIGHT]) { position.x += 1.0f; }
-		//	else if (key[DIK_LEFT]) { position.x -= 1.0f; }
-		//}
-
-		//matWorld = XMMatrixIdentity();
-		//matScale = XMMatrixScaling(scale.x, scale.y, scale.z);
-		//matWorld *= matScale;
-		////単位行列を代入
-		//matRot = XMMatrixIdentity();
-		//matRot *= XMMatrixRotationX(XMConvertToRadians(rotation.x));
-		//matRot *= XMMatrixRotationY(XMConvertToRadians(rotation.y));
-		//matRot *= XMMatrixRotationZ(XMConvertToRadians(rotation.z));
-		//matWorld *= matRot;
-
-
-		//matTrans = XMMatrixTranslation(position.x, position.y, position.z);
-		//matWorld *= matTrans;
-
-		////定数バッファに転送
-		//constMapTransform0->mat = matWorld * matView * matProjection;
-
-
-		////ワールド変換行列
-		//XMMATRIX matWorld1;
-		//matWorld1 = XMMatrixIdentity();
-		////各種変形行列を計算
-		//XMMATRIX matScale1 = XMMatrixScaling(1.0f, 1.0f, 1.0f);
-		//XMMATRIX matRot1 = XMMatrixRotationY(XM_PI / 4.0f);
-		//XMMATRIX matTrans1 = XMMatrixTranslation(-20.0f, 0.0f, 0.0f);
-		////ワールド行列を合成
-		//matWorld1 = matScale1 * matRot1 * matTrans1;
-		////ワールド,ビュー,射影行列を合成してシェーダーに転送
-		//constMapTransform1->mat = matWorld1 * matView * matProjection;
-
-
-		////トリガー処理
-		//bool キーを押した状態か(uint8_t キー番号);
-		//bool キーを離した状態か(uint8_t キー番号);
-		//bool キーを押した瞬間か(uint8_t キー番号);
-		//bool キーを離した瞬間か(uint8_t キー番号);
-
-
 
 
 		//////////////////////////////////////////////

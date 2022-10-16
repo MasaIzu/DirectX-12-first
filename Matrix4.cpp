@@ -18,23 +18,24 @@ Matrix4::Matrix4()
 	}
 }
 
+Matrix4::Matrix4(float m00, float m01, float m02, float m03,
+	float m10, float m11, float m12, float m13,
+	float m20, float m21, float m22, float m23,
+	float m30, float m31, float m32, float m33)
+{
+
+}
+
 //’PˆÊs—ñ‚ğ‹‚ß‚é
 Matrix4 Matrix4::identity()
 {
-	float result[4][4]
+	const Matrix4 result
 	{
 		1.0f,0.0f,0.0f,0.0f,
 		0.0f,1.0f,0.0f,0.0f,
 		0.0f,0.0f,1.0f,0.0f,
-		0.0f,0.0f,0.0f,1.0f
+		0.0f,0.0f,0.0f,1.0f,
 	};
-
-	// ‘ã“ü
-	for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < 4; j++) {
-			m[i][j] = result[i][j];
-		}
-	}
 
 	return *this;
 }

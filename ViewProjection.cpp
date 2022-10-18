@@ -42,7 +42,7 @@ void ViewProjection::UpdateMatrix() {
 
 
 	// 透視投影による射影行列の生成
-	matProjection = XMMatrixPerspectiveFovLH(fovAngleY, aspectRatio, nearZ, farZ);
+	matProjection = AffinTrans::PerspectiveFovLH(fovAngleY, aspectRatio, nearZ, farZ);
 
 	// 定数バッファに書き込み
 	constMap->view = matView;

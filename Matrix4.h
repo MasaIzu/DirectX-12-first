@@ -33,6 +33,8 @@ public:
 	// 座標変換（ベクトルと行列の掛け算をする）
 	Vector3 transform(const Vector3& v, const Matrix4& m);
 
+
+
 	// 代入演算子オーバーロード
 	Matrix4& operator*=(const Matrix4& m1);
 

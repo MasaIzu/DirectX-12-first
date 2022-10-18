@@ -3,7 +3,7 @@
 #include "Matrix4.h"
 #include "Vector3.h"
 #include "WorldTransform.h"
-#include"WinApp.h"
+#include "WinApp.h"
 
 namespace AffinTrans {
 
@@ -11,7 +11,7 @@ namespace AffinTrans {
 	Matrix4 Scale(Vector3 scale);
 	Matrix4 Rotation(Vector3 rotation, int X_1_Y_2_Z_3_XYZ_6);
 	Vector3 Vector3Rotation(Matrix4 rotation);
-	Matrix4 Move(Vector3 move);
+	Matrix4 Translation(Vector3 move);
 	Vector3 DebugMove(Matrix4 Move);
 	//ÉxÉNÉgÉãÇÃê≥ãKâª(Ç¢Ç¡ÇÿÇÒÇ…Ç‚ÇÈ)
 	Vector3 vector3Normalize(const Vector3& v);
@@ -25,10 +25,11 @@ namespace AffinTrans {
 	const Vector3 AddVector3(const Vector3 v1, const Vector3 v2);
 	Vector3 DivVecMat(const Vector3& vector3, const Matrix4& matrix4);
 
-	Matrix4 setViewportMat(WorldTransform& worldTransform, WinApp* window, const Vector3& v);
+	Matrix4 setViewportMat(WinApp* window, const Vector3& v);
+	Matrix4 MatrixInverse(Matrix4 pOut);
 
-	Matrix4 MatrixInverse(Matrix4& pOut);
+	Matrix4 LookAtLH(Vector3 eye, Vector3 target, Vector3 up);
+	Matrix4 PerspectiveFovLH(float fovAngleY, float  aspectRatio, float  nearZ, float farZ);
 
-	void  affin(WorldTransform& affin);
 
 }; // namespace AffinTrans

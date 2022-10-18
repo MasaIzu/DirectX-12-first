@@ -115,7 +115,7 @@ Matrix4 AffinTrans::Rotation(Vector3 rotation, int X_1_Y_2_Z_3_XYZ_6) {
 //	return Vector3(x, y, z);
 //}
 
-Matrix4 AffinTrans::Move(Vector3 Move) {
+Matrix4 AffinTrans::Translation(Vector3 Move) {
 	Matrix4 matMove = {
 		1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f,   1.0f,   0.0f,   0.0f,
@@ -216,7 +216,7 @@ Vector3 AffinTrans::DivVecMat(const Vector3& vector3, const Matrix4& matrix4)
 	return { V3.x, V3.y, V3.z };
 }
 
-Matrix4 AffinTrans::setViewportMat(WorldTransform& worldTransform, WinApp* window, const Vector3& v) {
+Matrix4 AffinTrans::setViewportMat(WinApp* window, const Vector3& v) {
 	//’PˆÊs—ñ‚ÌÝ’è
 	Matrix4 matViewport = Initialize();
 	matViewport.m[0][0] = window->GetInstance()->window_width / 2;
@@ -226,7 +226,7 @@ Matrix4 AffinTrans::setViewportMat(WorldTransform& worldTransform, WinApp* windo
 	return matViewport;
 }
 
-Matrix4 AffinTrans::MatrixInverse(Matrix4& pOut)
+Matrix4 AffinTrans::MatrixInverse(Matrix4 pOut)
 {
 	Matrix4 mat;
 	int i, j, loop;
@@ -314,9 +314,38 @@ Matrix4 AffinTrans::MatrixInverse(Matrix4& pOut)
 	return pOut;
 }
 
-void AffinTrans::affin(WorldTransform& affin) {
-	affin.matWorld_ = Initialize();
-	affin.matWorld_ *= Scale(affin.scale_);
-	affin.matWorld_ *= Rotation(affin.rotation_, 6);
-	affin.matWorld_ *= Move(affin.translation_);
+Matrix4 AffinTrans::LookAtLH(Vector3 eye, Vector3 target, Vector3 up){
+	Vector3 zaxis = eye - target;
+	zaxis.normalize();
+	Vector3 xaxis = up.cross(zaxis);
+	xaxis.normalize();
+	Vector3 yaxis = zaxis.cross(xaxis);
+	yaxis.normalize();
+
+	Matrix4 LookAt = {
+		xaxis.x,	yaxis.x,	zaxis.x,	0,
+		xaxis.y,	yaxis.y,	zaxis.y,	0,
+		xaxis.z,	yaxis.z,	zaxis.z,	0,
+		eye.x,		eye.y,		eye.z,		1
+	};
+
+	return LookAt;
+}
+
+Matrix4 AffinTrans::PerspectiveFovLH(float fovAngleY, float aspectRatio, float nearZ, float farZ){
+
+	float h = 1 / tan(fovAngleY * 0.5);
+	float w = h / aspectRatio;
+	float a = farZ / (farZ - nearZ);
+	float b = (-nearZ * farZ) / (farZ - nearZ);
+
+	Matrix4 perspectiveFovLH = {
+		w,		 0,		 0,		 0,
+		0,		 h,		 0,		 0,
+		0,		 0,		 a,		 1,
+		0,		 0,		 b,		 0
+	};
+
+
+	return perspectiveFovLH;
 }

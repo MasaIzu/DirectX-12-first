@@ -1,4 +1,4 @@
-#include "worldTransform.h"
+#include "WorldTransform.h"
 #include "DirectXCore.h"
 
 
@@ -47,18 +47,16 @@ void WorldTransform::Map(){
 
 void WorldTransform::TransferMatrix(){
 
-	DirectX::XMMATRIX matScale, matRot, matTrans;
+	Matrix4 matScale, matRot, matTrans;
 
 	//スケール、回転、平行移動行列の計算
-	matScale = DirectX::XMMatrixScaling(scale_.x, scale_.y, scale_.z);
-	matRot = DirectX::XMMatrixIdentity();
-	matRot *= DirectX::XMMatrixRotationX(rotation_.x);
-	matRot *= DirectX::XMMatrixRotationY(rotation_.y);
-	matRot *= DirectX::XMMatrixRotationZ(rotation_.z);
-	matTrans = DirectX::XMMatrixTranslation(translation_.x, translation_.y, translation_.z);
+	matScale = AffinTrans::Scale(scale_);
+	matRot = AffinTrans::Initialize();
+	matRot *= AffinTrans::Rotation(rotation_,6);
+	matTrans = AffinTrans::Translation(translation_);
 
 	//ワールド行列の合成
-	matWorld_ = DirectX::XMMatrixIdentity();//変形をリセット
+	matWorld_ = AffinTrans::Initialize();//変形をリセット
 	matWorld_ *= matScale;//ワールド行列にスケーリングを反映
 	matWorld_ *= matRot;//ワールド行列に回転を反映
 	matWorld_ *= matTrans;//ワールド行列に平行移動を反映

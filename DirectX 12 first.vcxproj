@@ -144,10 +144,17 @@
   <ItemGroup>
     <ClCompile Include="Affin.cpp" />
     <ClCompile Include="DirectXCore.cpp" />
+    <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="Input.cpp" />
+    <ClCompile Include="Material.cpp" />
+    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="MyMath.cpp" />
     <ClCompile Include="Matrix4.cpp" />
-    <ClCompile Include="Obj.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="TextureManager.cpp" />
+    <ClCompile Include="Vector2.cpp" />
+    <ClCompile Include="Vector4.cpp" />
     <ClCompile Include="ViewProjection.cpp" />
     <ClCompile Include="WinApp.cpp" />
     <ClCompile Include="main.cpp" />
@@ -162,10 +169,17 @@
   <ItemGroup>
     <ClInclude Include="Affin.h" />
     <ClInclude Include="DirectXCore.h" />
+    <ClInclude Include="GameScene.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="Material.h" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Model.h" />
+    <ClInclude Include="MyMath.h" />
     <ClInclude Include="Matrix4.h" />
-    <ClInclude Include="Obj.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="TextureManager.h" />
+    <ClInclude Include="Vector2.h" />
+    <ClInclude Include="Vector4.h" />
     <ClInclude Include="ViewProjection.h" />
     <ClInclude Include="WinApp.h" />
     <ClInclude Include="Vector3.h" />

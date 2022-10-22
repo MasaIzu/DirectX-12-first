@@ -2,7 +2,7 @@
 
 #include<cmath>  //sprt
 
-Vector3::Vector3() :x(0), y(0)
+Vector3::Vector3() :x(0), y(0), z(0)
 {
 }
 
@@ -50,6 +50,7 @@ Vector3& Vector3::operator+=(const Vector3& v)
 {
 	this->x += v.x;
 	this->y += v.y;
+	this->z += v.z;
 	return *this;
 }
 
@@ -57,6 +58,7 @@ Vector3& Vector3::operator-=(const Vector3& v)
 {
 	this->x -= v.x;
 	this->y -= v.y;
+	this->z -= v.z;
 	return *this;
 }
 
@@ -64,6 +66,7 @@ Vector3& Vector3::operator*=(float s)
 {
 	this->x *= s;
 	this->y *= s;
+	this->z *= s;
 	return *this;
 }
 
@@ -71,6 +74,7 @@ Vector3& Vector3::operator/=(float s)
 {
 	x /= s;
 	y /= s;
+	z /= s;
 	return *this;
 }
 

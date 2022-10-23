@@ -20,12 +20,15 @@ UINT Model::sDescriptorHandleIncrementSize_ = 0;
 ID3D12GraphicsCommandList* Model::sCommandList_ = nullptr;
 ComPtr<ID3D12RootSignature> Model::sRootSignature_;
 ComPtr<ID3D12PipelineState> Model::sPipelineState_;
+std::unique_ptr<LightGroup> Model::lightGroup;
 
 void Model::StaticInitialize() {
 
 	// パイプライン初期化
 	InitializeGraphicsPipeline();
 
+	// ライト生成
+	lightGroup.reset(LightGroup::Create());
 }
 
 void Model::InitializeGraphicsPipeline() {
@@ -565,6 +568,9 @@ void Model::LoadTextures() {
 void Model::Draw(
 	const WorldTransform& worldTransform, const ViewProjection& viewProjection) {
 
+	// ライトの描画
+	lightGroup->Draw(sCommandList_, static_cast<UINT>(RoomParameter::kLight));
+
 	// CBVをセット（ワールド行列）
 	sCommandList_->SetGraphicsRootConstantBufferView(
 		static_cast<UINT>(RoomParameter::kWorldTransform),
@@ -585,7 +591,9 @@ void Model::Draw(
 	const WorldTransform& worldTransform, const ViewProjection& viewProjection,
 	uint32_t textureHadle) {
 
-	
+	// ライトの描画
+	lightGroup->Draw(sCommandList_, static_cast<UINT>(RoomParameter::kLight));
+
 	// CBVをセット（ワールド行列）
 	sCommandList_->SetGraphicsRootConstantBufferView(
 		static_cast<UINT>(RoomParameter::kWorldTransform),

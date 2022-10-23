@@ -4,6 +4,7 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "Mesh.h"
+#include "LightGroup.h"
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -13,7 +14,7 @@
 /// </summary>
 class Model {
 private: // エイリアス
-  // Microsoft::WRL::を省略
+	// Microsoft::WRL::を省略
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 	// DirectX::を省略
 	using XMFLOAT2 = DirectX::XMFLOAT2;
@@ -22,9 +23,9 @@ private: // エイリアス
 	using XMMATRIX = DirectX::XMMATRIX;
 
 public: // 列挙子
-  /// <summary>
-  /// ルートパラメータ番号
-  /// </summary>
+	/// <summary>
+	/// ルートパラメータ番号
+	/// </summary>
 	enum class RoomParameter {
 		kWorldTransform, // ワールド変換行列
 		kViewProjection, // ビュープロジェクション変換行列
@@ -38,7 +39,7 @@ private:
 	static const std::string kDefaultModelName;
 
 private: // 静的メンバ変数
-  // デスクリプタサイズ
+	// デスクリプタサイズ
 	static UINT sDescriptorHandleIncrementSize_;
 	// コマンドリスト
 	static ID3D12GraphicsCommandList* sCommandList_;
@@ -46,11 +47,13 @@ private: // 静的メンバ変数
 	static Microsoft::WRL::ComPtr<ID3D12RootSignature> sRootSignature_;
 	// パイプラインステートオブジェクト
 	static Microsoft::WRL::ComPtr<ID3D12PipelineState> sPipelineState_;
+	// ライト
+	static std::unique_ptr<LightGroup> lightGroup;
 
 public: // 静的メンバ関数
-  /// <summary>
-  /// 静的初期化
-  /// </summary>
+	/// <summary>
+	/// 静的初期化
+	/// </summary>
 	static void StaticInitialize();
 
 	/// <summary>
@@ -84,9 +87,9 @@ public: // 静的メンバ関数
 	static void PostDraw();
 
 public: // メンバ関数
-  /// <summary>
-  /// デストラクタ
-  /// </summary>
+	/// <summary>
+	/// デストラクタ
+	/// </summary>
 	~Model();
 
 	/// <summary>
@@ -121,7 +124,7 @@ public: // メンバ関数
 	inline const std::vector<Mesh*>& GetMeshes() { return meshes_; }
 
 private: // メンバ変数
-  // 名前
+	// 名前
 	std::string name_;
 	// メッシュコンテナ
 	std::vector<Mesh*> meshes_;
@@ -131,11 +134,11 @@ private: // メンバ変数
 	Material* defaultMaterial_ = nullptr;
 
 private: // メンバ関数
-  /// <summary>
-  /// モデル読み込み
-  /// </summary>
-  /// <param name="modelname">モデル名</param>
-  /// <param name="modelname">エッジ平滑化フラグ</param>
+	/// <summary>
+	/// モデル読み込み
+	/// </summary>
+	/// <param name="modelname">モデル名</param>
+	/// <param name="modelname">エッジ平滑化フラグ</param>
 	void LoadModel(const std::string& modelname, bool smoothing);
 
 	/// <summary>

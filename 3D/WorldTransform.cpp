@@ -1,6 +1,6 @@
 #include "WorldTransform.h"
 #include "DirectXCore.h"
-
+#include <cassert>
 
 void WorldTransform::Initialize(){
 	CreateConstBuffer();

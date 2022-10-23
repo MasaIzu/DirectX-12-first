@@ -11,7 +11,7 @@ GameScene::~GameScene() {}
 void GameScene::Initialize() {
 
 	dxCommon_ = DirectXCore::GetInstance();
-	input_ = Input::GetInstance();
+	//input_ = Input::GetInstance();
 }
 
 void GameScene::Update() {}

@@ -6,6 +6,8 @@
 #include <d3d12.h>
 #include <wrl.h>
 
+const float PI = 3.141592f;
+
 // 定数バッファ用データ構造体
 struct ConstBufferDataViewProjection {
 	Matrix4 view;       // ワールド → ビュー変換行列
@@ -33,7 +35,7 @@ struct ViewProjection {
 
 #pragma region 射影行列の設定
 	// 垂直方向視野角
-	float fovAngleY = DirectX::XMConvertToRadians(45.0f);
+	float fovAngleY = ToRadian(45.0f);
 	// ビューポートのアスペクト比
 	float aspectRatio = (float)16 / 9;
 	// 深度限界（手前側）
@@ -63,4 +65,7 @@ struct ViewProjection {
 	/// 行列を更新する
 	/// </summary>
 	void UpdateMatrix();
+
+
+	float ToRadian(float x) { return x * (PI / 180); }
 };

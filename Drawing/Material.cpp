@@ -1,4 +1,4 @@
-#include "DirectXCommon.h"
+#include "DirectXCore.h"
 #include "Material.h"
 #include "TextureManager.h"
 #include <DirectXTex.h>
@@ -30,7 +30,7 @@ void Material::CreateConstantBuffer() {
 		CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferData) + 0xff) & ~0xff);
 
 	// 定数バッファの生成
-	result = DirectXCommon::GetInstance()->GetDevice()->CreateCommittedResource(
+	result = DirectXCore::GetInstance()->GetDevice()->CreateCommittedResource(
 		&heapProps, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
 		IID_PPV_ARGS(&constBuff_));
 	assert(SUCCEEDED(result));

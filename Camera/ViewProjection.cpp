@@ -4,7 +4,6 @@
 #include <cassert>
 #include <d3dx12.h>
 
-using namespace DirectX;
 
 void ViewProjection::Initialize() {
 	CreateConstBuffer();

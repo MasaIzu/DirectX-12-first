@@ -40,7 +40,7 @@ void WorldTransform::CreateConstBuffer(){
 void WorldTransform::Map(){
 
 	//定数バッファのマッピング
-	HRESULT result = constBuff_->Map(0, nullptr, (void**)constMap);
+	HRESULT result = constBuff_->Map(0, nullptr, (void**)&constMap);
 	assert(SUCCEEDED(result));
 
 }
@@ -50,19 +50,19 @@ void WorldTransform::TransferMatrix(){
 	Matrix4 matScale, matRot, matTrans;
 
 	//スケール、回転、平行移動行列の計算
-	matScale = AffinTrans::Scale(scale_);
-	matRot = AffinTrans::Initialize();
-	matRot *= AffinTrans::Rotation(rotation_,6);
-	matTrans = AffinTrans::Translation(translation_);
+	matScale = MyMath::Scale(scale_);
+	matRot = MyMath::Initialize();
+	matRot *= MyMath::Rotation(rotation_,6);
+	matTrans = MyMath::Translation(translation_);
 
 	//ワールド行列の合成
-	matWorld_ = AffinTrans::Initialize();//変形をリセット
+	matWorld_ = MyMath::Initialize();//変形をリセット
 	matWorld_ *= matScale;//ワールド行列にスケーリングを反映
 	matWorld_ *= matRot;//ワールド行列に回転を反映
 	matWorld_ *= matTrans;//ワールド行列に平行移動を反映
 
 	//親オブジェクトがあれば
-	if (parent_ != nullptr) {
+	if (parent_) {
 		//親オブジェクトのワールド行列を掛ける
 		matWorld_ *= parent_->matWorld_;
 	}

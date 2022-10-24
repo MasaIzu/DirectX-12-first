@@ -11,7 +11,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	WinApp* winApp_ = nullptr;
 	DirectXCore* dxCore_ = nullptr;
 	// 汎用機能
-	Input* input_ = new Input;
+	Input* input_ = nullptr;
 	GameScene* gameScene_ = nullptr;
 
 	// ゲームウィンドウの作成
@@ -24,7 +24,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 #pragma region 汎用機能初期化
 	// 入力の初期化
-	input_->Initialize(winApp_);
+	input_ = Input::GetInstance();
+	input_->Initialize();
 
 	// オーディオの初期化
 	Audio sound;
@@ -54,6 +55,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// メインループ
 	while (true) {
+		//fps制限
+		fps->FpsControlBegin();
+
 		// メッセージ処理
 		if (winApp_->ProcessMessage()) {
 			break;
@@ -78,7 +82,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	}
 
 	// 各種解放
-
 	sound.SoundUnload();
 
 	// ゲームウィンドウの破棄

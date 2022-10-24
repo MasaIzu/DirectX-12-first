@@ -3,7 +3,8 @@
 #include "WinApp.h"
 #include <cassert>
 #include <d3dx12.h>
-
+#include "MyMath.h"
+#include<DirectXMath.h>
 
 void ViewProjection::Initialize() {
 	CreateConstBuffer();
@@ -37,11 +38,17 @@ void ViewProjection::Map() {
 void ViewProjection::UpdateMatrix() {
 
 	// ビュー行列の生成
-	matView = AffinTrans::MatrixInverse(AffinTrans::LookAtLH(eye, target, up));
+	Matrix4 tmp = MyMath::LookAtLH(eye, target, up);
+	matView = MyMath::MatrixInverse(&tmp);
+	DirectX::XMVECTOR a = { eye.x,eye.y,eye.z };
+	DirectX::XMVECTOR b = { target.x,target.y,target.z };
+	DirectX::XMVECTOR c = { up.x,up.y,up.z };
 
+	DirectX::XMMATRIX matView2 = DirectX::XMMatrixLookAtLH(a, b, c);
 
 	// 透視投影による射影行列の生成
-	matProjection = AffinTrans::PerspectiveFovLH(fovAngleY, aspectRatio, nearZ, farZ);
+	matProjection = MyMath::PerspectiveFovLH(fovAngleY, aspectRatio, nearZ, farZ);
+	DirectX::XMMATRIX matProjection2 = DirectX::XMMatrixPerspectiveFovLH(fovAngleY, aspectRatio, nearZ, farZ);
 
 	// 定数バッファに書き込み
 	constMap->view = matView;

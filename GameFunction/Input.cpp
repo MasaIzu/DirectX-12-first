@@ -1,30 +1,57 @@
 #include "Input.h"
+#include "WinApp.h"
+#include <cassert>
+
+#include <basetsd.h>
+#include <commctrl.h>
+#include <dbt.h>
+#include <oleauto.h>
+#include <shellapi.h>
+#include <wbemidl.h>
+#include <wrl/client.h>
 
 #pragma comment(lib,"dinput8.lib")
 #pragma comment(lib,"dxguid.lib")
 
-#include <cassert>
+#include <dinputd.h>
+#include <memory>
 
-void Input::Initialize(WinApp* winApp)
+
+Input* Input::GetInstance() {
+	static Input instance;
+	return &instance;
+}
+
+Input::~Input() {
+	if (devKeyboard_) {
+		devKeyboard_->Unacquire();
+	}
+}
+
+void Input::Initialize()
 {
-	HRESULT result;
-	// 借りてきたWinAppのインスタンスを記録
-	this->winApp_ = winApp;
+	WinApp* winApp = WinApp::GetInstance();
 
-	//DirectInputの初期化
-	result = DirectInput8Create(winApp->GetHInstance(), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput, nullptr);
+	hwnd_ = winApp->GetHwnd();
+	HRESULT result = S_FALSE;
+
+	// DirectInputオブジェクトの生成
+	result = DirectInput8Create(
+		winApp->GetHInstance(), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&dInput_, nullptr);
 	assert(SUCCEEDED(result));
 
-	//キーボードデバイスの生成
-	result = directInput->CreateDevice(GUID_SysKeyboard, &keyboard, NULL);
+	// キーボードデバイスの生成
+	result = dInput_->CreateDevice(GUID_SysKeyboard, &devKeyboard_, NULL);
 	assert(SUCCEEDED(result));
 
-	//入力データ形式のセット
-	result = keyboard->SetDataFormat(&c_dfDIKeyboard);//標準形式
+	// 入力データ形式のセット
+	result = devKeyboard_->SetDataFormat(&c_dfDIKeyboard); // 標準形式
 	assert(SUCCEEDED(result));
 
 	// 排他制御レベルのセット
-	result = keyboard->SetCooperativeLevel(winApp->GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
+	result = devKeyboard_->SetCooperativeLevel(
+		hwnd_, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
+	assert(SUCCEEDED(result));
 }
 
 void Input::Update()
@@ -33,10 +60,10 @@ void Input::Update()
 	memcpy(keyPre, key, sizeof(key));
 
 	// キーボード情報の取得開始
-	keyboard->Acquire();
+	devKeyboard_->Acquire();
 
 	// 全キーの入力状態を取得する
-	keyboard->GetDeviceState(sizeof(key), key);
+	devKeyboard_->GetDeviceState(sizeof(key), key);
 
 }
 

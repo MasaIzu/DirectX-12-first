@@ -6,8 +6,11 @@ Vector3::Vector3() :x(0), y(0), z(0)
 {
 }
 
-Vector3::Vector3(float x, float y, float z) : x(0.0f), y(0.0f), z(0.0f)
+Vector3::Vector3(float x, float y, float z)
 {
+	this->x = x;
+	this->y = y;
+	this->z = z;
 }
 
 float Vector3::length()const {
@@ -84,28 +87,42 @@ Vector3& Vector3::operator/=(float s)
 const Vector3 operator+(const Vector3& v1, const Vector3& v2)
 {
 	Vector3 temp(v1);
-	return temp + v2;
+	temp += v2;
+	return temp;
 }
 
 const Vector3 operator-(const Vector3& v1, const Vector3& v2)
 {
 	Vector3 temp(v1);
-	return temp - v2;
+	temp -= v2;
+	return temp;
 }
 
-const Vector3 operator*(const Vector3& v, float s)
-{
-	Vector3 temp(v);
-	return temp * s;
+const Vector3 operator*(const Vector3& v, float s){
+	Vector3 temp = v;
+	temp.x = temp.x * s;
+	temp.y = temp.y * s;
+	temp.z = temp.z * s;
+
+	return temp;
 }
 
 const Vector3 operator*(float s, const Vector3& v)
 {
-	return v * s;
+	Vector3 temp = v;
+	temp.x = temp.x * s;
+	temp.y = temp.y * s;
+	temp.z = temp.z * s;
+
+	return temp;
 }
 
 const Vector3 operator/(const Vector3& v, float s)
 {
-	Vector3 temp(v);
-	return temp / s;
+	Vector3 temp = v;
+	temp.x = temp.x / s;
+	temp.y = temp.y / s;
+	temp.z = temp.z / s;
+
+	return temp;
 }

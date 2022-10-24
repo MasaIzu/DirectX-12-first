@@ -118,7 +118,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Base;3D;Camera;Drawing;GameFunction;Scene;Math;Sound;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Base;3D;Camera;Drawing;GameFunction;Scene;Math;Sound;Enemy;Collision;Background;Player;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -134,7 +134,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>Base;3D;Camera;Drawing;GameFunction;Scene;Math;Sound;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Base;3D;Camera;Drawing;GameFunction;Scene;Math;Sound;Enemy;Collision;Background;Player;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -239,15 +239,20 @@
     <ClInclude Include="3D\PointLight.h" />
     <ClInclude Include="3D\SpotLight.h" />
     <ClInclude Include="3D\WorldTransform.h" />
+    <ClInclude Include="Background\Load.h" />
+    <ClInclude Include="Background\Wing.h" />
     <ClInclude Include="Base\DirectXCore.h" />
     <ClInclude Include="Base\ErrorException.h" />
     <ClInclude Include="Base\FPS.h" />
     <ClInclude Include="Base\SafeDelete.h" />
     <ClInclude Include="Base\WinApp.h" />
     <ClInclude Include="Camera\ViewProjection.h" />
+    <ClInclude Include="Collision\Collision.h" />
     <ClInclude Include="Drawing\Material.h" />
     <ClInclude Include="Drawing\Sprite.h" />
     <ClInclude Include="Drawing\TextureManager.h" />
+    <ClInclude Include="Enemy\Enemy.h" />
+    <ClInclude Include="Enemy\EnemyPop.h" />
     <ClInclude Include="GameFunction\Input.h" />
     <ClInclude Include="Math\Affin.h" />
     <ClInclude Include="Math\Matrix4.h" />
@@ -255,6 +260,7 @@
     <ClInclude Include="Math\Vector2.h" />
     <ClInclude Include="Math\Vector3.h" />
     <ClInclude Include="Math\Vector4.h" />
+    <ClInclude Include="Player\Player.h" />
     <ClInclude Include="Scene\GameScene.h" />
     <ClInclude Include="Sound\Audio.h" />
   </ItemGroup>
@@ -263,13 +269,18 @@
     <ClCompile Include="3D\Mesh.cpp" />
     <ClCompile Include="3D\Model.cpp" />
     <ClCompile Include="3D\WorldTransform.cpp" />
+    <ClCompile Include="Background\Load.cpp" />
+    <ClCompile Include="Background\Wing.cpp" />
     <ClCompile Include="Base\DirectXCore.cpp" />
     <ClCompile Include="Base\FPS.cpp" />
     <ClCompile Include="Base\WinApp.cpp" />
     <ClCompile Include="Camera\ViewProjection.cpp" />
+    <ClCompile Include="Collision\Collision.cpp" />
     <ClCompile Include="Drawing\Material.cpp" />
     <ClCompile Include="Drawing\Sprite.cpp" />
     <ClCompile Include="Drawing\TextureManager.cpp" />
+    <ClCompile Include="Enemy\Enemy.cpp" />
+    <ClCompile Include="Enemy\EnemyPop.cpp" />
     <ClCompile Include="GameFunction\Input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Math\Affin.cpp" />
@@ -278,6 +289,7 @@
     <ClCompile Include="Math\Vector2.cpp" />
     <ClCompile Include="Math\Vector3.cpp" />
     <ClCompile Include="Math\Vector4.cpp" />
+    <ClCompile Include="Player\Player.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
     <ClCompile Include="Sound\Audio.cpp" />
   </ItemGroup>

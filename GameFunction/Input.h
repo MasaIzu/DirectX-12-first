@@ -1,5 +1,8 @@
 #pragma once
-#include <windows.h>
+#include <DirectXMath.h>
+#include <Windows.h>
+#include <array>
+#include <vector>
 #include <wrl.h>
 #define DIRECTINPUT_VERSION 0x0800 //DirectInputのバージョン指定
 #include <dinput.h>
@@ -13,8 +16,10 @@ public:
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 public: // メンバ関数
+
+	static Input* GetInstance();
 	// 初期化
-	void Initialize(WinApp* winApp);
+	void Initialize();
 
 	// 更新
 	void Update();
@@ -40,13 +45,19 @@ public: // メンバ関数
 	/// <returns>トリガーか</returns>
 	bool ReleasedKey(BYTE keyNumber);
 
+private:
+	Input() = default;
+	~Input();
+	Input(const Input&) = delete;
+	const Input& operator=(const Input&) = delete;
+
 private:// 静的メンバ変数
 
 	// DirectInputのインスタンス
-	ComPtr<IDirectInput8> directInput = nullptr;
+	ComPtr<IDirectInput8> dInput_ = nullptr;
 
 	// キーボードのデバイス
-	ComPtr<IDirectInputDevice8> keyboard = nullptr;
+	ComPtr<IDirectInputDevice8> devKeyboard_ = nullptr;
 
 	// 全キーの状態
 	BYTE key[256] = {};
@@ -56,4 +67,6 @@ private:// 静的メンバ変数
 
 	// WindowsAPI
 	WinApp* winApp_ = nullptr;
+
+	HWND hwnd_;
 };

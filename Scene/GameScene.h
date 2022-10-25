@@ -15,7 +15,7 @@
 #include "Collision.h"
 #include "wing.h"
 #include "background.h"
-
+#include "ScoreSprite.h"
 
 /// <summary>
 /// ƒQ[ƒ€ƒV[ƒ“

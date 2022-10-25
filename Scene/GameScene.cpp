@@ -8,6 +8,12 @@
 GameScene::GameScene() {}
 
 GameScene::~GameScene() {
+	delete TitleCar_;
+	for (int i = 0; i < 3; i++) {
+		delete stert321[i];
+	}
+	delete meter_;
+	delete needle;
 }
 
 void GameScene::Initialize() {
@@ -76,20 +82,47 @@ void GameScene::Initialize() {
 
 	}
 
-	Sprite::LoadTexture(2, L"Resources/meter.png");
-	meter_ = Sprite::Create(2, { 1180.0f, 620.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, { 0.5f, 0.5f });
+	Sprite::LoadTexture(3, L"Resources/meter.png");
+	meter_ = Sprite::Create(3, { 1150.0f, 600.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, { 0.5f, 0.5f });
 	meter_->SetSize({ 200.0f, 200.0f });
 
 
 	//j‚ÌƒeƒNƒXƒ`ƒƒ
-	Sprite::LoadTexture(3, L"Resources/needle.png");
-	needle = Sprite::Create(3, { 1180.0f, 620.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, { 0.5f, 0.5f });
+	Sprite::LoadTexture(4, L"Resources/needle.png");
+	needle = Sprite::Create(4, { 1150.0f, 600.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, { 0.5f, 0.5f });
 	needle->SetSize({ 7.0f, 170.0f });
-	needle->SetRotation((PI / 180.0f) * -150.0f);
+	needle->SetRotation(-150.0f);
+
+	Sprite::LoadTexture(5, L"Resources/TitleRogo.png");
+	titleRogo = Sprite::Create(5, { 350.0f, 220.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, { 0.5f, 0.5f });
+	titleRogo->SetSize({ 608.0f, 246.0f });
+
+	Sprite::LoadTexture(6, L"Resources/Space.png");
+	space = Sprite::Create(6, { 800.0f, 520.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, { 0.5f, 0.5f });
+	space->SetSize({ 200.0f, 100.0f });
 
 
+	Sprite::LoadTexture(7, L"Resources/TimeFont.png");
+	gameTime = Sprite::Create(7, { 75.0f, 50.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, { 0.5f, 0.5f });
+	gameTime->SetSize({ 100.0f, 30.0f });
+
+	Sprite::LoadTexture(8, L"Resources/300.png");
+	overTakingCount = Sprite::Create(8, { 1150.0f, 75.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, { 0.5f, 0.5f });
+	overTakingCount->SetSize({ 150.0f, 75.0f });
+
+	Sprite::LoadTexture(9, L"Resources/123.png");
+	for (int i = 0; i < 9; i++) {
+
+		numbers[i] = Sprite::Create(9, { 1080.0f, 75.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, { 0.5f, 0.5f });
+		numbers[i]->SetTextureRect({ 800.0f - (80.0f * i), 0.0f }, { 800.0f, 80.0f });
+		numbers[i]->SetSize({ 80.0f, 80.0f });
+
+	}
+
+	color = 1.0f;
 	rePlay = 0;
 	title = 0;
+	number = 0;
 
 	viewProjection_.UpdateMatrix();
 }
@@ -97,6 +130,7 @@ void GameScene::Initialize() {
 void GameScene::Clean() {
 	cameraMoveFlag = 0;
 	cameraTransFlag = 0;
+	color = 1.0f;
 
 	if (rePlay == 1) {
 		rePlay = 0;
@@ -125,6 +159,7 @@ void GameScene::Update() {
 		if (input_->TriggerKey(DIK_SPACE)) {
 			cameraMoveFlag = 1;
 		}
+		AlphaChange(scene_);
 		camera(cameraMoveFlag);
 		//ƒ^ƒCƒgƒ‹‚Æ”wŒiŽ©“®ˆÚ“®
 		load_->Demo();
@@ -135,12 +170,15 @@ void GameScene::Update() {
 		break;
 	case GameScene::Scene::Stage:
 
+
 		player_->SetOverTakingCount(enemyPop_->GetEnemyOverTakingCount());
 		player_->Updata();
 
 		enemyPop_->SetPlayer(player_);
 		enemyPop_->SetWing(wing_);
 		enemyPop_->Update(model_);
+
+		number = enemyPop_->GetEnemyOverTakingCount();
 
 		//“¹˜HXV
 		load_->Update(player_->GetPlayerSpeed());
@@ -229,6 +267,7 @@ void GameScene::Draw() {
 		// “G‚Ì•`‰æ
 		enemyPop_->Draw(viewProjection_);
 
+
 		break;
 	case GameScene::Scene::Result:
 		//”wŒi•`‰æ
@@ -262,16 +301,18 @@ void GameScene::Draw() {
 	case GameScene::Scene::Blackout:
 		break;
 	case GameScene::Scene::Title:
-
+		titleRogo->Draw();
+		space->Draw();
 		break;
 	case GameScene::Scene::Stage:
-		/*if (player_->GetTimer() > 0) {
+		if (player_->GetTimer() > 0) {
 			stert321[(player_->GetTimer() / 60)]->Draw();
-		}*/
+		}
 		meter_->Draw();
-
-		needle->SetRotation((((player_->GetKmH() / 400) * 240) - 150) * (PI / 180));
+		gameTime->Draw();
+		needle->SetRotation((((player_->GetKmH() / 400.0f) * 240.0f) - 150.0f));
 		needle->Draw();
+		overTakingCount->Draw();
 		break;
 	case GameScene::Scene::Result:
 		TitleCar_->Draw();
@@ -334,4 +375,22 @@ void GameScene::camera(int x) {
 	}
 
 	viewProjection_.UpdateMatrix();
+}
+
+void GameScene::AlphaChange(Scene x) {
+
+	if (x == Scene::Title) {
+		if (cameraMoveFlag == 1) {
+			color -= 0.01;
+		}
+	}
+	
+
+	titleRogo->SetColor({ 1,1,1,color });
+}
+
+void GameScene::DrawNunbers() {
+
+	
+
 }

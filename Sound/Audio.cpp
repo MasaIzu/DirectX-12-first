@@ -1,6 +1,12 @@
 #include "Audio.h"
 #include <cassert>
 
+Audio* Audio::GetInstance()
+{
+    static Audio* audio = new Audio;
+    return audio;
+}
+
 //初期化
 void Audio::Initialize() {
     HRESULT result;
@@ -94,8 +100,7 @@ void Audio::SoundPlayWave() {
     result = xAudio2->CreateSourceVoice(&pSourceVoice, &soundData.wfex);
     assert(SUCCEEDED(result));
 
-    //再生する波形データの設定
-    XAUDIO2_BUFFER buf{};
+
     buf.pAudioData = soundData.pBuffer;
     buf.AudioBytes = soundData.bufferSize;
     buf.Flags = XAUDIO2_END_OF_STREAM;
@@ -103,4 +108,23 @@ void Audio::SoundPlayWave() {
     //波形データの再生
     result = pSourceVoice->SubmitSourceBuffer(&buf);
     result = pSourceVoice->Start();
+}
+
+void Audio::StopWave(const SoundData& soundData)
+{
+    HRESULT result;
+    //波形フォーマットを元にSourceVoiceの生成
+    IXAudio2SourceVoice* pSourceVoice = nullptr;
+    result = xAudio2->CreateSourceVoice(&pSourceVoice, &soundData.wfex);
+    assert(SUCCEEDED(result));
+
+    XAUDIO2_VOICE_STATE state;
+    pSourceVoice->GetState(&state);
+    if (state.BuffersQueued == 0)
+    {
+        return;
+    }
+    result = pSourceVoice->Stop(0);
+    result = pSourceVoice->FlushSourceBuffers();
+    result = pSourceVoice->SubmitSourceBuffer(&buf);
 }

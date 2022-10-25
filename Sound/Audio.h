@@ -5,7 +5,7 @@
 
 #pragma comment(lib,"xaudio2.lib")
 
-using namespace Microsoft::WRL;
+
 
 //チャンクヘッダ
 struct ChunkHeader
@@ -38,6 +38,11 @@ struct SoundData
 
 class Audio {
 public:		//メンバ関数
+	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
+	
+	// インスタンス化
+	static Audio* GetInstance();
+
 	//初期化
 	void Initialize();
 	//音声読み込み
@@ -46,6 +51,8 @@ public:		//メンバ関数
 	void SoundUnload();
 	//音声再生
 	void SoundPlayWave();
+	// 音声停止
+	void StopWave(const SoundData& soundData);
 	//音声リセット→データ開放
 	void Reset();
 
@@ -54,10 +61,19 @@ public:		//メンバ関数
 	////データ情報
 	//SoundData GetSound() { return soundData; }
 
+private:
+	Audio() = default;
+	~Audio() = default;
+
+	Audio(const Audio&) = delete;
+	Audio& operator = (const Audio&) = delete;
+
 private:	//メンバ変数
 	//サウンド再生
 	ComPtr<IXAudio2> xAudio2;
 	IXAudio2MasteringVoice* masterVoice;
+	//再生する波形データの設定
+	XAUDIO2_BUFFER buf{};
 	//音声データ
 	SoundData soundData;
 };

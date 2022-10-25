@@ -81,6 +81,11 @@ public: // 静的メンバ関数
 	// 座標の取得
 	const XMFLOAT2& GetPosition() { return position; }
 
+	//カラー替え
+	void SetColor(const XMFLOAT4& color) { this->color = color; }
+
+
+
 private: // 静的メンバ変数
 	// テクスチャの最大枚数
 	static const int srvCount = 512;

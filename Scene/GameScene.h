@@ -63,6 +63,14 @@ public: // メンバ関数
 		Initialize,//初期化シーン
 	};
 
+	/// <summary>
+	/// alpha値を変更
+	/// </summary>
+	void AlphaChange(Scene x);
+
+
+	void DrawNunbers();
+
 
 private: // メンバ変数
 	//フェーズ
@@ -75,11 +83,21 @@ private: // メンバ変数
 	//ゲームクリア
 	Sprite* TitleCar_ = nullptr;
 	//最初のカウント
-	Sprite* stert321[4];
+	Sprite* stert321[3];
 	//スピードメーター
 	Sprite* meter_ = nullptr;
 	//メーターの針
 	Sprite* needle = nullptr;
+	//タイトル
+	Sprite* titleRogo = nullptr;
+	//title下のスペース
+	Sprite* space = nullptr;
+	//time
+	Sprite* gameTime = nullptr;
+	//オーバーテイキングカウント
+	Sprite* overTakingCount = nullptr;
+	//123
+	Sprite* numbers[10];
 
 
 	//3Dモデル
@@ -121,9 +139,13 @@ private: // メンバ変数
 	int cameraMoveFlag;
 	int Timer;
 
+	float color;
 
 	int rePlay;
 	int title;
+
+	int number;
+
 
 	/// <summary>
 	/// ゲームシーン用

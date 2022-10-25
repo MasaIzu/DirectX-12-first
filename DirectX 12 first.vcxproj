@@ -263,6 +263,7 @@
     <ClInclude Include="Math\Vector4.h" />
     <ClInclude Include="Player\Player.h" />
     <ClInclude Include="Scene\GameScene.h" />
+    <ClInclude Include="ScoreSprite.h" />
     <ClInclude Include="Sound\Audio.h" />
   </ItemGroup>
   <ItemGroup>
@@ -293,6 +294,7 @@
     <ClCompile Include="Math\Vector4.cpp" />
     <ClCompile Include="Player\Player.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
+    <ClCompile Include="ScoreSprite.cpp" />
     <ClCompile Include="Sound\Audio.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

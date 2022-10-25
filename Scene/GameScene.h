@@ -146,6 +146,11 @@ private: // メンバ変数
 
 	int number;
 
+	// スコアの描画用
+	int divScore = 1000;
+	const int maxScoreNum = 3;
+	int scoreNum[3] = { 0 };
+	
 
 	/// <summary>
 	/// ゲームシーン用

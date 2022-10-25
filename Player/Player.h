@@ -87,6 +87,11 @@ public://ゲッター
     /// </summary>
     void SetOverTakingCount(int count);
 
+    /// <summary>
+    /// スタートタイマー取得
+    /// </summary>
+    int GetTimer();
+
 private:
     //ワールド変換データ
     WorldTransform worldTransform_;
@@ -123,4 +128,6 @@ private:
     int overTakingCount;
     int speedTimer;
 
+    int bustFlag;
+    float bustMax;
 };

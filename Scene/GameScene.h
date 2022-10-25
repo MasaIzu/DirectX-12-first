@@ -14,8 +14,7 @@
 #include "Enemy.h"
 #include "Collision.h"
 #include "wing.h"
-#include "BackGround.h"
-
+#include "background.h"
 
 
 /// <summary>
@@ -49,10 +48,39 @@ public: // メンバ関数
 	/// </summary>
 	void Draw();
 
+	void camera(int x);
+
+	/// <summary>
+	/// 使ったもののおかたずけ
+	/// </summary>
+	void Clean();
+
+	enum class Scene {
+		Blackout,//暗転シーン
+		Title,//タイトル
+		Stage,//バトルステージ
+		Result,//リザルト
+		Initialize,//初期化シーン
+	};
+
+
 private: // メンバ変数
-	DirectXCore* dxCommon_ = nullptr;
+	//フェーズ
+	Scene scene_ = Scene::Title;
+
+	DirectXCore* dxCore_ = nullptr;
 	Input* input_ = nullptr;
-	Audio audio_;
+	Audio* audio_ = nullptr;
+
+	//ゲームクリア
+	Sprite* TitleCar_ = nullptr;
+	//最初のカウント
+	Sprite* stert321[4];
+	//スピードメーター
+	Sprite* meter_ = nullptr;
+	//メーターの針
+	Sprite* needle = nullptr;
+
 
 	//3Dモデル
 	Model* model_ = nullptr;
@@ -87,8 +115,15 @@ private: // メンバ変数
 	Vector3 gamePlayCameraPos;
 	Vector3 keepCamera;
 
-	int cameraTransFlag = 0;
+	int cameraTransFlag;
 	Vector3 cameraSpeed;
+
+	int cameraMoveFlag;
+	int Timer;
+
+
+	int rePlay;
+	int title;
 
 	/// <summary>
 	/// ゲームシーン用

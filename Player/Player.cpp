@@ -23,6 +23,9 @@ Player::Player() {
 	saveSpeedFlag = 0;
 	speedTimer = 2;
 
+	bustFlag = 0;
+	bustMax = 6;
+
 	//ƒ[ƒ‹ƒh•ÏŠ·‚Ì‰Šú‰»
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = { 0, 0, -50 };
@@ -45,7 +48,7 @@ Player::~Player() {
 void Player::Initialize() {
 	playerSpeed = 1.0f;
 	playerJumpSpeed = 0;
-	playerMaxAccelerator = 5.0f;
+	playerMaxAccelerator = 9.0f;
 	jumpFlag = 0;
 	kmH = 0;
 	gravity = 9.0f;
@@ -78,6 +81,14 @@ void Player::PlayerMove() {
 		if (playerSpeed < playerMaxAccelerator) {
 			playerSpeed += 0.05f;
 			speedTimer = 2;
+		}
+	}
+	if (bustFlag == 0) {
+		if (playerSpeed < bustMax) {
+			playerSpeed += 0.1;
+		}
+		else {
+			bustFlag = 1;
 		}
 	}
 
@@ -147,7 +158,7 @@ void Player::PlayerMove() {
 void Player::EnemyCarBack() {
 
 	if (playerSpeed < 16) {
-		playerSpeed += 0.016;
+		playerSpeed += 0.012;
 	}
 }
 
@@ -218,4 +229,9 @@ void Player::SetOverTakingCount(int count) {
 
 	overTakingCount = count;
 
+}
+
+int Player::GetTimer()
+{
+	return timer;
 }

@@ -36,6 +36,8 @@ public://ゲッターセッター
 	void  SetPlayer(Player* player) { player_ = player; }
 	void SetWing(Wing* wing) { wing_ = wing; }
 
+	float GetGoalEmemyPos();
+
 private:
 	// 車種のパターンを抽選する関数
 	void CarModelLottery();
@@ -91,12 +93,19 @@ private:// メンバ変数
 
 	int TrafficAccidentFlag;
 
-	int overTakingCount;
+	int overTakingCount = 200;
 
 	// 敵のモデル
 	Model* puriusModel = nullptr;
 	Model* ferariModel = nullptr;
 	Model* trakuModel = nullptr;
 
+	// ゴールの敵
+	std::unique_ptr<Enemy> GoalEnemy = nullptr;
+	std::unique_ptr<Enemy> GoalFlagOBJ = nullptr;
+	Model* GoalEnemyModel = nullptr;
+	Model* GoalFlagOBJModel = nullptr;
+	Vector3 GoalEnemyPos = { 0 * loadWidth, 0, 34 * loadWidth };
+	bool goalFlag = false;
 };
 

@@ -28,8 +28,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	input_->Initialize();
 
 	// オーディオの初期化
-	Audio sound;
-	sound.Initialize();
+	/*Audio sound;
+	sound.Initialize();*/
 
 	// テクスチャマネージャの初期化
 	TextureManager::GetInstance()->Initialize(dxCore_->GetDevice());
@@ -82,7 +82,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	}
 
 	// 各種解放
-	sound.SoundUnload();
+	//sound.SoundUnload();
 
 	// ゲームウィンドウの破棄
 #pragma region  WindowsAPI後始末

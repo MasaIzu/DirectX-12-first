@@ -21,6 +21,11 @@ public:
 	/// </summary>
 	void Draw(ViewProjection viewProjection);
 
+	/// <summary>
+	/// タイトル画面用
+	/// </summary>
+	void Demo();
+
 private:
 	//ワールド変換データ
 	WorldTransform worldTransformRight_[2];

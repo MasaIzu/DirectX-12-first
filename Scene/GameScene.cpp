@@ -124,6 +124,12 @@ void GameScene::Initialize() {
 	title = 0;
 	number = 0;
 
+	for (int i = 0; i < maxScoreNum; i++)
+	{
+		scoreSprite[i].Initialize();
+		scoreSprite2[i].Initialize();
+	}
+
 	viewProjection_.UpdateMatrix();
 }
 
@@ -313,6 +319,7 @@ void GameScene::Draw() {
 		needle->SetRotation((((player_->GetKmH() / 400.0f) * 240.0f) - 150.0f));
 		needle->Draw();
 		overTakingCount->Draw();
+		DrawNunbers();
 		break;
 	case GameScene::Scene::Result:
 		TitleCar_->Draw();
@@ -390,7 +397,20 @@ void GameScene::AlphaChange(Scene x) {
 }
 
 void GameScene::DrawNunbers() {
-
-	
-
+	divScore = 1000;
+	for (int i = 0; i < maxScoreNum; i++)
+	{
+		scoreNum[i] = enemyPop_->GetEnemyOverTakingCount() % divScore / (divScore / 10);
+		divScore = divScore / 10;
+		spritePos.x = 990 - ((1 - i) * 40);
+		scoreSprite[i].Draw(scoreNum[i], spritePos);
+	}
+	divScore = 1000;
+	for (int i = 0; i < maxScoreNum; i++)
+	{
+		scoreNum2[i] = (int)player_->GetKmH() % divScore / (divScore / 10);
+		divScore = divScore / 10;
+		sprite2Pos.x = 1180 - ((1 - i) * 35);
+		scoreSprite2[i].DrawSpeed(scoreNum2[i], sprite2Pos);
+	}
 }

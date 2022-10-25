@@ -150,8 +150,11 @@ private: // メンバ変数
 	int divScore = 1000;
 	const int maxScoreNum = 3;
 	int scoreNum[3] = { 0 };
-	
-
+	int scoreNum2[3] = { 0 };
+	Vector2 spritePos = { 1100,15 };
+	Vector2 sprite2Pos = { 1200,630 };
+	ScoreSprite scoreSprite[3];
+	ScoreSprite scoreSprite2[3];
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

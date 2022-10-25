@@ -15,6 +15,7 @@ class EnemyPop
 public:// メンバ関数
 
 	EnemyPop();
+	void Initialize();
 
 	// 更新処理
 	void Update(Model* model);
@@ -30,7 +31,7 @@ public:// メンバ関数
 
 
 public://ゲッターセッター
-
+	int GetEnemyOverTakingCount();
 	int GetTrafficAccidentFlag();
 	void  SetPlayer(Player* player) { player_ = player; }
 	void SetWing(Wing* wing) { wing_ = wing; }
@@ -44,7 +45,6 @@ private:// メンバ変数
 	std::list<std::unique_ptr<Enemy>> enemy1;
 	std::list<std::unique_ptr<Enemy>> enemy2;
 
-
 	//自キャラ
 	Player* player_ = nullptr;
 	Collision* collision_ = nullptr;
@@ -52,22 +52,32 @@ private:// メンバ変数
 	//風
 	Wing* wing_ = nullptr;
 
-	
+
 	// 一つのレーンの幅
 	float loadWidth = 18.5f;
 
 	// 敵の位置のパターンの配列
-	Vector3 enemyPos1[3] = { { 0 * loadWidth, 0, 32*loadWidth},
-							 {-2 * loadWidth, 0, 30*loadWidth},
-							 { 2 * loadWidth, 0, 31*loadWidth} };
+	Vector3 enemyPos1[3] = { { 0 * loadWidth, 0, 32 * loadWidth},
+							 {-2 * loadWidth, 0, 30 * loadWidth},
+							 { 2 * loadWidth, 0, 31 * loadWidth} };
 
-	Vector3 enemyPos2[3] = { {-1 * loadWidth, 0, 32*loadWidth},
-							 {-2 * loadWidth, 0, 31*loadWidth},
-							 { 1 * loadWidth, 0, 30*loadWidth} };
+	Vector3 enemyPos2[3] = { {-1 * loadWidth, 0, 32 * loadWidth},
+							 {-2 * loadWidth, 0, 31 * loadWidth},
+							 { 1 * loadWidth, 0, 30 * loadWidth} };
 
-	Vector3 enemyPos3[3] = { { 2 * loadWidth, 0, 32*loadWidth},
-							 {-1 * loadWidth, 0, 31*loadWidth},
-							 { 1 * loadWidth, 0, 30*loadWidth} };
+	Vector3 enemyPos3[3] = { { 2 * loadWidth, 0, 32 * loadWidth},
+							 {-1 * loadWidth, 0, 31 * loadWidth},
+							 { 1 * loadWidth, 0, 30 * loadWidth} };
+
+	Vector3 enemyPos4[4] = { { 2 * loadWidth, 0, 32 * loadWidth},
+							 {-1 * loadWidth, 0, 31 * loadWidth},
+							 { 0 * loadWidth, 0, 30 * loadWidth},
+							 {-2 * loadWidth, 0, 34 * loadWidth} };
+
+	Vector3 enemyPos5[4] = { { 1 * loadWidth, 0, 30 * loadWidth},
+							 {-2 * loadWidth, 0, 33 * loadWidth},
+							 {-1 * loadWidth, 0, 31 * loadWidth},
+							 { 0 * loadWidth, 0, 34 * loadWidth} };
 	// 敵のランダムパターン
 	int carModelnum_ = 0;
 	CarModel carModel_ = CarModel::truck;
@@ -75,10 +85,18 @@ private:// メンバ変数
 
 	// 敵のポップするタイマー
 	int popTimer = 0;
-	
+
 	// 敵のポップする間隔のタイマー
 	int popInterval = 2 * 60;
 
 	int TrafficAccidentFlag;
+
+	int overTakingCount;
+
+	// 敵のモデル
+	Model* puriusModel = nullptr;
+	Model* ferariModel = nullptr;
+	Model* trakuModel = nullptr;
+
 };
 

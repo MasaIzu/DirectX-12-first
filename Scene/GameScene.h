@@ -14,6 +14,9 @@
 #include "Enemy.h"
 #include "Collision.h"
 #include "wing.h"
+#include "BackGround.h"
+
+
 
 /// <summary>
 /// ゲームシーン
@@ -68,11 +71,11 @@ private: // メンバ変数
 	Model* loadModel_ = nullptr;
 	Load* load_ = nullptr;
 
-	//スプライト
-	Sprite* sprite = nullptr;
+	//背景
+	Model* groundRightModel_ = nullptr;
+	BackGround* backGround_ = nullptr;
 
-	//テクスチャバンドル
-	uint32_t textureHandle_ = 0u;
+	Model* groundLeftModel_ = nullptr;
 
 	//風
 	Model* wingModel_ = nullptr;
@@ -81,6 +84,11 @@ private: // メンバ変数
 	//当たり判定
 	Collision* cali_ = nullptr;
 
+	Vector3 gamePlayCameraPos;
+	Vector3 keepCamera;
+
+	int cameraTransFlag = 0;
+	Vector3 cameraSpeed;
 
 	/// <summary>
 	/// ゲームシーン用

@@ -82,6 +82,10 @@ public://ゲッター
     /// </summary>
     int GetMovingFlag();
 
+    /// <summary>
+    /// 追い抜きセット
+    /// </summary>
+    void SetOverTakingCount(int count);
 
 private:
     //ワールド変換データ
@@ -116,7 +120,7 @@ private:
 
     float saveSpeed;
     int saveSpeedFlag;
-
+    int overTakingCount;
     int speedTimer;
 
 };

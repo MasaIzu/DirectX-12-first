@@ -26,15 +26,15 @@ Player::Player() {
 	//ワールド変換の初期化
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = { 0, 0, -50 };
-	worldTransform_.scale_ = { 5,5,5 };
-	
+	worldTransform_.scale_ = { 4,4,4 };
+
 	//行列更新
 	AffinTrans::affin(worldTransform_);
 	worldTransform_.TransferMatrix();
 
 	input_ = Input::GetInstance();
 
-	model_ = Model::Create();
+	model_ = Model::CreateFromOBJ("CarPlayer", true);
 	collision_ = new Collision();
 }
 
@@ -71,7 +71,7 @@ void Player::Draw(ViewProjection viewProjection_) {
 
 }
 
-void Player::PlayerMove(){
+void Player::PlayerMove() {
 
 	//だんだんと動くスピードを上げる
 	if (speedTimer == 0) {
@@ -80,8 +80,8 @@ void Player::PlayerMove(){
 			speedTimer = 2;
 		}
 	}
-	
-	
+
+
 	//スペース押されたらジャンプ
 	if (input_->TriggerKey(DIK_SPACE)) {
 		jumpFlag = 1;
@@ -144,14 +144,14 @@ void Player::PlayerMove(){
 
 }
 
-void Player::EnemyCarBack(){
+void Player::EnemyCarBack() {
 
 	if (playerSpeed < 16) {
 		playerSpeed += 0.016;
 	}
 }
 
-void Player::TrafficAccident(){
+void Player::TrafficAccident() {
 	if (accidentFlag == 1) {
 		if (saveSpeedFlag == 0) {
 			saveSpeedFlag = 1;
@@ -170,11 +170,11 @@ void Player::TrafficAccident(){
 	}
 }
 
-void Player::TrafficAccidentFlag(){
+void Player::TrafficAccidentFlag() {
 	accidentFlag = 1;
 }
 
-void Player::countDown(){
+void Player::countDown() {
 	if (timer > 0) {
 		timer--;
 	}
@@ -183,13 +183,13 @@ void Player::countDown(){
 	}
 }
 
-void Player::SpeedAccordingPosition(){
+void Player::SpeedAccordingPosition() {
 	worldTransform_.translation_ = { worldTransform_.translation_.x, worldTransform_.translation_.y, -55 };
-	worldTransform_.translation_.z +=  playerSpeed * 5;
+	worldTransform_.translation_.z += playerSpeed * 5;
 
 }
 
-Vector3 Player::GetPlayerPos(){
+Vector3 Player::GetPlayerPos() {
 
 	//ワールド座標を入れる変数
 	Vector3 worldPos;
@@ -212,4 +212,10 @@ float Player::GetKmH() {
 int Player::GetMovingFlag()
 {
 	return moving;
+}
+
+void Player::SetOverTakingCount(int count) {
+
+	overTakingCount = count;
+
 }

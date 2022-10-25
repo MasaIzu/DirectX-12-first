@@ -118,7 +118,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Base;3D;Camera;Drawing;GameFunction;Scene;Math;Sound;Enemy;Collision;Background;Player;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Base;3D;Camera;Drawing;GameFunction;Scene;Math;Sound;Enemy;Collision;BackGround;Player;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -134,7 +134,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>Base;3D;Camera;Drawing;GameFunction;Scene;Math;Sound;Enemy;Collision;Background;Player;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Base;3D;Camera;Drawing;GameFunction;Scene;Math;Sound;Enemy;Collision;BackGround;Player;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -239,6 +239,7 @@
     <ClInclude Include="3D\PointLight.h" />
     <ClInclude Include="3D\SpotLight.h" />
     <ClInclude Include="3D\WorldTransform.h" />
+    <ClInclude Include="BackGround\BackGround.h" />
     <ClInclude Include="Background\Load.h" />
     <ClInclude Include="Background\Wing.h" />
     <ClInclude Include="Base\DirectXCore.h" />
@@ -269,6 +270,7 @@
     <ClCompile Include="3D\Mesh.cpp" />
     <ClCompile Include="3D\Model.cpp" />
     <ClCompile Include="3D\WorldTransform.cpp" />
+    <ClCompile Include="BackGround\BackGround.cpp" />
     <ClCompile Include="Background\Load.cpp" />
     <ClCompile Include="Background\Wing.cpp" />
     <ClCompile Include="Base\DirectXCore.cpp" />

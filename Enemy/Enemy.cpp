@@ -14,7 +14,7 @@ void Enemy::Initialize(Model* model, Vector3& pos, CarModel carModel)
 
 	// 初期座標を設定
 	worldTransform_.translation_ = pos;
-	worldTransform_.scale_ = { 5,5,5 };
+	worldTransform_.scale_ = { 4,4,4 };
 	initPos = worldTransform_.translation_;
 	// 車種を設定
 	carModel_ = carModel;
@@ -23,13 +23,14 @@ void Enemy::Initialize(Model* model, Vector3& pos, CarModel carModel)
 	switch (carModel_)
 	{
 	case CarModel::truck:
-		moveSpeed_ = { 0.0f,0.0f, 0.7f };
+		worldTransform_.scale_ = { 9,10,9 };
+		moveSpeed_ = { 0.0f,0.0f, 1.0f };
 		break;
 	case CarModel::prius:
-		moveSpeed_ = { 0.0f,0.0f, 0.6f };
+		moveSpeed_ = { 0.0f,0.0f, 3.0f };
 		break;
 	case CarModel::ferrari:
-		moveSpeed_ = { 0.0f,0.0f, 0.5f };
+		moveSpeed_ = { 0.0f,0.0f, 5.0f };
 		break;
 	default:
 		break;
@@ -42,27 +43,38 @@ void Enemy::Update()
 	lifeTimer++;
 
 	//前に進む処理
-	worldTransform_.translation_ -= moveSpeed_ * player_->GetPlayerSpeed();
+	if (contactVer0 == false) {
+		worldTransform_.translation_.z += moveSpeed_.z - player_->GetPlayerSpeed();
+	}
+	else if (contactVer0 == true)
+	{
+		worldTransform_.translation_.z += moveSpeed_.z;
+	}
 
-	// 左車線に移動可能だったら、一レーン移動させる
-	if (leftLaneChangeFlag_ == true) {
-		if (worldTransform_.translation_.x > initPos.x - (1 * loadWidth)) {
-			worldTransform_.translation_.x -= 0.5f;
+
+	if (contactFlag == false) {
+		// 左車線に移動可能だったら、一レーン移動させる
+		if (leftLaneChangeFlag_ == true) {
+			if (worldTransform_.translation_.x > initPos.x - (1 * loadWidth)) {
+				worldTransform_.translation_.x -= 0.5f;
+			}
+			else if (worldTransform_.translation_.x < initPos.x - (1 * loadWidth)) {
+				worldTransform_.translation_.x = initPos.x - (1 * loadWidth);
+			}
 		}
-		else if (worldTransform_.translation_.x < initPos.x - (1 * loadWidth)) {
-			worldTransform_.translation_.x = initPos.x - (1 * loadWidth);
+
+		// 右車線に移動可能だったら、一レーン移動させる
+		if (rightLaneChangeFlag_ == true) {
+			if (worldTransform_.translation_.x < initPos.x + (1 * loadWidth)) {
+				worldTransform_.translation_.x += 0.5f;
+			}
+			else if (worldTransform_.translation_.x > initPos.x + (1 * loadWidth)) {
+				worldTransform_.translation_.x = initPos.x + (1 * loadWidth);
+			}
 		}
 	}
 
-	// 右車線に移動可能だったら、一レーン移動させる
-	if (rightLaneChangeFlag_ == true) {
-		if (worldTransform_.translation_.x < initPos.x + (1 * loadWidth)) {
-			worldTransform_.translation_.x += 0.5f;
-		}
-		else if (worldTransform_.translation_.x > initPos.x + (1 * loadWidth)) {
-			worldTransform_.translation_.x = initPos.x + (1 * loadWidth);
-		}
-	}
+
 
 	ContactPlayer();
 
@@ -71,7 +83,7 @@ void Enemy::Update()
 	worldTransform_.TransferMatrix();
 
 	// 生きている時間が限界に達したら消す
-	if (worldTransform_.translation_.z <= -100) {
+	if (worldTransform_.translation_.z <= -100 || worldTransform_.translation_.z >= 630) {
 		isDead_ = true;
 	}
 }
@@ -166,7 +178,7 @@ void Enemy::Draw(const ViewProjection& viewProjection)
 void Enemy::ContactPlayer()
 {
 	if (contactFlag == false) {
-		if (collision_->BoxCollision(player_->GetPlayerPos(), worldTransform_.translation_, Vector3(5, 5, 5), Vector3(5, 5, 5))) {
+		if (collision_->BoxCollision(player_->GetPlayerPos(), worldTransform_.translation_, Vector3(5, 2, 5), Vector3(5, 6, 6))) {
 			if (player_->GetMovingFlag() == 0) {
 				fukitobiTime = fukitobiTimeMax;
 				contactVer0 = true;
@@ -175,7 +187,7 @@ void Enemy::ContactPlayer()
 		}
 	}
 	if (contactFlag == false) {
-		if (collision_->BoxCollision(player_->GetPlayerPos(), worldTransform_.translation_, Vector3(5, 5, 5), Vector3(5, 5, 5))) {
+		if (collision_->BoxCollision(player_->GetPlayerPos(), worldTransform_.translation_, Vector3(5, 2, 5), Vector3(5, 6, 6))) {
 			if (player_->GetMovingFlag() == 1) {
 				contactVer1 = true;
 			}
@@ -185,10 +197,10 @@ void Enemy::ContactPlayer()
 			contactFlag = true;
 		}
 	}
-	
+
 	if (contactVer0 == true) {
 		fukitobiTime--;
-		moveSpeed_ = { 0,0,-0.7f };
+		moveSpeed_ = { 0,0,+2.5f };
 		if (fukitobiTime <= 0) {
 			contactVer0 = false;
 			contactFlag = false;
@@ -199,10 +211,10 @@ void Enemy::ContactPlayer()
 				moveSpeed_ = { 0.0f,0.0f, 1.0f };
 				break;
 			case CarModel::prius:
-				moveSpeed_ = { 0.0f,0.0f, 0.8f };
+				moveSpeed_ = { 0.0f,0.0f, 3.0f };
 				break;
 			case CarModel::ferrari:
-				moveSpeed_ = { 0.0f,0.0f, 0.7f };
+				moveSpeed_ = { 0.0f,0.0f, 5.0f };
 				break;
 			default:
 				break;

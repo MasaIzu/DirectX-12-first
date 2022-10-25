@@ -12,26 +12,16 @@ void WorldTransform::CreateConstBuffer(){
 
 	HRESULT result;
 
-	//定数バッファのヒープ設定
-	D3D12_HEAP_PROPERTIES heapProp{};
-	heapProp.Type = D3D12_HEAP_TYPE_UPLOAD;
-	//定数バッファのリソース設定
-	D3D12_RESOURCE_DESC resdesc{};
-	resdesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	resdesc.Width = (sizeof(ConstBufferDataWorldTransform) + 0xff) & ~0xff;
-	resdesc.Height = 1;
-	resdesc.DepthOrArraySize = 1;
-	resdesc.MipLevels = 1;
-	resdesc.SampleDesc.Count = 1;
-	resdesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+	// ヒーププロパティ
+	CD3DX12_HEAP_PROPERTIES heapProps = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+	// リソース設定
+	CD3DX12_RESOURCE_DESC resourceDesc =
+		CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataWorldTransform) + 0xff) & ~0xff);
 
-	//定数バッファの生成
+	// 定数バッファの生成
 	result = DirectXCore::GetInstance()->GetDevice()->CreateCommittedResource(
-		&heapProp,
-		D3D12_HEAP_FLAG_NONE,
-		&resdesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
+		&heapProps, // アップロード可能
+		D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
 		IID_PPV_ARGS(&constBuff_));
 	assert(SUCCEEDED(result));
 

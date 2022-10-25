@@ -416,9 +416,9 @@ Matrix4 MyMath::LookAtLH(Vector3 eye, Vector3 target, Vector3 up) {
 	yaxis.normalize();
 
 	Matrix4 LookAt = {
-		xaxis.x,	yaxis.x,	zaxis.x,	0,
-		xaxis.y,	yaxis.y,	zaxis.y,	0,
-		xaxis.z,	yaxis.z,	zaxis.z,	0,
+		xaxis.x,	xaxis.y,	xaxis.z,	0,
+		yaxis.x,	yaxis.y,	yaxis.z,	0,
+		zaxis.x,	zaxis.y,	zaxis.z,	0,
 		eye.x,		eye.y,		eye.z,		1
 	};
 

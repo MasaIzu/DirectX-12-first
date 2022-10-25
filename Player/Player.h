@@ -1,11 +1,12 @@
 #pragma once
-#include"Model.h"
-#include"WorldTransform.h"
-#include"ViewProjection.h"
-#include"Input.h"
-#include"Vector3.h"
-#include"Affin.h"
-#include"Collision.h"
+#include "Model.h"
+#include "WorldTransform.h"
+#include "ViewProjection.h"
+#include "Input.h"
+#include "Vector3.h"
+#include "Affin.h"
+#include "Collision.h"
+#include "Audio.h"
 
 class Player {
 
@@ -99,7 +100,7 @@ private:
     Input* input_ = nullptr;
     Model* model_ = nullptr;
     Collision* collision_ = nullptr;
-
+    Audio* sound_ = nullptr;
 
     //ÉÅÉìÉoïœêî
     float playerSpeed;

@@ -38,6 +38,11 @@ Player::Player() {
 	input_ = Input::GetInstance();
 
 	model_ = Model::CreateFromOBJ("CarPlayer", true);
+
+	sound_ = Audio::GetInstance();
+	sound_->Initialize();
+	sound_->SoundLoadWave("Resources/car_start.wav");
+
 	collision_ = new Collision();
 }
 
@@ -79,6 +84,7 @@ void Player::PlayerMove() {
 	//だんだんと動くスピードを上げる
 	if (speedTimer == 0) {
 		if (playerSpeed < playerMaxAccelerator) {
+			//sound_->SoundPlayWave();
 			playerSpeed += 0.05f;
 			speedTimer = 2;
 		}

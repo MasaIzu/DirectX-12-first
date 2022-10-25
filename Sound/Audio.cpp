@@ -108,6 +108,7 @@ void Audio::SoundPlayWave() {
     //波形データの再生
     result = pSourceVoice->SubmitSourceBuffer(&buf);
     result = pSourceVoice->Start();
+
 }
 
 void Audio::StopWave(const SoundData& soundData)

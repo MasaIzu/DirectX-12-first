@@ -253,7 +253,7 @@
     <ClInclude Include="BackGround\BackGround.h">
       <Filter>ヘッダー ファイル\Background</Filter>
     </ClInclude>
-    <ClInclude Include="ScoreSprite.h">
+    <ClInclude Include="GameFunction\ScoreSprite.h">
       <Filter>ヘッダー ファイル\MyEngine\GameFunction</Filter>
     </ClInclude>
   </ItemGroup>
@@ -342,7 +342,7 @@
     <ClCompile Include="BackGround\BackGround.cpp">
       <Filter>ソース ファイル\Background</Filter>
     </ClCompile>
-    <ClCompile Include="ScoreSprite.cpp">
+    <ClCompile Include="GameFunction\ScoreSprite.cpp">
       <Filter>ソース ファイル\MyEngine\GameFunction</Filter>
     </ClCompile>
   </ItemGroup>

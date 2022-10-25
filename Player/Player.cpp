@@ -87,7 +87,7 @@ void Player::PlayerMove() {
 	//だんだんと動くスピードを上げる
 	if (speedTimer == 0) {
 		if (playerSpeed < playerMaxAccelerator) {
-			sound_[0]->SoundPlayWave();
+			//sound_[0]->SoundPlayWave();
 			playerSpeed += 0.05f;
 			speedTimer = 2;
 		}

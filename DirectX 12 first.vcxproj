@@ -285,6 +285,7 @@
     <ClCompile Include="Enemy\Enemy.cpp" />
     <ClCompile Include="Enemy\EnemyPop.cpp" />
     <ClCompile Include="GameFunction\Input.cpp" />
+    <ClCompile Include="GameFunction\ScoreSprite.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Math\Affin.cpp" />
     <ClCompile Include="Math\Matrix4.cpp" />
@@ -294,7 +295,6 @@
     <ClCompile Include="Math\Vector4.cpp" />
     <ClCompile Include="Player\Player.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
-    <ClCompile Include="ScoreSprite.cpp" />
     <ClCompile Include="Sound\Audio.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -39,9 +39,12 @@ Player::Player() {
 
 	model_ = Model::CreateFromOBJ("CarPlayer", true);
 
-	sound_ = Audio::GetInstance();
-	sound_->Initialize();
-	sound_->SoundLoadWave("Resources/car_start.wav");
+	for (int i = 0; i < 2; i++) {
+		sound_[i] = Audio::GetInstance();
+		sound_[i]->Initialize();
+	}
+	sound_[0]->SoundLoadWave("Resources/car_start.wav");
+	sound_[1]->SoundLoadWave("Resources/speedup.wav");
 
 	collision_ = new Collision();
 }
@@ -84,7 +87,7 @@ void Player::PlayerMove() {
 	//だんだんと動くスピードを上げる
 	if (speedTimer == 0) {
 		if (playerSpeed < playerMaxAccelerator) {
-			//sound_->SoundPlayWave();
+			sound_[0]->SoundPlayWave();
 			playerSpeed += 0.05f;
 			speedTimer = 2;
 		}
@@ -162,7 +165,7 @@ void Player::PlayerMove() {
 }
 
 void Player::EnemyCarBack() {
-
+	//carBacksound_->SoundPlayWave();
 	if (playerSpeed < 16) {
 		playerSpeed += 0.012;
 	}

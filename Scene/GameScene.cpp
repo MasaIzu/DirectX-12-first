@@ -141,6 +141,8 @@ void GameScene::Initialize() {
 	Sprite::LoadTexture(17, L"Resources/titleselects.png");
 	gameStart = Sprite::Create(17, { 600.0f, 500.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, { 0.5f, 0.5f });
 	gameStart->SetSize({ 400.0f, 100.0f });
+	Sprite::LoadTexture(18, L"Resources/kakusi.png");
+	BlackFilter = Sprite::Create(18, { 0,0 });
 
 	color = 1.0f;
 	rePlay = 0;
@@ -165,6 +167,7 @@ void GameScene::Clean() {
 		if (Timer == 0) {
 			if (player_->GetPlayerSpeed() < 1) {
 				BarAlpha = 0;
+				BlackAlpha = 0;
 				waitTimer = 0;
 				enemyPop_->Initialize();
 				player_->Initialize();
@@ -177,6 +180,7 @@ void GameScene::Clean() {
 		if (Timer == 0) {
 			if (player_->GetPlayerSpeed() < 1) {
 				BarAlpha = 0;
+				BlackAlpha = 0;
 				waitTimer = 0;
 				enemyPop_->Initialize();
 				player_->Initialize();
@@ -244,7 +248,9 @@ void GameScene::Update() {
 		waitTimer++;
 		if (waitTimer >= 0.5 * 60) {
 			BarAlpha += 0.01f;
+			BlackAlpha += 0.02f;
 			// スプライトの徐々に描画する処理
+			BlackFilter->SetColor({ 1,1,1,BlackAlpha });
 			RetryFont[0]->SetColor({ 1,1,1,BarAlpha });
 			RetryFont[1]->SetColor({ 1,1,1,BarAlpha });
 			TitleFont[0]->SetColor({ 1,1,1,BarAlpha });
@@ -257,6 +263,11 @@ void GameScene::Update() {
 			if (BarAlpha >= 1.0f)
 			{
 				BarAlpha = 1.0f;
+			}
+
+			if (BlackAlpha >= 0.9f)
+			{
+				BlackAlpha = 0.9f;
 			}
 		}
 		// シーンチェンジタイトル
@@ -300,6 +311,17 @@ void GameScene::Update() {
 		load_->Update(player_->GetPlayerSpeed());
 		//背景更新
 		backGround_->Update(player_->GetPlayerSpeed());
+
+		BarAlpha -= 0.03f;
+		BlackAlpha -= 0.03f;
+		// スプライトの徐々に描画する処理
+		BlackFilter->SetColor({ 1,1,1,BlackAlpha });
+		RetryFont[0]->SetColor({ 1,1,1,BarAlpha });
+		RetryFont[1]->SetColor({ 1,1,1,BarAlpha });
+		TitleFont[0]->SetColor({ 1,1,1,BarAlpha });
+		TitleFont[1]->SetColor({ 1,1,1,BarAlpha });
+		TitleCar_->SetColor({ 1,1,1,BarAlpha });
+		ChangeFlag->SetColor({ 1,1,1,BarAlpha });
 
 		break;
 	default:
@@ -418,6 +440,7 @@ void GameScene::Draw() {
 		break;
 	case GameScene::Scene::Result:
 		if (waitTimer >= 0.5 * 60) {
+			BlackFilter->Draw();
 			TitleCar_->Draw();
 			ChangeFlag->Draw();
 			if (ChangeFlag->GetPosition().x == titlepos.x)
@@ -438,7 +461,22 @@ void GameScene::Draw() {
 		
 		break;
 	case GameScene::Scene::Initialize:
-
+		BlackFilter->Draw();
+		TitleCar_->Draw();
+		ChangeFlag->Draw();
+		if (ChangeFlag->GetPosition().x == titlepos.x)
+		{
+			TitleFont[0]->Draw();
+		}
+		else {
+			TitleFont[1]->Draw();
+		}
+		if (ChangeFlag->GetPosition().x == retryPos.x) {
+			RetryFont[0]->Draw();
+		}
+		else {
+			RetryFont[1]->Draw();
+		}
 		break;
 	default:
 		break;

@@ -89,7 +89,7 @@ void Player::ResetSpeed(int x){
 	countDown();
 	if (x == 1) {
 		if (playerSpeed > 1) {
-			playerSpeed -= 0.045;
+			playerSpeed -= 0.055;
 		}
 	}
 	if (jumpFlag == 1) {

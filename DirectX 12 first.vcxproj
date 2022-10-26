@@ -255,6 +255,7 @@
     <ClInclude Include="Enemy\Enemy.h" />
     <ClInclude Include="Enemy\EnemyPop.h" />
     <ClInclude Include="GameFunction\Input.h" />
+    <ClInclude Include="GameFunction\ScoreSprite.h" />
     <ClInclude Include="Math\Affin.h" />
     <ClInclude Include="Math\Matrix4.h" />
     <ClInclude Include="Math\MyMath.h" />
@@ -284,6 +285,7 @@
     <ClCompile Include="Enemy\Enemy.cpp" />
     <ClCompile Include="Enemy\EnemyPop.cpp" />
     <ClCompile Include="GameFunction\Input.cpp" />
+    <ClCompile Include="GameFunction\ScoreSprite.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Math\Affin.cpp" />
     <ClCompile Include="Math\Matrix4.cpp" />

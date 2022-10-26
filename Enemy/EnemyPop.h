@@ -15,6 +15,9 @@ class EnemyPop
 public:// メンバ関数
 
 	EnemyPop();
+
+	void LoadTexture();
+
 	void Initialize();
 
 	// 更新処理
@@ -45,7 +48,7 @@ private:// メンバ変数
 
 	// 敵の生成パターンのリスト
 	std::list<std::unique_ptr<Enemy>> enemy1;
-	std::list<std::unique_ptr<Enemy>> enemy2;
+	//std::list<std::unique_ptr<Enemy>> enemy2;
 
 	//自キャラ
 	Player* player_ = nullptr;

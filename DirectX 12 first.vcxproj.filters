@@ -253,6 +253,9 @@
     <ClInclude Include="BackGround\BackGround.h">
       <Filter>ヘッダー ファイル\Background</Filter>
     </ClInclude>
+    <ClInclude Include="GameFunction\ScoreSprite.h">
+      <Filter>ヘッダー ファイル\MyEngine\GameFunction</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -338,6 +341,9 @@
     </ClCompile>
     <ClCompile Include="BackGround\BackGround.cpp">
       <Filter>ソース ファイル\Background</Filter>
+    </ClCompile>
+    <ClCompile Include="GameFunction\ScoreSprite.cpp">
+      <Filter>ソース ファイル\MyEngine\GameFunction</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

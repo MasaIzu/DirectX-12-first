@@ -18,9 +18,10 @@ void Audio::Initialize() {
 }
 
 //音声読み込み
-void Audio::SoundLoadWave(const char* filename)
+int Audio::SoundLoadWave(const char* filename)
 {
     HRESULT result;
+    int handle = indexSoundData_;
 
     //ファイル入力ストリームのインスタンス
     std::ifstream file;
@@ -76,6 +77,10 @@ void Audio::SoundLoadWave(const char* filename)
     soundData.wfex = format.fmt;
     soundData.pBuffer = reinterpret_cast<BYTE*>(pBuffer);
     soundData.bufferSize = data.size;
+
+    indexSoundData_++;
+
+    return handle;
 }
 
 //音声データ解放
@@ -92,7 +97,7 @@ void Audio::SoundUnload() {
 }
 
 //音声再生
-void Audio::SoundPlayWave() {
+void Audio::SoundPlayWave(bool loopFlag) {
     HRESULT result;
 
     //波形フォーマットを元にSourceVoiceの生成
@@ -104,6 +109,11 @@ void Audio::SoundPlayWave() {
     buf.pAudioData = soundData.pBuffer;
     buf.AudioBytes = soundData.bufferSize;
     buf.Flags = XAUDIO2_END_OF_STREAM;
+
+    if (loopFlag) {
+        // 無限ループ
+        buf.LoopCount = XAUDIO2_LOOP_INFINITE;
+    }
 
     //波形データの再生
     result = pSourceVoice->SubmitSourceBuffer(&buf);

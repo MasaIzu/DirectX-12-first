@@ -59,11 +59,18 @@ void Player::Initialize() {
 	playerMaxAccelerator = 9.0f;
 	jumpFlag = 0;
 	kmH = 0;
-	gravity = 9.0f;
-	junpFrame = 0;
-
-	//ワールドトランスフォームの初期化
-	worldTransform_.Initialize();
+	timer = 180;
+	saveSpeed = 0;
+	saveSpeedFlag = 0;
+	speedTimer = 2;
+	moving = 0;
+	enemyBackSpeed = 0;
+	bustFlag = 0;
+	bustMax = 6;
+	leftFlag = 0;
+	rightFlag = 0;
+	nextPos = 0;
+	playerSideMove = 1.0;
 
 }
 
@@ -75,6 +82,42 @@ void Player::Updata() {
 	TrafficAccident();
 	SpeedAccordingPosition();
 }
+
+void Player::ResetSpeed(int x){
+
+
+	countDown();
+	if (x == 1) {
+		if (playerSpeed > 1) {
+			playerSpeed -= 0.045;
+		}
+	}
+	if (jumpFlag == 1) {
+		//ジャンプフレーム
+		junpFrame++;
+		playerJumpSpeed = 1.3f - gravity * (static_cast<float>(junpFrame) / 100.0f);
+		worldTransform_.translation_.y += playerJumpSpeed;
+	}
+	//0から下にいかないように
+	if (worldTransform_.translation_.y < 0) {
+		playerJumpSpeed = 0;
+		junpFrame = 0;
+		worldTransform_.translation_.y = 0;
+		jumpFlag = 0;
+	}
+	if (worldTransform_.translation_.x > 0) {
+		worldTransform_.translation_.x -= 0.3;
+	}
+	if (worldTransform_.translation_.x < 0) {
+		worldTransform_.translation_.x += 0.3;
+	}
+	SpeedAccordingPosition();
+
+	//行列更新
+	AffinTrans::affin(worldTransform_);
+	worldTransform_.TransferMatrix();
+}
+
 
 void Player::Draw(ViewProjection viewProjection_) {
 

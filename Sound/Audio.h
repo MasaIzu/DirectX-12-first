@@ -46,11 +46,11 @@ public:		//メンバ関数
 	//初期化
 	void Initialize();
 	//音声読み込み
-	void SoundLoadWave(const char* filename);
+	int SoundLoadWave(const char* filename);
 	//音声データ解放
 	void SoundUnload();
 	//音声再生
-	void SoundPlayWave();
+	void SoundPlayWave(bool flag);
 	// 音声停止
 	void StopWave(const SoundData& soundData);
 	//音声リセット→データ開放
@@ -76,4 +76,6 @@ private:	//メンバ変数
 	XAUDIO2_BUFFER buf{};
 	//音声データ
 	SoundData soundData;
+
+	int indexSoundData_ = 0;
 };

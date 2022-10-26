@@ -59,7 +59,10 @@ public:
     /// </summary>
     void SpeedAccordingPosition();
 
-
+    /// <summary>
+    /// スピードを下げていきます
+    /// </summary>
+    void ResetSpeed(int x);
 
 public://ゲッター
 
@@ -92,6 +95,8 @@ public://ゲッター
     /// スタートタイマー取得
     /// </summary>
     int GetTimer();
+
+
 
 private:
     //ワールド変換データ
@@ -132,4 +137,6 @@ private:
 
     int bustFlag;
     float bustMax;
+
+
 };

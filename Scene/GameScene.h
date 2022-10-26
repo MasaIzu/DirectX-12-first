@@ -179,6 +179,11 @@ private: // メンバ変数
 	Vector2 retryPos = { 580,400 };
 	Vector2 titlepos = { 280,400 };
 	int waitTimer = 0;
+
+	//　操作説明のスプライト
+	Sprite* spaceSousa = nullptr;
+	Sprite* ReanChageSousa = nullptr;
+
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

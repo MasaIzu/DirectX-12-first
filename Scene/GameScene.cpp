@@ -144,6 +144,9 @@ void GameScene::Initialize() {
 	Sprite::LoadTexture(18, L"Resources/kakusi.png");
 	BlackFilter = Sprite::Create(18, { 0,0 });
 
+
+
+
 	for (int i = 0; i < 10; i++) {
 		//ˆê
 		timers[i] = Sprite::Create(9, { 310.0f, 65.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, { 0.5f, 0.5f });
@@ -158,8 +161,17 @@ void GameScene::Initialize() {
 		timers2[i]->SetTextureRect({ 0.0f + (80.0f * i), 0.0f }, { 80.0f, 80.0f });
 		timers2[i]->SetSize({ 80.0f, 80.0f });
 	}
+
 	Sprite::LoadTexture(19, L"Resources/coron.png");
 	coro = Sprite::Create(19, { 220.0f, 65.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, { 0.5f, 0.5f });
+
+	Sprite::LoadTexture(20, L"Resources/JumpFont.png");
+	spaceSousa = Sprite::Create(20, { 50,450 });
+	spaceSousa->SetSize({ 200,80 });
+
+	Sprite::LoadTexture(21, L"Resources/ReanChageFont.png");
+	ReanChageSousa = Sprite::Create(21, { 50,550 });
+	ReanChageSousa->SetSize({ 200,80 });
 
 	color = 1.0f;
 	rePlay = 0;
@@ -228,8 +240,10 @@ void GameScene::Update() {
 	case GameScene::Scene::Blackout:
 		break;
 	case GameScene::Scene::Title:
-		if (input_->TriggerKey(DIK_SPACE)) {
-			cameraMoveFlag = 1;
+		if (titleWaitTime == 0) {
+			if (input_->TriggerKey(DIK_SPACE)) {
+				cameraMoveFlag = 1;
+			}
 		}
 		AlphaChange(scene_);
 		camera(cameraMoveFlag);
@@ -418,7 +432,7 @@ void GameScene::Draw() {
 		wing_->Draw(viewProjection_);
 		// “G‚Ì•`‰æ
 		enemyPop_->Draw(viewProjection_);
-
+		
 
 		break;
 	case GameScene::Scene::Result:
@@ -484,6 +498,8 @@ void GameScene::Draw() {
 		timers1[scoreTimers[1]]->Draw();
 		timers2[scoreTimers[2]]->Draw();
 		coro->Draw();
+		spaceSousa->Draw();
+		ReanChageSousa->Draw();
 
 		break;
 	case GameScene::Scene::Result:

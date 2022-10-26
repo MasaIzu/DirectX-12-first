@@ -42,7 +42,7 @@ void EnemyPop::Update(Model* model)
 
 
 	// タイマーが間隔時間になったらランダムに生成と車種を抽選して、設定する
-	if (overTakingCount <= 300) {
+	if (overTakingCount <= 200) {
 		if (popTimer >= popInterval) {
 
 			carPattern_ = rand() % 5 + 1;
@@ -185,7 +185,7 @@ void EnemyPop::Update(Model* model)
 		}
 	}
 
-	if (overTakingCount == 300) {
+	if (overTakingCount == 200) {
 		goalFlag = true;
 
 	}

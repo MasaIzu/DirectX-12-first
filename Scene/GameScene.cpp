@@ -107,7 +107,7 @@ void GameScene::Initialize() {
 	gameTime = Sprite::Create(7, { 75.0f, 50.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, { 0.5f, 0.5f });
 	gameTime->SetSize({ 100.0f, 30.0f });
 
-	Sprite::LoadTexture(8, L"Resources/300.png");
+	Sprite::LoadTexture(8, L"Resources/200.png");
 	overTakingCount = Sprite::Create(8, { 1150.0f, 75.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, { 0.5f, 0.5f });
 	overTakingCount->SetSize({ 150.0f, 75.0f });
 

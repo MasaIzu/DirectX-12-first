@@ -20,7 +20,7 @@ void GameScene::Initialize() {
 	srand(time(nullptr));
 	dxCore_ = DirectXCore::GetInstance();
 	input_ = Input::GetInstance();
-	audio_ = Audio::GetInstance();
+	//audio_ = Audio::GetInstance();
 	//‚RDƒ‚ƒfƒ‹‚Ì¶¬
 	model_ = Model::Create();
 

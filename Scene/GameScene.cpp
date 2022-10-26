@@ -31,6 +31,7 @@ void GameScene::Initialize() {
 	enemyPop_ = new EnemyPop();
 	enemy_ = new Enemy();
 	enemyPop_->Initialize();
+	enemyPop_->LoadTexture();
 
 	//ビュープロジェクションの初期化
 	viewProjection_.Initialize();
@@ -76,9 +77,9 @@ void GameScene::Initialize() {
 	Sprite::LoadTexture(2, L"Resources/stert321.png");
 	for (int i = 0; i < 3; i++) {
 
-		stert321[i] = Sprite::Create(2, {640.0f, 360.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.5f, 0.5f});
+		stert321[i] = Sprite::Create(2, {640.0f, 300.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.5f, 0.5f});
 		stert321[i]->SetTextureRect({ 256.0f - (128.0f * i), 0.0f }, { 128.0f, 192.0f });
-		stert321[i]->SetSize({ 128.0f, 128.0f });
+		stert321[i]->SetSize({ 96.0f, 128.0f });
 
 	}
 
@@ -119,6 +120,26 @@ void GameScene::Initialize() {
 
 	}
 
+	//リザルトシーンで使うスプライトのロード
+	Sprite::LoadTexture(12, L"Resources/TITLEYellow.png");
+	Sprite::LoadTexture(13, L"Resources/TITLEBlack.png");
+	TitleFont[0] = Sprite::Create(12, { 380,480 });
+	TitleFont[0]->SetSize({ 220,50 });
+	TitleFont[1] = Sprite::Create(13, { 380,480 });
+	TitleFont[1]->SetSize({ 220,50 });
+
+	Sprite::LoadTexture(14, L"Resources/RETRYYellow.png");
+	Sprite::LoadTexture(15, L"Resources/RETRYBlack.png");
+	RetryFont[0] = Sprite::Create(14, { 680,480 });
+	RetryFont[0]->SetSize({ 220,50 });
+	RetryFont[1] = Sprite::Create(15, { 680,480 });
+	RetryFont[1]->SetSize({ 220,50 });
+
+	Sprite::LoadTexture(16, L"Resources/UnkoFlag.png");
+	ChangeFlag = Sprite::Create(16, { titlepos.x ,titlepos.y });
+
+
+
 	color = 1.0f;
 	rePlay = 0;
 	title = 0;
@@ -141,6 +162,7 @@ void GameScene::Clean() {
 	if (rePlay == 1) {
 		rePlay = 0;
 		viewProjection_.eye = gamePlayCameraPos;
+		enemyPop_->Initialize();
 		scene_ = Scene::Stage;
 	}
 	else if (title == 1) {
@@ -148,7 +170,7 @@ void GameScene::Clean() {
 		viewProjection_.eye = keepCamera;
 		scene_ = Scene::Title;
 	}
-
+	
 }
 
 void GameScene::Update() {
@@ -198,8 +220,45 @@ void GameScene::Update() {
 		}
 		break;
 	case GameScene::Scene::Result:
+		
 		camera(0);
 		player_->Updata();
+		waitTimer++;
+		if (waitTimer >= 0.5 * 60) {
+			BarAlpha += 0.01f;
+			// スプライトの徐々に描画する処理
+			RetryFont[0]->SetColor({ 1,1,1,BarAlpha });
+			RetryFont[1]->SetColor({ 1,1,1,BarAlpha });
+			TitleFont[0]->SetColor({ 1,1,1,BarAlpha });
+			TitleFont[1]->SetColor({ 1,1,1,BarAlpha });
+			TitleCar_->SetColor({ 1,1,1,BarAlpha });
+			ChangeFlag->SetColor({ 1,1,1,BarAlpha });
+			// アルファ値が限界を超えない処理
+			if (BarAlpha >= 1.0f)
+			{
+				BarAlpha = 1.0f;
+			}
+		}
+		// シーンチェンジタイトル
+		if (ChangeFlag->GetPosition().x == titlepos.x)
+		{
+			if (input_->TriggerKey(DIK_SPACE)) {
+				title = true;
+			}
+		}
+		// シーンチェンジゲームシーン
+		if (ChangeFlag->GetPosition().x == retryPos.x) {
+			if (input_->TriggerKey(DIK_SPACE)) {
+				rePlay = true;
+			}
+		}
+		if (input_->TriggerKey(DIK_LEFT)) {
+			ChangeFlag->SetPosition({ titlepos.x,titlepos.y });
+		}
+		if (input_->TriggerKey(DIK_RIGHT)) {
+			ChangeFlag->SetPosition({ retryPos.x,retryPos.y });
+		}
+		if(ChangeFlag)
 		//道路更新
 		load_->Update(player_->GetPlayerSpeed());
 		//背景更新
@@ -322,7 +381,23 @@ void GameScene::Draw() {
 		DrawNunbers();
 		break;
 	case GameScene::Scene::Result:
-		TitleCar_->Draw();
+		if (waitTimer >= 0.5 * 60) {
+			TitleCar_->Draw();
+			ChangeFlag->Draw();
+			if (ChangeFlag->GetPosition().x == titlepos.x)
+			{
+				TitleFont[0]->Draw();
+			}
+			else {
+				TitleFont[1]->Draw();
+			}
+			if (ChangeFlag->GetPosition().x == retryPos.x) {
+				RetryFont[0]->Draw();
+			}
+			else {
+				RetryFont[1]->Draw();
+			}
+		}
 		break;
 	case GameScene::Scene::Initialize:
 
@@ -392,7 +467,7 @@ void GameScene::AlphaChange(Scene x) {
 		}
 	}
 	
-
+	
 	titleRogo->SetColor({ 1,1,1,color });
 }
 

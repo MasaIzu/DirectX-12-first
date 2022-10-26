@@ -11,13 +11,23 @@ EnemyPop::EnemyPop() {
 	overTakingCount = 290;
 }
 
-void EnemyPop::Initialize()
+void EnemyPop::LoadTexture()
 {
 	puriusModel = Model::CreateFromOBJ("puriusu", true);
 	trakuModel = Model::CreateFromOBJ("trakku", true);
 	ferariModel = Model::CreateFromOBJ("CarFerari", true);
 	GoalEnemyModel = Model::CreateFromOBJ("GoalCar", true);
 	GoalFlagOBJModel = Model::CreateFromOBJ("GoalFlag", true);
+}
+
+void EnemyPop::Initialize()
+{
+	enemy1.clear();
+	popTimer = 0;
+	popInterval = 2 * 60;
+	overTakingCount = 290;
+	GoalEnemy.release();
+	GoalFlagOBJ.release();
 }
 
 void EnemyPop::Update(Model* model)

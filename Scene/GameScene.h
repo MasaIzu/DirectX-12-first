@@ -155,6 +155,17 @@ private: // メンバ変数
 	Vector2 sprite2Pos = { 1200,630 };
 	ScoreSprite scoreSprite[3];
 	ScoreSprite scoreSprite2[3];
+
+	// リザルトシーン用の変数
+	float BarAlpha = 0.0f;
+	float BlackAlpha = 0.0f;
+	Sprite* TitleFont[2];
+	Sprite* RetryFont[2];
+	Sprite* BlackFilter = nullptr;
+	Sprite* ChangeFlag = nullptr;
+	Vector2 retryPos = { 580,400 };
+	Vector2 titlepos = { 280,400 };
+	int waitTimer = 0;
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

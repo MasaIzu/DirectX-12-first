@@ -333,7 +333,7 @@ void EnemyPop::Draw(const ViewProjection& viewProjection)
 void EnemyPop::CarBack() {
 
 	Vector3 PlayerVec = player_->GetPlayerPos();
-	Vector3 Psize = { 5,5,300 };
+	Vector3 Psize = { 5,5,330 };
 	Vector3 Esize = { 5,5,5 };
 	for (std::unique_ptr<Enemy>& enemy : enemy1) {
 
@@ -348,8 +348,8 @@ void EnemyPop::CarBack() {
 void EnemyPop::TrafficAccidentEnemyVer() {
 
 	Vector3 PlayerVec = player_->GetPlayerPos();
-	Vector3 Psize = { 5,2,6 };
-	Vector3 Esize = { 5,6,6 };
+	Vector3 Psize = { 2.0f,2,5 };
+	Vector3 Esize = { 5,6,5 };
 	for (std::unique_ptr<Enemy>& enemy : enemy1) {
 
 		Vector3 enemyPos_ = enemy->GetWorldTransform().translation_;

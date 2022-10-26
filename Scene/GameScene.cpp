@@ -165,6 +165,7 @@ void GameScene::Initialize() {
 	rePlay = 0;
 	title = 0;
 	number = 0;
+	titleWaitTime = 0;
 
 	for (int i = 0; i < maxScoreNum; i++)
 	{
@@ -177,7 +178,7 @@ void GameScene::Initialize() {
 
 void GameScene::Clean() {
 	cameraMoveFlag = 1; 
-	color = 1.0f;
+	color = 0.0f;
 
 	if (rePlay == 1) {
 		camera(cameraMoveFlag);
@@ -205,6 +206,7 @@ void GameScene::Clean() {
 				Timer = 120;
 				scene_ = Scene::Title;
 				title = 0;
+				titleWaitTime = 10;
 			}
 		}
 	}
@@ -218,6 +220,10 @@ void GameScene::Update() {
 			Timer--;
 		}
 	}
+	if (titleWaitTime > 0) {
+		titleWaitTime--;
+	}
+
 	switch (scene_) {
 	case GameScene::Scene::Blackout:
 		break;
@@ -453,9 +459,11 @@ void GameScene::Draw() {
 	case GameScene::Scene::Blackout:
 		break;
 	case GameScene::Scene::Title:
-		titleRogo->Draw();
-		space->Draw();
-		gameStart->Draw();
+		if (titleWaitTime == 0) {
+			titleRogo->Draw();
+			space->Draw();
+			gameStart->Draw();
+		}
 		break;
 	case GameScene::Scene::Stage:
 		if (player_->GetTimer() > 0) {
@@ -586,8 +594,15 @@ void GameScene::camera(int x) {
 void GameScene::AlphaChange(Scene x) {
 
 	if (x == Scene::Title) {
-		if (cameraMoveFlag == 1) {
-			color -= 0.01;
+		if (cameraMoveFlag == 0) {
+			if (color < 1.0f) {
+				color += 0.03;
+			}
+		}
+		else if (cameraMoveFlag == 1) {
+			if (color > 0.0f) {
+				color -= 0.01;
+			}
 		}
 	}
 	

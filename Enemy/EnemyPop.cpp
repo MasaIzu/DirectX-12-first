@@ -8,7 +8,7 @@ EnemyPop::EnemyPop() {
 
 	collision_ = new Collision();
 	TrafficAccidentFlag = 0;
-	overTakingCount = 290;
+	overTakingCount = 0;
 }
 
 void EnemyPop::LoadTexture()
@@ -25,7 +25,7 @@ void EnemyPop::Initialize()
 	enemy1.clear();
 	popTimer = 0;
 	popInterval = 2 * 60;
-	overTakingCount = 290;
+	overTakingCount = 0;
 	GoalEnemy.release();
 	GoalFlagOBJ.release();
 }

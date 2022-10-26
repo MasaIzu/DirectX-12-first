@@ -322,16 +322,18 @@ void GameScene::Update() {
 			}
 		}
 		// シーンチェンジタイトル
-		if (ChangeFlag->GetPosition().x == titlepos.x)
-		{
-			if (input_->TriggerKey(DIK_SPACE)) {
-				title = true;
+		if (BlackAlpha == 0.9f) {
+			if (ChangeFlag->GetPosition().x == titlepos.x)
+			{
+				if (input_->TriggerKey(DIK_SPACE)) {
+					title = true;
+				}
 			}
-		}
-		// シーンチェンジゲームシーン
-		if (ChangeFlag->GetPosition().x == retryPos.x) {
-			if (input_->TriggerKey(DIK_SPACE)) {
-				rePlay = true;
+			// シーンチェンジゲームシーン
+			if (ChangeFlag->GetPosition().x == retryPos.x) {
+				if (input_->TriggerKey(DIK_SPACE)) {
+					rePlay = true;
+				}
 			}
 		}
 		if (input_->TriggerKey(DIK_LEFT)) {

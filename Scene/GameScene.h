@@ -101,6 +101,13 @@ private: // メンバ変数
 	//ゲームスタート
 	Sprite* gameStart = nullptr;
 
+	//大麻
+	Sprite* timers[10];
+	Sprite* timers1[10];
+	Sprite* timers2[10];
+	Sprite* coro;
+	
+
 	//3Dモデル
 	Model* model_ = nullptr;
 
@@ -148,7 +155,10 @@ private: // メンバ変数
 
 	int number;
 
-	
+	int scoreTimer = 0;
+
+	int scoreTimers[3] = { 0,0,0 };
+
 	// スコアの描画用
 	int divScore = 1000;
 	const int maxScoreNum = 3;

@@ -144,6 +144,23 @@ void GameScene::Initialize() {
 	Sprite::LoadTexture(18, L"Resources/kakusi.png");
 	BlackFilter = Sprite::Create(18, { 0,0 });
 
+	for (int i = 0; i < 10; i++) {
+		//一
+		timers[i] = Sprite::Create(9, { 310.0f, 65.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, { 0.5f, 0.5f });
+		timers[i]->SetTextureRect({ 0.0f + (80.0f * i), 0.0f }, { 80.0f, 80.0f });
+		timers[i]->SetSize({ 80.0f, 80.0f });
+		//十
+		timers1[i] = Sprite::Create(9, { 250.0f, 65.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, { 0.5f, 0.5f });
+		timers1[i]->SetTextureRect({ 0.0f + (80.0f * i), 0.0f }, { 80.0f, 80.0f });
+		timers1[i]->SetSize({ 80.0f, 80.0f });
+		//分
+		timers2[i] = Sprite::Create(9, { 170.0f, 65.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, { 0.5f, 0.5f });
+		timers2[i]->SetTextureRect({ 0.0f + (80.0f * i), 0.0f }, { 80.0f, 80.0f });
+		timers2[i]->SetSize({ 80.0f, 80.0f });
+	}
+	Sprite::LoadTexture(19, L"Resources/coron.png");
+	coro = Sprite::Create(19, { 220.0f, 65.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, { 0.5f, 0.5f });
+
 	color = 1.0f;
 	rePlay = 0;
 	title = 0;
@@ -219,7 +236,17 @@ void GameScene::Update() {
 		break;
 	case GameScene::Scene::Stage:
 
+		timers[scoreTimers[0]]->SetColor({ 1,1,1,1 });
+		timers1[scoreTimers[1]]->SetColor({ 1,1,1,1 });
+		timers2[scoreTimers[2]]->SetColor({ 1,1,1,1 });
+		coro->SetColor({ 1,1,1,1 });
+		if (player_->GetTimer() <= 0) {
+			scoreTimer++;
+		}
 		
+		scoreTimers[0] = (scoreTimer / 60) % 10;
+		scoreTimers[1] = (scoreTimer / 600) % 6;
+		scoreTimers[2] = (scoreTimer / 3600) % 10;
 
 		player_->SetOverTakingCount(enemyPop_->GetEnemyOverTakingCount());
 		player_->Updata();
@@ -258,6 +285,10 @@ void GameScene::Update() {
 			TitleCar_->SetColor({ 1,1,1,BarAlpha });
 			ChangeFlag->SetColor({ 1,1,1,BarAlpha });
 			
+			timers[scoreTimers[0]]->SetColor({ 1,1,1,BarAlpha });
+			timers1[scoreTimers[1]]->SetColor({ 1,1,1,BarAlpha });
+			timers2[scoreTimers[2]]->SetColor({ 1,1,1,BarAlpha });
+			coro->SetColor({ 1, 1, 1, BarAlpha });
 			
 			// アルファ値が限界を超えない処理
 			if (BarAlpha >= 1.0f)
@@ -306,6 +337,7 @@ void GameScene::Update() {
 	case GameScene::Scene::Initialize:
 		//使ったもののおかたずけ
 		Clean();
+		scoreTimer = 0;
 		player_->ResetSpeed(1);
 		//道路更新
 		load_->Update(player_->GetPlayerSpeed());
@@ -436,6 +468,14 @@ void GameScene::Draw() {
 		overTakingCount->Draw();
 		DrawNunbers();
 
+		timers[scoreTimers[0]]->SetPosition({ 350.0f, 65.0f });
+		timers1[scoreTimers[1]]->SetPosition({ 280.0f, 65.0f });
+		timers2[scoreTimers[2]]->SetPosition({ 170.0f, 65.0f });
+		coro->SetPosition({ 230.0f,65.0f });
+		timers[scoreTimers[0]]->Draw();
+		timers1[scoreTimers[1]]->Draw();
+		timers2[scoreTimers[2]]->Draw();
+		coro->Draw();
 
 		break;
 	case GameScene::Scene::Result:
@@ -456,7 +496,15 @@ void GameScene::Draw() {
 			else {
 				RetryFont[1]->Draw();
 			}
-			
+		
+			timers[scoreTimers[0]]->SetPosition({ 740.0f,200.0f });
+			timers1[scoreTimers[1]]->SetPosition({ 670.0f,200.0f });
+			timers2[scoreTimers[2]]->SetPosition({ 560.0f,200.0f });
+			coro->SetPosition({ 620.0f,200.0f });
+			timers[scoreTimers[0]]->Draw();
+			timers1[scoreTimers[1]]->Draw();
+			timers2[scoreTimers[2]]->Draw();
+			coro->Draw();
 		}
 		
 		break;

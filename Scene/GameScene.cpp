@@ -185,6 +185,10 @@ void GameScene::Initialize() {
 	number = 0;
 	titleWaitTime = 0;
 
+	sound_ = new SoundManager();
+	sound_->Initialize();
+	soundData = sound_.SoundLoadWave("game.wav");
+
 	for (int i = 0; i < maxScoreNum; i++)
 	{
 		scoreSprite[i].Initialize();
@@ -391,6 +395,9 @@ void GameScene::Update() {
 }
 
 void GameScene::Draw() {
+
+	//オーディオ
+	sound_->SoundPlayWave()
 
 	// コマンドリストの取得
 	ID3D12GraphicsCommandList* commandList = dxCore_->GetCommandList();

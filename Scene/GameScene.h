@@ -16,6 +16,7 @@
 #include "wing.h"
 #include "background.h"
 #include "ScoreSprite.h"
+#include <xaudio2.h>
 
 /// <summary>
 /// ゲームシーン
@@ -108,6 +109,10 @@ private: // メンバ変数
 	Sprite* coro;
 	
 	Sprite* OverTakingCount = nullptr;
+
+	//オーディオ
+	SoundManager* sound_ = nullptr;
+	SoundData soundData;
 
 
 	//3Dモデル

@@ -1,81 +1,70 @@
 #pragma once
+#include "DirectXCore.h"
 #include <xaudio2.h>
-#include <fstream>
-#include <wrl.h>
-
 #pragma comment(lib,"xaudio2.lib")
-
-
+#include <fstream>
+#include <array>
+#include <cstdint>
+#include <set>
+#include <string>
+#include <map>
+#include <combaseapi.h>
+#include <Windows.h>
+#include <cassert>
+#include <iterator>
 
 //チャンクヘッダ
-struct ChunkHeader
-{
-	char id[4]; //チャンク毎のID
-	int32_t size;   //チャンクのサイズ
+struct ChunkHeader {
+	char id[4];		//チャンク毎のID
+	int32_t size;	//チャンクサイズ
 };
-//RIFFチャンク
-struct RiffHeader
-{
-	ChunkHeader chunk;  // "RIFF"
-	char type[4];   // "WAVE"
+
+//RIFFヘッダチャンク
+struct RiffHeader {
+	ChunkHeader chunk;	//"RIFF"
+	char type[4];		//"WAVE"
 };
+
 //FMTチャンク
-struct FormatChunk
-{
-	ChunkHeader chunk;  // "fmt"
-	WAVEFORMATEX fmt;   // 波形フォーマット
+struct FormatChunk {
+	ChunkHeader chunk;	//"fmt"
+	WAVEFORMATEX fmt;	//波形フォーマット
 };
+
 //音声データ
-struct SoundData
-{
+struct SoundData {
 	//波形フォーマット
 	WAVEFORMATEX wfex;
 	//バッファの先頭アドレス
 	BYTE* pBuffer;
-	//バッファのサイズ
+	//バッファサイズ
 	unsigned int bufferSize;
 };
 
-class Audio {
-public:		//メンバ関数
-	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
-	
-	// インスタンス化
-	static Audio* GetInstance();
-
-	//初期化
+class SoundManager
+{
+public:
+	Microsoft::WRL::ComPtr<IXAudio2> xAudio2;
+	IXAudio2MasteringVoice* masterVoice;
+	static const int kMaxSoundData = 256;
 	void Initialize();
 	//音声読み込み
-	int SoundLoadWave(const char* filename);
-	//音声データ解放
-	void SoundUnload();
+	SoundData SoundLoadWave(const char* filename);
 	//音声再生
-	void SoundPlayWave(bool flag);
+	void SoundPlayWave(IXAudio2* xAudio2, const SoundData& soundData, bool loop = false, float volume = 1.0f);
 	// 音声停止
 	void StopWave(const SoundData& soundData);
-	//音声リセット→データ開放
-	void Reset();
-
-	////xAudio2情報
-	//ComPtr<IXAudio2> GetAudio();
-	////データ情報
-	//SoundData GetSound() { return soundData; }
+	//void StopWave(const std::string& filename);
+	//音声解放
+	void SoundUnload(SoundData* soundData);
+	//xAudio2の解放
+	void End();
 
 private:
-	Audio() = default;
-	~Audio() = default;
-
-	Audio(const Audio&) = delete;
-	Audio& operator = (const Audio&) = delete;
-
-private:	//メンバ変数
-	//サウンド再生
-	ComPtr<IXAudio2> xAudio2;
-	IXAudio2MasteringVoice* masterVoice;
+	std::map<std::string, SoundData> soundDatas_;
 	//再生する波形データの設定
 	XAUDIO2_BUFFER buf{};
-	//音声データ
-	SoundData soundData;
-
-	int indexSoundData_ = 0;
+	//波形フォーマットからSourceVoiceの生成
+	IXAudio2SourceVoice* sourceVoice = nullptr;
+	HRESULT result;
 };

@@ -111,7 +111,7 @@ void GameScene::Initialize() {
 	overTakingCount = Sprite::Create(8, { 1150.0f, 75.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, { 0.5f, 0.5f });
 	overTakingCount->SetSize({ 150.0f, 75.0f });
 
-	Sprite::LoadTexture(9, L"Resources/123.png");
+	Sprite::LoadTexture(9, L"Resources/123-export.png");
 	for (int i = 0; i < 9; i++) {
 
 		numbers[i] = Sprite::Create(9, { 1080.0f, 75.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, { 0.5f, 0.5f });
@@ -138,7 +138,7 @@ void GameScene::Initialize() {
 	Sprite::LoadTexture(16, L"Resources/UnkoFlag.png");
 	ChangeFlag = Sprite::Create(16, { titlepos.x ,titlepos.y });
 
-
+	
 
 	color = 1.0f;
 	rePlay = 0;
@@ -198,6 +198,7 @@ void GameScene::Update() {
 		break;
 	case GameScene::Scene::Stage:
 
+		
 
 		player_->SetOverTakingCount(enemyPop_->GetEnemyOverTakingCount());
 		player_->Updata();
@@ -233,6 +234,8 @@ void GameScene::Update() {
 			TitleFont[1]->SetColor({ 1,1,1,BarAlpha });
 			TitleCar_->SetColor({ 1,1,1,BarAlpha });
 			ChangeFlag->SetColor({ 1,1,1,BarAlpha });
+			
+			
 			// アルファ値が限界を超えない処理
 			if (BarAlpha >= 1.0f)
 			{
@@ -273,7 +276,7 @@ void GameScene::Update() {
 	case GameScene::Scene::Initialize:
 		//使ったもののおかたずけ
 		Clean();
-
+	
 		break;
 	default:
 		break;
@@ -379,6 +382,8 @@ void GameScene::Draw() {
 		needle->Draw();
 		overTakingCount->Draw();
 		DrawNunbers();
+
+
 		break;
 	case GameScene::Scene::Result:
 		if (waitTimer >= 0.5 * 60) {
@@ -397,7 +402,9 @@ void GameScene::Draw() {
 			else {
 				RetryFont[1]->Draw();
 			}
+			
 		}
+		
 		break;
 	case GameScene::Scene::Initialize:
 

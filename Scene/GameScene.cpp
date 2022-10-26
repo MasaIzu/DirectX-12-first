@@ -185,9 +185,9 @@ void GameScene::Initialize() {
 	number = 0;
 	titleWaitTime = 0;
 
-	sound_ = new SoundManager();
-	sound_->Initialize();
-	soundData = sound_.SoundLoadWave("game.wav");
+
+
+	sound_.Initialize();
 
 	for (int i = 0; i < maxScoreNum; i++)
 	{
@@ -236,6 +236,12 @@ void GameScene::Clean() {
 }
 
 void GameScene::Update() {
+
+	if (isPlayingBGM == false) {
+		//音声再生
+		sound_.SoundPlayWave(sound_.xAudio2.Get(), soundData, true, 0.01f);
+		isPlayingBGM = true;
+	}
 
 	if (cameraMoveFlag == 1) {
 		if (Timer > 0) {
@@ -395,9 +401,6 @@ void GameScene::Update() {
 }
 
 void GameScene::Draw() {
-
-	//オーディオ
-	sound_->SoundPlayWave()
 
 	// コマンドリストの取得
 	ID3D12GraphicsCommandList* commandList = dxCore_->GetCommandList();

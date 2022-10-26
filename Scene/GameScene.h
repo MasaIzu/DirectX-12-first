@@ -18,6 +18,8 @@
 #include "ScoreSprite.h"
 #include <xaudio2.h>
 
+#pragma comment(lib,"xaudio2.lib")
+
 /// <summary>
 /// ゲームシーン
 /// </summary>
@@ -111,9 +113,10 @@ private: // メンバ変数
 	Sprite* OverTakingCount = nullptr;
 
 	//オーディオ
-	SoundManager* sound_ = nullptr;
-	SoundData soundData;
+	SoundManager sound_;
+	SoundData soundData = sound_.SoundLoadWave("Resources/game.wav");
 
+	bool isPlayingBGM = false;
 
 	//3Dモデル
 	Model* model_ = nullptr;

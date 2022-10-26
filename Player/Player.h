@@ -105,7 +105,6 @@ private:
     Input* input_ = nullptr;
     Model* model_ = nullptr;
     Collision* collision_ = nullptr;
-    Audio* sound_[2];
    
 
     //ƒƒ“ƒo•Ï”

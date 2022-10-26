@@ -39,12 +39,6 @@ Player::Player() {
 
 	model_ = Model::CreateFromOBJ("CarPlayer", true);
 
-	for (int i = 0; i < 2; i++) {
-		sound_[i] = Audio::GetInstance();
-		sound_[i]->Initialize();
-	}
-	sound_[0]->SoundLoadWave("Resources/car_start.wav");
-	sound_[1]->SoundLoadWave("Resources/speedup.wav");
 
 	collision_ = new Collision();
 }

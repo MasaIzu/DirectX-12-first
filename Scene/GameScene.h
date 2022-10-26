@@ -107,6 +107,8 @@ private: // ƒƒ“ƒo•Ï”
 	Sprite* timers2[10];
 	Sprite* coro;
 	
+	Sprite* OverTakingCount = nullptr;
+
 
 	//3Dƒ‚ƒfƒ‹
 	Model* model_ = nullptr;

@@ -173,6 +173,12 @@ void GameScene::Initialize() {
 	ReanChageSousa = Sprite::Create(21, { 50,550 });
 	ReanChageSousa->SetSize({ 200,80 });
 
+	
+	Sprite::LoadTexture(22, L"Resources/OverTakeFont.png");
+	OverTakingCount = Sprite::Create(22, { 850,40 });
+	OverTakingCount->SetSize({ 100,30 });
+
+
 	color = 1.0f;
 	rePlay = 0;
 	title = 0;
@@ -502,6 +508,7 @@ void GameScene::Draw() {
 		coro->Draw();
 		spaceSousa->Draw();
 		ReanChageSousa->Draw();
+		OverTakingCount->Draw();
 
 		break;
 	case GameScene::Scene::Result:

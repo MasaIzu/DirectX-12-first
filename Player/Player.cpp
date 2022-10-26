@@ -39,6 +39,9 @@ Player::Player() {
 
 	model_ = Model::CreateFromOBJ("CarPlayer", true);
 
+	acseru = sound_.SoundLoadWave("Resources/break_front_.wav");
+
+	sound_.Initialize();
 
 	collision_ = new Collision();
 }
@@ -210,6 +213,11 @@ void Player::EnemyCarBack() {
 
 void Player::TrafficAccident() {
 	if (accidentFlag == 1) {
+		if (isPlayingBGM == false) {
+			//âπê∫çƒê∂
+			sound_.SoundPlayWave(sound_.xAudio2.Get(), acseru, false, 0.01f);
+			isPlayingBGM = true;
+		}
 		if (saveSpeedFlag == 0) {
 			saveSpeedFlag = 1;
 			saveSpeed = 0;
@@ -223,6 +231,7 @@ void Player::TrafficAccident() {
 		else {
 			accidentFlag = 0;
 			saveSpeedFlag = 0;
+			isPlayingBGM = false;
 		}
 	}
 }

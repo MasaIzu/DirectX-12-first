@@ -114,9 +114,12 @@ private: // メンバ変数
 
 	//オーディオ
 	SoundManager sound_;
-	SoundData soundData = sound_.SoundLoadWave("Resources/game.wav");
+	SoundData soundData;
+	SoundData soundData2;
+	SoundData acseru;
 
 	bool isPlayingBGM = false;
+	bool isPlayingBGM2 = false;
 
 	//3Dモデル
 	Model* model_ = nullptr;

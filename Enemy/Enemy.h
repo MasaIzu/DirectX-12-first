@@ -5,6 +5,10 @@
 #include <cassert>
 #include "collision.h"
 #include "Player.h"
+#include "Audio.h"
+#include <xaudio2.h>
+
+#pragma comment(lib,"xaudio2.lib")
 
 enum class CarModel {
 	truck,// トラック（遅い車）
@@ -73,6 +77,10 @@ public:// メンバ関数
 	void ContactPlayer();
 	bool ContactFlag() { return contactFlag; }
 
+	int GetAudio();
+
+	void SetAudio(int x);
+
 	//プレイヤーに抜かれた時
 	int playerOverTaking;
 
@@ -83,6 +91,13 @@ private:// メンバ変数
 
 	//モデル
 	Model* model_ = nullptr;
+
+	//オーディオ
+	SoundManager sound_;
+	SoundData acseru;
+
+	bool isPlayingBGM = false;
+	int x = 0;
 
 	// 速度全般
 	// 進む速度

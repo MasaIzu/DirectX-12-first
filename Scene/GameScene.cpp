@@ -186,8 +186,11 @@ void GameScene::Initialize() {
 	titleWaitTime = 0;
 
 
+	soundData = sound_.SoundLoadWave("Resources/game_.wav");
+	soundData2 = sound_.SoundLoadWave("Resources/countdown_.wav");
+	acseru = sound_.SoundLoadWave("Resources/break_side.wav");
 
-	sound_.Initialize();
+	sound_.Initialize(); 
 
 	for (int i = 0; i < maxScoreNum; i++)
 	{
@@ -201,7 +204,7 @@ void GameScene::Initialize() {
 void GameScene::Clean() {
 	cameraMoveFlag = 1; 
 	color = 0.0f;
-
+	isPlayingBGM2 = false;
 	if (rePlay == 1) {
 		camera(cameraMoveFlag);
 		if (Timer == 0) {
@@ -271,7 +274,11 @@ void GameScene::Update() {
 		}
 		break;
 	case GameScene::Scene::Stage:
-
+		if (isPlayingBGM2 == false) {
+			//‰¹ºÄ¶
+			sound_.SoundPlayWave(sound_.xAudio2.Get(), soundData2, false, 0.01f);
+			isPlayingBGM2 = true;
+		}
 		timers[scoreTimers[0]]->SetColor({ 1,1,1,1 });
 		timers1[scoreTimers[1]]->SetColor({ 1,1,1,1 });
 		timers2[scoreTimers[2]]->SetColor({ 1,1,1,1 });

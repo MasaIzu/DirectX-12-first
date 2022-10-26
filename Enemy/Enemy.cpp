@@ -19,6 +19,7 @@ void Enemy::Initialize(Model* model, Vector3& pos, CarModel carModel)
 	// 車種を設定
 	carModel_ = carModel;
 
+
 	// 車種ごとのスピードを設定
 	switch (carModel_)
 	{
@@ -190,9 +191,11 @@ void Enemy::ContactPlayer()
 		if (collision_->BoxCollision(player_->GetPlayerPos(), worldTransform_.translation_, Vector3(5.5f, 2, 5.5f), Vector3(5, 6, 5))) {
 			if (player_->GetMovingFlag() == 1) {
 				contactVer1 = true;
+				
 			}
 			else if (player_->GetMovingFlag() == -1) {
 				contactVer2 = true;
+	
 			}
 			contactFlag = true;
 		}

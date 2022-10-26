@@ -7,6 +7,9 @@
 #include "Affin.h"
 #include "Collision.h"
 #include "Audio.h"
+#include <xaudio2.h>
+
+#pragma comment(lib,"xaudio2.lib")
 
 class Player {
 
@@ -106,6 +109,11 @@ private:
     Model* model_ = nullptr;
     Collision* collision_ = nullptr;
    
+    //オーディオ
+    SoundManager sound_;
+    SoundData acseru;
+
+    bool isPlayingBGM = false;
 
     //メンバ変数
     float playerSpeed;

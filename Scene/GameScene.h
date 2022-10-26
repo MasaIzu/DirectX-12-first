@@ -98,7 +98,8 @@ private: // メンバ変数
 	Sprite* overTakingCount = nullptr;
 	//123
 	Sprite* numbers[10];
-
+	//ゲームスタート
+	Sprite* gameStart = nullptr;
 
 	//3Dモデル
 	Model* model_ = nullptr;
@@ -143,6 +144,7 @@ private: // メンバ変数
 
 	int rePlay;
 	int title;
+	int titleWaitTime;
 
 	int number;
 

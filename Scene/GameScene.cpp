@@ -99,7 +99,7 @@ void GameScene::Initialize() {
 	titleRogo->SetSize({ 608.0f, 246.0f });
 
 	Sprite::LoadTexture(6, L"Resources/Space.png");
-	space = Sprite::Create(6, { 800.0f, 520.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, { 0.5f, 0.5f });
+	space = Sprite::Create(6, { 600.0f, 600.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, { 0.5f, 0.5f });
 	space->SetSize({ 200.0f, 100.0f });
 
 
@@ -138,7 +138,9 @@ void GameScene::Initialize() {
 	Sprite::LoadTexture(16, L"Resources/UnkoFlag.png");
 	ChangeFlag = Sprite::Create(16, { titlepos.x ,titlepos.y });
 
-
+	Sprite::LoadTexture(17, L"Resources/titleselects.png");
+	gameStart = Sprite::Create(17, { 600.0f, 500.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, { 0.5f, 0.5f });
+	gameStart->SetSize({ 400.0f, 100.0f });
 
 	color = 1.0f;
 	rePlay = 0;
@@ -155,20 +157,35 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Clean() {
-	cameraMoveFlag = 0;
-	cameraTransFlag = 0;
+	cameraMoveFlag = 1; 
 	color = 1.0f;
 
 	if (rePlay == 1) {
-		rePlay = 0;
-		viewProjection_.eye = gamePlayCameraPos;
-		enemyPop_->Initialize();
-		scene_ = Scene::Stage;
+		camera(cameraMoveFlag);
+		if (Timer == 0) {
+			if (player_->GetPlayerSpeed() < 1) {
+				BarAlpha = 0;
+				waitTimer = 0;
+				enemyPop_->Initialize();
+				player_->Initialize();
+				scene_ = Scene::Stage;
+				rePlay = 0;
+			}
+		}
 	}
 	else if (title == 1) {
-		title = 0;
-		viewProjection_.eye = keepCamera;
-		scene_ = Scene::Title;
+		if (Timer == 0) {
+			if (player_->GetPlayerSpeed() < 1) {
+				BarAlpha = 0;
+				waitTimer = 0;
+				enemyPop_->Initialize();
+				player_->Initialize();
+				cameraMoveFlag = 0;
+				Timer = 120;
+				scene_ = Scene::Title;
+				title = 0;
+			}
+		}
 	}
 	
 }
@@ -222,7 +239,7 @@ void GameScene::Update() {
 	case GameScene::Scene::Result:
 		
 		camera(0);
-		player_->Updata();
+		player_->ResetSpeed(0);
 		waitTimer++;
 		if (waitTimer >= 0.5 * 60) {
 			BarAlpha += 0.01f;
@@ -267,12 +284,19 @@ void GameScene::Update() {
 		wing_->Update(player_->GetPlayerPos());
 
 		if (rePlay == 1 || title == 1) {
+			viewProjection_.eye = keepCamera;
+			Timer = 120;
 			scene_ = Scene::Initialize;
 		}
 		break;
 	case GameScene::Scene::Initialize:
 		//Žg‚Á‚½‚à‚Ì‚Ì‚¨‚©‚½‚¸‚¯
 		Clean();
+		player_->ResetSpeed(1);
+		//“¹˜HXV
+		load_->Update(player_->GetPlayerSpeed());
+		//”wŒiXV
+		backGround_->Update(player_->GetPlayerSpeed());
 
 		break;
 	default:
@@ -344,6 +368,12 @@ void GameScene::Draw() {
 
 		break;
 	case GameScene::Scene::Initialize:
+		//”wŒi•`‰æ
+		backGround_->Draw(viewProjection_);
+		//“¹˜H•`‰æ
+		load_->Draw(viewProjection_);
+		// ƒvƒŒƒCƒ„[‚Ì•`‰æ
+		player_->Draw(viewProjection_);
 
 		break;
 	default:
@@ -368,6 +398,7 @@ void GameScene::Draw() {
 	case GameScene::Scene::Title:
 		titleRogo->Draw();
 		space->Draw();
+		gameStart->Draw();
 		break;
 	case GameScene::Scene::Stage:
 		if (player_->GetTimer() > 0) {
@@ -467,7 +498,8 @@ void GameScene::AlphaChange(Scene x) {
 		}
 	}
 	
-	
+	gameStart->SetColor({ 1,1,1,color });
+	space->SetColor({ 1,1,1,color });
 	titleRogo->SetColor({ 1,1,1,color });
 }
 

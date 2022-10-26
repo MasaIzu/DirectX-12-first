@@ -78,7 +78,7 @@ private: // メンバ変数
 
 	DirectXCore* dxCore_ = nullptr;
 	Input* input_ = nullptr;
-	Audio* audio_ = nullptr;
+	//Audio* audio_ = nullptr;
 
 	//ゲームクリア
 	Sprite* TitleCar_ = nullptr;

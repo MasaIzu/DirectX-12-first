@@ -1,10 +1,33 @@
 #pragma once
-#include"Vector2.h"
+#include"Vector3.h"
+#include"Matrix4.h"
+#include "WinApp.h"
 
+//便利系まとめ
+namespace MyMath {
 
-class MyMath : public Vector2
-{
+	Matrix4 Initialize();
+	Matrix4 Scale(const Vector3& scale);
+	Matrix4 Rotation(const Vector3& rotation, int X_1_Y_2_Z_3_XYZ_6);
+	Matrix4 Translation(const Vector3& move);
 
+	//ベクトルの正規化(いっぺんにやる)
+	Vector3 vector3Normalize(const Vector3& v);
+	//ベクトルと行列の掛け算(出力Vector3)
+	Vector3 MatVector(Matrix4 matrix4, Vector3 vector3);
+	Vector3 MulVector3(Vector3 vector3, Vector3 s);
+
+	const Vector3 SubVec(Vector3 v, Vector3 v2);
+
+	Vector3 GetWorldTransform(Matrix4 matrix4);
+	const Vector3 AddVector3(const Vector3 v1, const Vector3 v2);
+	Vector3 DivVecMat(const Vector3& vector3, const Matrix4& matrix4);
+
+	Matrix4 setViewportMat(WinApp* window, const Vector3& v);
+	Matrix4 MatrixInverse(const Matrix4* pOut);
+
+	Matrix4 LookAtLH(Vector3 eye, Vector3 target, Vector3 up);
+	Matrix4 PerspectiveFovLH(float fovAngleY, float  aspectRatio, float  nearZ, float farZ);
 
 
 

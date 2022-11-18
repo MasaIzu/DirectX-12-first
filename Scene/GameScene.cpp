@@ -555,6 +555,7 @@ void GameScene::Draw() {
 			timers1[scoreTimers[1]]->Draw();
 			timers2[scoreTimers[2]]->Draw();
 			coro->Draw();
+			space->Draw();
 		}
 		
 		break;

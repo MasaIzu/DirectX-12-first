@@ -16,7 +16,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// ゲームウィンドウの作成
 	winApp_ = WinApp::GetInstance();
-	winApp_->CreateGameWindow();
+	winApp_->CreateGameWindow("ぶっとびカーレース");
 
 	// DirectX初期化処理
 	dxCore_ = DirectXCore::GetInstance();

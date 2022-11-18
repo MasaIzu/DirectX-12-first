@@ -35,7 +35,7 @@ namespace {
 	}
 } // namespace
 
-const wchar_t WinApp::kWindowClassName[] = L"DirectXGame";
+const wchar_t WinApp::kWindowClassName[] = L"ぶっとびカーレース";
 
 WinApp* WinApp::GetInstance() {
 	static WinApp instance;

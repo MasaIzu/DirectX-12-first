@@ -216,6 +216,7 @@ void GameScene::Clean() {
 				player_->Initialize();
 				scene_ = Scene::Stage;
 				rePlay = 0;
+				space->SetColor({ 1,1,1,1 });
 			}
 		}
 	}
@@ -232,6 +233,7 @@ void GameScene::Clean() {
 				scene_ = Scene::Title;
 				title = 0;
 				titleWaitTime = 10;
+				space->SetColor({ 1,1,1,1 });
 			}
 		}
 	}
@@ -272,6 +274,7 @@ void GameScene::Update() {
 		if (Timer == 0) {
 			scene_ = Scene::Stage;
 		}
+		
 		break;
 	case GameScene::Scene::Stage:
 		if (isPlayingBGM2 == false) {
@@ -332,6 +335,7 @@ void GameScene::Update() {
 			timers1[scoreTimers[1]]->SetColor({ 1,1,1,BarAlpha });
 			timers2[scoreTimers[2]]->SetColor({ 1,1,1,BarAlpha });
 			coro->SetColor({ 1, 1, 1, BarAlpha });
+			space->SetColor({ 1,1,1,BarAlpha });
 			
 			// アルファ値が限界を超えない処理
 			if (BarAlpha >= 1.0f)
@@ -500,6 +504,7 @@ void GameScene::Draw() {
 	case GameScene::Scene::Title:
 		if (titleWaitTime == 0) {
 			titleRogo->Draw();
+			space->SetPosition({ 600,600 });
 			space->Draw();
 			gameStart->Draw();
 		}
@@ -555,6 +560,7 @@ void GameScene::Draw() {
 			timers1[scoreTimers[1]]->Draw();
 			timers2[scoreTimers[2]]->Draw();
 			coro->Draw();
+			space->SetPosition({ 620,580 });
 			space->Draw();
 		}
 		

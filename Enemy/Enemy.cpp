@@ -178,26 +178,55 @@ void Enemy::Draw(const ViewProjection& viewProjection)
 
 void Enemy::ContactPlayer()
 {
+
 	if (contactFlag == false) {
-		if (collision_->BoxCollision(player_->GetPlayerPos(), worldTransform_.translation_, Vector3(5.5f, 2, 5.5f), Vector3(5, 6, 5))) {
-			if (player_->GetMovingFlag() == 0) {
-				fukitobiTime = fukitobiTimeMax;
-				contactVer0 = true;
-				contactFlag = true;
+		if (carModel_ == CarModel::truck)
+		{
+			if (collision_->BoxCollision(player_->GetPlayerPos(), worldTransform_.translation_, Vector3(5.5f, 2, 5.5f), Vector3(5, 10, 5))) {
+				if (player_->GetMovingFlag() == 0) {
+					fukitobiTime = fukitobiTimeMax;
+					contactVer0 = true;
+					contactFlag = true;
+				}
+			}
+		}
+		else {
+			if (collision_->BoxCollision(player_->GetPlayerPos(), worldTransform_.translation_, Vector3(5.5f, 2, 5.5f), Vector3(5, 6, 5))) {
+				if (player_->GetMovingFlag() == 0) {
+					fukitobiTime = fukitobiTimeMax;
+					contactVer0 = true;
+					contactFlag = true;
+				}
 			}
 		}
 	}
 	if (contactFlag == false) {
-		if (collision_->BoxCollision(player_->GetPlayerPos(), worldTransform_.translation_, Vector3(5.5f, 2, 5.5f), Vector3(5, 6, 5))) {
-			if (player_->GetMovingFlag() == 1) {
-				contactVer1 = true;
-				
+		if (carModel_ == CarModel::truck)
+		{
+			if (collision_->BoxCollision(player_->GetPlayerPos(), worldTransform_.translation_, Vector3(5.5f, 2, 5.5f), Vector3(5, 10, 5))) {
+				if (player_->GetMovingFlag() == 1) {
+					contactVer1 = true;
+
+				}
+				else if (player_->GetMovingFlag() == -1) {
+					contactVer2 = true;
+
+				}
+				contactFlag = true;
 			}
-			else if (player_->GetMovingFlag() == -1) {
-				contactVer2 = true;
-	
+		}
+		else {
+			if (collision_->BoxCollision(player_->GetPlayerPos(), worldTransform_.translation_, Vector3(5.5f, 2, 5.5f), Vector3(5, 6, 5))) {
+				if (player_->GetMovingFlag() == 1) {
+					contactVer1 = true;
+
+				}
+				else if (player_->GetMovingFlag() == -1) {
+					contactVer2 = true;
+
+				}
+				contactFlag = true;
 			}
-			contactFlag = true;
 		}
 	}
 

@@ -16,9 +16,9 @@ GameScene::~GameScene() {
 	delete needle;
 }
 
-void GameScene::Initialize() {
+void GameScene::Initialize(DirectXCore* dxCore) {
 	srand(time(nullptr));
-	dxCore_ = DirectXCore::GetInstance();
+	dxCore_ = dxCore;
 	input_ = Input::GetInstance();
 	//audio_ = Audio::GetInstance();
 	//ÇRDÉÇÉfÉãÇÃê∂ê¨

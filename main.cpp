@@ -9,18 +9,18 @@
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	WinApp* winApp_ = nullptr;
-	DirectXCore* dxCore_ = nullptr;
+	DirectXCore* directXCore_ = nullptr;
 	// 汎用機能
 	Input* input_ = nullptr;
 	GameScene* gameScene_ = nullptr;
 
 	// ゲームウィンドウの作成
-	winApp_ = WinApp::GetInstance();
-	winApp_->CreateGameWindow("ぶっとびカーレース");
+	winApp_ = new WinApp;
+	winApp_->MakeWindow(L"ぶっとびカーレース");
 
 	// DirectX初期化処理
-	dxCore_ = DirectXCore::GetInstance();
-	dxCore_->Initialize(winApp_);
+	directXCore_ = new DirectXCore;
+	directXCore_->DirectXCoreInitialize(winApp_->Gethwnd(), winApp_->window_width, winApp_->window_height);
 
 #pragma region 汎用機能初期化
 	// 入力の初期化
@@ -32,11 +32,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	sound.Initialize();*/
 
 	// テクスチャマネージャの初期化
-	TextureManager::GetInstance()->Initialize(dxCore_->GetDevice());
+	TextureManager::GetInstance()->Initialize(directXCore_->GetDevice());
 	TextureManager::Load("white1x1.png");
 
 	// スプライト静的初期化
-	Sprite::StaticInitialize(dxCore_->GetDevice(), WinApp::window_width, WinApp::window_height);
+	Sprite::StaticInitialize(directXCore_->GetDevice(), winApp_->window_width, winApp_->window_height);
 
 	// デバッグテキスト初期化
 	
@@ -70,12 +70,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		
 
 		// 描画開始
-		dxCore_->PreDraw();
+		directXCore_->PreDraw();
 		// ゲームシーンの描画
 		gameScene_->Draw();
 		
 		// 描画終了
-		dxCore_->PostDraw();
+		directXCore_->PostDraw();
 
 		//FPS固定
 		fps->FpsControlEnd();

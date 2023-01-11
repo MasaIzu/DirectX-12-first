@@ -7,124 +7,74 @@
 #include <dxgi1_6.h>
 #include <wrl.h>
 
-#include "WinApp.h"
 
-/// <summary>
-/// DirectX汎用
-/// </summary>
 class DirectXCore {
-public: // メンバ関数
+
+public://メンバ関数
+
+	void DirectXCoreInitialize(HWND hwnd, int window_width, int window_height);
+
 
 	/// <summary>
-	/// シングルトンインスタンスの取得
-	/// </summary>
-	/// <returns></returns>
-	static DirectXCore* GetInstance();
-
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	void Initialize(
-		WinApp* win, int32_t backBufferWidth = WinApp::window_width,
-		int32_t backBufferHeight = WinApp::window_height);
-
-	/// <summary>
-	/// 描画前処理
+	/// 描画前後処理
 	/// </summary>
 	void PreDraw();
-
-	/// <summary>
-	/// 描画後処理
-	/// </summary>
 	void PostDraw();
 
-	/// <summary>
-	/// レンダーターゲットのクリア
-	/// </summary>
+	// レンダーターゲットのクリア
 	void ClearRenderTarget();
 
-	/// <summary>
-	/// 深度バッファのクリア
-	/// </summary>
+	// 深度バッファのクリア
 	void ClearDepthBuffer();
 
-	/// <summary>
-	/// デバイスの取得
-	/// </summary>
-	/// <returns>デバイス</returns>
-	ID3D12Device* GetDevice() { return device_.Get(); }
+	// デバイスの取得
+	ID3D12Device* GetDevice() { return device.Get(); }
 
-	/// <summary>
-	/// 描画コマンドリストの取得
-	/// </summary>
-	/// <returns>描画コマンドリスト</returns>
-	ID3D12GraphicsCommandList* GetCommandList() { return commandList_.Get(); }
+	// 描画コマンドリストの取得
+	ID3D12GraphicsCommandList* GetCommandList() { return commandList.Get(); }
 
-	/// <summary>
-	/// バックバッファの幅取得
-	/// </summary>
-	/// <returns>バックバッファの幅</returns>
-	int32_t GetBackBufferWidth() const;
-
-	/// <summary>
-	/// バックバッファの高さ取得
-	/// </summary>
-	/// <returns>バックバッファの高さ</returns>
-	int32_t GetBackBufferHeight() const;
-
-private: // メンバ変数
-	// ウィンドウズアプリケーション管理
-	WinApp* winApp_;
+private://メンバ変数
 
 	// Direct3D関連
-	Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory_;
-	Microsoft::WRL::ComPtr<ID3D12Device> device_;
-	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList_;
-	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocator_;
-	Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue_;
-	Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain_;
-	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> backBuffers_;
-	Microsoft::WRL::ComPtr<ID3D12Resource> depthBuffer_;
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvHeap_;
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvHeap_;
-	Microsoft::WRL::ComPtr<ID3D12Fence> fence_;
-	UINT64 fenceVal_ = 0;
-	int32_t backBufferWidth_ = 0;
-	int32_t backBufferHeight_ = 0;
+	Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory;
+	Microsoft::WRL::ComPtr<ID3D12Device> device;
+	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList;
+	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocator;
+	Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue;
+	Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain;
+	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> backBuffers;
+	Microsoft::WRL::ComPtr<ID3D12Resource> depthBuffer;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvHeap;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvHeap;
 
-private: // メンバ関数
-	DirectXCore() = default;
-	~DirectXCore() = default;
-	DirectXCore(const DirectXCore&) = delete;
-	const DirectXCore& operator=(const DirectXCore&) = delete;
+	int backBufferWidth_ = 0;
+	int backBufferHeight_ = 0;
 
-	/// <summary>
-	/// DXGIデバイス初期化
-	/// </summary>
-	void InitializeDXGIDevice();
+	//フェンスの生成
+	ID3D12Fence* fence = nullptr;
+	UINT64 fenceVal = 0;
 
-	/// <summary>
-	/// スワップチェーンの生成
-	/// </summary>
-	void CreateSwapChain();
+	HWND hwnd_;
 
-	/// <summary>
-	/// コマンド関連初期化
-	/// </summary>
+private://メンバ変数
+
+
+	// DXGIデバイス初期化
+	void InitializeDevice();
+
+	// スワップチェーンの生成
+	void InitializeSwapChain();
+
+	// コマンド関連初期化
 	void InitializeCommand();
 
-	/// <summary>
-	/// レンダーターゲット生成
-	/// </summary>
-	void CreateFinalRenderTargets();
+	// レンダーターゲット生成
+	void InitializeRenderTargets();
 
-	/// <summary>
-	/// 深度バッファ生成
-	/// </summary>
-	void CreateDepthBuffer();
+	// 深度バッファ生成
+	void InitializeDepthBuffer();
 
-	/// <summary>
-	/// フェンス生成
-	/// </summary>
-	void CreateFence();
+	// フェンス生成
+	void InitializeFence();
+
 };

@@ -69,33 +69,9 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="ユーザーソース ファイル\Player">
-      <UniqueIdentifier>{d26a4c2c-f80a-464c-8b9b-78f8bed507c8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ユーザーソース ファイル\Enemy">
-      <UniqueIdentifier>{08e6ac36-cadf-4f78-97b4-69bd0867dc5d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ユーザーソース ファイル\Background">
-      <UniqueIdentifier>{3158803b-9ade-47d1-a428-f40774e32bcf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ユーザーソース ファイル\Scene">
-      <UniqueIdentifier>{699df95a-a547-4294-bdc2-1a50043bdb2e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ユーザーヘッダー ファイル">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="ユーザーヘッダー ファイル\Player">
-      <UniqueIdentifier>{8aec4ca8-fc2c-4573-8f42-aa311bd4a6ee}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ユーザーヘッダー ファイル\Enemy">
-      <UniqueIdentifier>{69232e90-02c3-4963-ac72-489cccd6c461}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ユーザーヘッダー ファイル\Background">
-      <UniqueIdentifier>{46e79b39-b629-482d-93ff-5bc726ee6990}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ユーザーヘッダー ファイル\Scene">
-      <UniqueIdentifier>{74d31d17-cab0-49b7-a3f7-513de6a6ca1d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -232,32 +208,14 @@
     <ClInclude Include="3D\WorldTransform.h">
       <Filter>Engine\ヘッダー\3D</Filter>
     </ClInclude>
-    <ClInclude Include="Scene\GameScene.h">
-      <Filter>ユーザーヘッダー ファイル\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemy\Enemy.h">
-      <Filter>ユーザーヘッダー ファイル\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemy\EnemyPop.h">
-      <Filter>ユーザーヘッダー ファイル\Enemy</Filter>
-    </ClInclude>
     <ClInclude Include="Collision\Collision.h">
       <Filter>Engine\ヘッダー\Collision</Filter>
     </ClInclude>
-    <ClInclude Include="Background\Load.h">
-      <Filter>ユーザーヘッダー ファイル\Background</Filter>
-    </ClInclude>
-    <ClInclude Include="Background\Wing.h">
-      <Filter>ユーザーヘッダー ファイル\Background</Filter>
-    </ClInclude>
-    <ClInclude Include="Player\Player.h">
-      <Filter>ユーザーヘッダー ファイル\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="BackGround\BackGround.h">
-      <Filter>ユーザーヘッダー ファイル\Background</Filter>
-    </ClInclude>
     <ClInclude Include="GameFunction\ScoreSprite.h">
       <Filter>Engine\ヘッダー\GameFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\GameScene.h">
+      <Filter>ユーザーヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -321,32 +279,14 @@
     <ClCompile Include="3D\WorldTransform.cpp">
       <Filter>Engine\ソース ファイル\3D</Filter>
     </ClCompile>
-    <ClCompile Include="Scene\GameScene.cpp">
-      <Filter>ユーザーソース ファイル\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemy\Enemy.cpp">
-      <Filter>ユーザーソース ファイル\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemy\EnemyPop.cpp">
-      <Filter>ユーザーソース ファイル\Enemy</Filter>
-    </ClCompile>
     <ClCompile Include="Collision\Collision.cpp">
       <Filter>Engine\ソース ファイル\Collision</Filter>
     </ClCompile>
-    <ClCompile Include="Background\Load.cpp">
-      <Filter>ユーザーソース ファイル\Background</Filter>
-    </ClCompile>
-    <ClCompile Include="Background\Wing.cpp">
-      <Filter>ユーザーソース ファイル\Background</Filter>
-    </ClCompile>
-    <ClCompile Include="Player\Player.cpp">
-      <Filter>ユーザーソース ファイル\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="BackGround\BackGround.cpp">
-      <Filter>ユーザーソース ファイル\Background</Filter>
-    </ClCompile>
     <ClCompile Include="GameFunction\ScoreSprite.cpp">
       <Filter>Engine\ソース ファイル\GameFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\GameScene.cpp">
+      <Filter>ユーザーソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

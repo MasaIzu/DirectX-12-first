@@ -16,7 +16,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// ゲームウィンドウの作成
 	winApp_ = new WinApp;
-	winApp_->MakeWindow(L"ぶっとびカーレース");
+	winApp_->MakeWindow(L"適当ゲーム");
 
 	// DirectX初期化処理
 	directXCore_ = new DirectXCore;
@@ -27,9 +27,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	input_ = Input::GetInstance();
 	input_->Initialize();
 
-	// オーディオの初期化
-	/*Audio sound;
-	sound.Initialize();*/
 
 	// テクスチャマネージャの初期化
 	TextureManager::GetInstance()->Initialize(directXCore_->GetDevice());
@@ -49,7 +46,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// ゲームシーンの初期化
 	gameScene_ = new GameScene();
-	gameScene_->Initialize();
+	gameScene_->Initialize(directXCore_);
 
 	FPS* fps = new FPS;
 
@@ -82,7 +79,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	}
 
 	// 各種解放
-	//sound.SoundUnload();
+	
 
 	// ゲームウィンドウの破棄
 #pragma region  WindowsAPI後始末

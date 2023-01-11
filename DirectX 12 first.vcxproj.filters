@@ -73,6 +73,12 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
+    <Filter Include="Engine\ソース ファイル\2D">
+      <UniqueIdentifier>{7a6205cf-89b9-452d-9be4-4d645c5a6467}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\ヘッダー\2D">
+      <UniqueIdentifier>{c38a081c-e8cd-4328-80bf-75f679fbdd67}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Obj.hlsli">
@@ -160,9 +166,6 @@
     <ClInclude Include="Drawing\Material.h">
       <Filter>Engine\ヘッダー\Drawing</Filter>
     </ClInclude>
-    <ClInclude Include="Drawing\Sprite.h">
-      <Filter>Engine\ヘッダー\Drawing</Filter>
-    </ClInclude>
     <ClInclude Include="Drawing\TextureManager.h">
       <Filter>Engine\ヘッダー\Drawing</Filter>
     </ClInclude>
@@ -217,6 +220,9 @@
     <ClInclude Include="Scene\GameScene.h">
       <Filter>ユーザーヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Drawing\Sprite.h">
+      <Filter>Engine\ヘッダー\2D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -229,9 +235,6 @@
       <Filter>Engine\ソース ファイル\Math</Filter>
     </ClCompile>
     <ClCompile Include="Math\Matrix4.cpp">
-      <Filter>Engine\ソース ファイル\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Math\MyMath.cpp">
       <Filter>Engine\ソース ファイル\Math</Filter>
     </ClCompile>
     <ClCompile Include="Math\Vector2.cpp">
@@ -247,9 +250,6 @@
       <Filter>Engine\ソース ファイル\GameFunction</Filter>
     </ClCompile>
     <ClCompile Include="Drawing\Material.cpp">
-      <Filter>Engine\ソース ファイル\Drawing</Filter>
-    </ClCompile>
-    <ClCompile Include="Drawing\Sprite.cpp">
       <Filter>Engine\ソース ファイル\Drawing</Filter>
     </ClCompile>
     <ClCompile Include="Drawing\TextureManager.cpp">
@@ -287,6 +287,12 @@
     </ClCompile>
     <ClCompile Include="Scene\GameScene.cpp">
       <Filter>ユーザーソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Drawing\Sprite.cpp">
+      <Filter>Engine\ソース ファイル\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\MyMath.cpp">
+      <Filter>Engine\ソース ファイル\Math</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

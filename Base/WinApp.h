@@ -18,7 +18,7 @@ public: // Ã“Iƒƒ“ƒoŠÖ”
 public://ƒƒ“ƒoŠÖ”
 	void MakeWindow(std::wstring title);
 	bool ProcessMessage();
-	void TerminateGameWindow();
+	void DeleteGameWindow();
 
 
 public://GetterSetter

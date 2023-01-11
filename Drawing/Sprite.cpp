@@ -13,11 +13,11 @@ using namespace Microsoft::WRL;
 /// 静的メンバ変数の実体
 /// </summary>
 ID3D12Device* Sprite::device = nullptr;
-UINT Sprite::descriptorHandleIncrementSize;
+UINT Sprite::descriptorSize;
 ID3D12GraphicsCommandList* Sprite::cmdList = nullptr;
 ComPtr<ID3D12RootSignature> Sprite::rootSignature;
 ComPtr<ID3D12PipelineState> Sprite::pipelineState;
-XMMATRIX Sprite::matProjection;
+Matrix4 Sprite::matProjection;
 ComPtr<ID3D12DescriptorHeap> Sprite::descHeap;
 ComPtr<ID3D12Resource> Sprite::texBuff[srvCount];
 
@@ -29,7 +29,7 @@ void Sprite::StaticInitialize(ID3D12Device* device, int window_width, int window
 	Sprite::device = device;
 
 	// デスクリプタサイズを取得
-	descriptorHandleIncrementSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	descriptorSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
 	HRESULT result = S_FALSE;
 	ComPtr<ID3DBlob> vsBlob; // 頂点シェーダオブジェクト
@@ -193,10 +193,10 @@ void Sprite::StaticInitialize(ID3D12Device* device, int window_width, int window
 	assert(SUCCEEDED(result));
 
 	// 射影行列計算
-	matProjection = XMMatrixOrthographicOffCenterLH(
+	matProjection = MyMath::ConvertXMMATtoMat4(XMMatrixOrthographicOffCenterLH(
 		0.0f, (float)window_width,
 		(float)window_height, 0.0f,
-		0.0f, 1.0f);
+		0.0f, 1.0f));
 
 	// デスクリプタヒープを生成	
 	D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc = {};
@@ -275,7 +275,7 @@ void Sprite::LoadTexture(UINT texnumber, const wchar_t* filename)
 
 	device->CreateShaderResourceView(texBuff[texnumber].Get(), //ビューと関連付けるバッファ
 		&srvDesc, //テクスチャ設定情報
-		CD3DX12_CPU_DESCRIPTOR_HANDLE(descHeap->GetCPUDescriptorHandleForHeapStart(), texnumber, descriptorHandleIncrementSize)
+		CD3DX12_CPU_DESCRIPTOR_HANDLE(descHeap->GetCPUDescriptorHandleForHeapStart(), texnumber, descriptorSize)
 	);
 
 }
@@ -302,10 +302,10 @@ void Sprite::PostDraw()
 	Sprite::cmdList = nullptr;
 }
 
-Sprite* Sprite::Create(UINT texNumber, XMFLOAT2 position, XMFLOAT4 color, XMFLOAT2 anchorpoint, bool isFlipX, bool isFlipY)
+Sprite* Sprite::Create(UINT texNumber, Vector2 position, Vector4 color, Vector2 anchorpoint, bool isFlipX, bool isFlipY)
 {
 	// 仮サイズ
-	XMFLOAT2 size = { 100.0f, 100.0f };
+	Vector2 size = { 100.0f, 100.0f };
 
 	if (texBuff[texNumber])
 	{
@@ -331,12 +331,12 @@ Sprite* Sprite::Create(UINT texNumber, XMFLOAT2 position, XMFLOAT4 color, XMFLOA
 	return sprite;
 }
 
-Sprite::Sprite(UINT texNumber, XMFLOAT2 position, XMFLOAT2 size, XMFLOAT4 color, XMFLOAT2 anchorpoint, bool isFlipX, bool isFlipY)
+Sprite::Sprite(UINT texNumber, Vector2 position, Vector2 size, Vector4 color, Vector2 anchorpoint, bool isFlipX, bool isFlipY)
 {
 	this->position = position;
 	this->size = size;
 	this->anchorpoint = anchorpoint;
-	this->matWorld = XMMatrixIdentity();
+	this->matWorld = MyMath::ConvertXMMATtoMat4(XMMatrixIdentity());
 	this->color = color;
 	this->texNumber = texNumber;
 	this->isFlipX = isFlipX;
@@ -408,7 +408,7 @@ void Sprite::SetRotation(float rotation)
 	TransferVertices();
 }
 
-void Sprite::SetPosition(const XMFLOAT2& position)
+void Sprite::SetPosition(const Vector2& position)
 {
 	this->position = position;
 
@@ -416,7 +416,7 @@ void Sprite::SetPosition(const XMFLOAT2& position)
 	TransferVertices();
 }
 
-void Sprite::SetSize(const XMFLOAT2& size)
+void Sprite::SetSize(const Vector2& size)
 {
 	this->size = size;
 
@@ -424,7 +424,7 @@ void Sprite::SetSize(const XMFLOAT2& size)
 	TransferVertices();
 }
 
-void Sprite::SetAnchorPoint(const XMFLOAT2& anchorpoint)
+void Sprite::SetAnchorPoint(const Vector2& anchorpoint)
 {
 	this->anchorpoint = anchorpoint;
 
@@ -448,7 +448,7 @@ void Sprite::SetIsFlipY(bool isFlipY)
 	TransferVertices();
 }
 
-void Sprite::SetTextureRect(const XMFLOAT2& texBase, const XMFLOAT2& texSize)
+void Sprite::SetTextureRect(const Vector2& texBase, const Vector2& texSize)
 {
 	this->texBase = texBase;
 	this->texSize = texSize;
@@ -460,9 +460,9 @@ void Sprite::SetTextureRect(const XMFLOAT2& texBase, const XMFLOAT2& texSize)
 void Sprite::Draw()
 {
 	// ワールド行列の更新
-	this->matWorld = XMMatrixIdentity();
-	this->matWorld *= XMMatrixRotationZ(XMConvertToRadians(rotation));
-	this->matWorld *= XMMatrixTranslation(position.x, position.y, 0.0f);
+	this->matWorld = MyMath::ConvertXMMATtoMat4(XMMatrixIdentity());
+	this->matWorld *= MyMath::ConvertXMMATtoMat4(XMMatrixRotationZ(XMConvertToRadians(rotation)));
+	this->matWorld *= MyMath::ConvertXMMATtoMat4(XMMatrixTranslation(position.x, position.y, 0.0f));
 
 	// 定数バッファにデータ転送
 	ConstBufferData* constMap = nullptr;
@@ -482,7 +482,7 @@ void Sprite::Draw()
 	// 定数バッファビューをセット
 	cmdList->SetGraphicsRootConstantBufferView(0, this->constBuff->GetGPUVirtualAddress());
 	// シェーダリソースビューをセット
-	cmdList->SetGraphicsRootDescriptorTable(1, CD3DX12_GPU_DESCRIPTOR_HANDLE(descHeap->GetGPUDescriptorHandleForHeapStart(), this->texNumber, descriptorHandleIncrementSize));
+	cmdList->SetGraphicsRootDescriptorTable(1, CD3DX12_GPU_DESCRIPTOR_HANDLE(descHeap->GetGPUDescriptorHandleForHeapStart(), this->texNumber, descriptorSize));
 	// 描画コマンド
 	cmdList->DrawInstanced(4, 1, 0, 0);
 }

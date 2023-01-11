@@ -211,10 +211,10 @@ Vector3 MyMath::DivVecMat(const Vector3& vector3, const Matrix4& matrix4)
 Matrix4 MyMath::setViewportMat(WinApp* window, const Vector3& v) {
 	//’PˆÊs—ñ‚ÌÝ’è
 	Matrix4 matViewport = Initialize();
-	matViewport.m[0][0] = window->GetInstance()->window_width / 2;
-	matViewport.m[1][1] = -window->GetInstance()->window_height / 2;
-	matViewport.m[3][0] = (window->GetInstance()->window_width / 2) + v.x;
-	matViewport.m[3][1] = (window->GetInstance()->window_height / 2) + v.y;
+	matViewport.m[0][0] = window->window_width / 2;
+	matViewport.m[1][1] = -window->window_height / 2;
+	matViewport.m[3][0] = (window->window_width / 2) + v.x;
+	matViewport.m[3][1] = (window->window_height / 2) + v.y;
 	return matViewport;
 }
 
@@ -406,6 +406,21 @@ Matrix4 MyMath::MatrixInverse(const Matrix4* mat)
 
 	return retMat;
 }
+
+Matrix4 MyMath::ConvertXMMATtoMat4(DirectX::XMMATRIX XMMatrix) {
+	Matrix4 result;
+	for (int i = 0; i < 4; i++) {
+
+		result.m[i][0] = DirectX::XMVectorGetX(XMMatrix.r[i]);
+		result.m[i][1] = DirectX::XMVectorGetY(XMMatrix.r[i]);
+		result.m[i][2] = DirectX::XMVectorGetZ(XMMatrix.r[i]);
+		result.m[i][3] = DirectX::XMVectorGetW(XMMatrix.r[i]);
+	}
+
+
+	return result;
+}
+
 
 Matrix4 MyMath::LookAtLH(Vector3 eye, Vector3 target, Vector3 up) {
 	Vector3 zaxis = target - eye;

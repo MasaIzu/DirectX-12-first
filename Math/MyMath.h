@@ -2,6 +2,7 @@
 #include"Vector3.h"
 #include"Matrix4.h"
 #include "WinApp.h"
+#include <DirectXMath.h>
 
 //•Ö—˜Œn‚Ü‚Æ‚ß
 namespace MyMath {
@@ -25,6 +26,8 @@ namespace MyMath {
 
 	Matrix4 setViewportMat(WinApp* window, const Vector3& v);
 	Matrix4 MatrixInverse(const Matrix4* pOut);
+
+	Matrix4 ConvertXMMATtoMat4(DirectX::XMMATRIX XMMatrix);
 
 	Matrix4 LookAtLH(Vector3 eye, Vector3 target, Vector3 up);
 	Matrix4 PerspectiveFovLH(float fovAngleY, float  aspectRatio, float  nearZ, float farZ);

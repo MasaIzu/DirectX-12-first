@@ -67,7 +67,7 @@ bool WinApp::ProcessMessage() {
 	return false;
 }
 
-void WinApp::TerminateGameWindow() {
+void WinApp::DeleteGameWindow() {
 	// ウィンドウクラスを登録解除
 	UnregisterClass(w.lpszClassName, w.hInstance);
 }

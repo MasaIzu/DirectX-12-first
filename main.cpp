@@ -84,7 +84,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ゲームウィンドウの破棄
 #pragma region  WindowsAPI後始末
 
-	winApp_->TerminateGameWindow();
+	winApp_->DeleteGameWindow();
 
 #pragma endregion
 	return 0;

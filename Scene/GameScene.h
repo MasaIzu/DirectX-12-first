@@ -8,12 +8,13 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "affin.h"
-#include "Player.h"
-#include "Enemy.h"
-#include "RailCamera.h"
+#include "../Player.h"
+#include "../Enemy.h"
 #include <sstream>
-#include"Select.h"
-#include "EnemyBullet.h"
+
+#include "../EnemyBullet.h"
+#include "../Select.h"
+#include "../RailCamera.h"
 
 
 /// <summary>
@@ -38,7 +39,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(DirectXCore* directXCore);
+	void Initialize(WinApp* winApp,DirectXCore* directXCore);
 
 	/// <summary>
 	/// 毎フレーム処理
@@ -140,6 +141,7 @@ private: // メンバ変数
 	//シーン分け
 	Scene scene_ = Scene::First;
 
+	WinApp* winApp_ = nullptr;
 
 	//シーン次行く
 	WorldTransform nextScene;

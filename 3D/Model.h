@@ -50,12 +50,12 @@ public: // 静的メンバ関数
 	/// <summary>
 	/// 静的初期化
 	/// </summary>
-	static void StaticInitialize();
+	static void StaticInitialize(DirectXCore* directXCore);
 
 	/// <summary>
 	/// グラフィックスパイプラインの初期化
 	/// </summary>
-	static void InitializeGraphicsPipeline();
+	static void InitializeGraphicsPipeline(DirectXCore* directXCore);
 
 	/// <summary>
 	/// 3Dモデル生成
@@ -128,6 +128,8 @@ private: // メンバ変数
 	std::unordered_map<std::string, Material*> materials_;
 	// デフォルトマテリアル
 	Material* defaultMaterial_ = nullptr;
+
+	DirectXCore* directXCore_ = nullptr;
 
 private: // メンバ関数
 	/// <summary>

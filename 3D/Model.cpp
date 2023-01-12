@@ -22,20 +22,22 @@ ComPtr<ID3D12RootSignature> Model::sRootSignature_;
 ComPtr<ID3D12PipelineState> Model::sPipelineState_;
 std::unique_ptr<LightGroup> Model::lightGroup;
 
-void Model::StaticInitialize() {
+void Model::StaticInitialize(DirectXCore* directXCore) {
 
 	// パイプライン初期化
-	InitializeGraphicsPipeline();
+	InitializeGraphicsPipeline(directXCore);
 
 	// ライト生成
 	lightGroup.reset(LightGroup::Create());
 }
 
-void Model::InitializeGraphicsPipeline() {
+void Model::InitializeGraphicsPipeline(DirectXCore* directXCore) {
 	HRESULT result = S_FALSE;
 	ComPtr<ID3DBlob> vsBlob;    // 頂点シェーダオブジェクト
 	ComPtr<ID3DBlob> psBlob;    // ピクセルシェーダオブジェクト
 	ComPtr<ID3DBlob> errorBlob; // エラーオブジェクト
+
+	directXCore_ = directXCore
 
 	// 頂点シェーダの読み込みとコンパイル
 	result = D3DCompileFromFile(

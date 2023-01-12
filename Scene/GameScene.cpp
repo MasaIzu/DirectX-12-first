@@ -14,13 +14,11 @@ GameScene::~GameScene() {
 	delete modelSkydome_;
 }
 
-void GameScene::Initialize(DirectXCore* directXCore) {
+void GameScene::Initialize(WinApp* winApp,DirectXCore* directXCore) {
 
 	dxCommon_ = directXCore;
+	winApp_ = winApp;
 	input_ = Input::GetInstance();
-	audio_ = Audio::GetInstance();
-	debugText_ = DebugText::GetInstance();
-
 
 	textureHandle_ = TextureManager::Load("Black.png");
 	ReticleTextureHandle_ = TextureManager::Load("aim.png");
@@ -49,17 +47,17 @@ void GameScene::Initialize(DirectXCore* directXCore) {
 
 	//スプライト生成
 	nextSprite.reset(Sprite::
-		Create(nextTexture_, Vector2(WinApp::GetInstance()->kWindowWidth / 2, WinApp::GetInstance()->kWindowHeight / 2),
+		Create(nextTexture_, Vector2(winApp_->window_width / 2, winApp_->window_height / 2),
 			Vector4(1, 1, 1, 1), Vector2(0.5, 0.5)));
 
 	//スプライト生成
 	finSprite.reset(Sprite::
-		Create(finTexture_, Vector2(WinApp::GetInstance()->kWindowWidth / 2, WinApp::GetInstance()->kWindowHeight / 2),
+		Create(finTexture_, Vector2(winApp_->window_width / 2, winApp_->window_height / 2),
 			Vector4(1, 1, 1, 1), Vector2(0.5, 0.5)));
 
 	//スプライト生成
 	loserSprite.reset(Sprite::
-		Create(loserTexture_, Vector2(WinApp::GetInstance()->kWindowWidth / 2, WinApp::GetInstance()->kWindowHeight / 2),
+		Create(loserTexture_, Vector2(winApp_->window_width / 2, winApp_->window_height / 2),
 			Vector4(1, 1, 1, 1), Vector2(0.5, 0.5)));
 
 
@@ -68,31 +66,24 @@ void GameScene::Initialize(DirectXCore* directXCore) {
 
 	//自キャラの生成
 	player_ = new Player();
-	//Skydome
-	skydome_ = new Skydome();
+	
 	//レールカメラ
 	railCamera_ = new RailCamera();
-	//Ground
-	ground_ = new Ground();
+	
 	//Select
 	select_ = new Select();
-	//ボス
-	boss_ = new Boss();
+	
 
 	//ビュープロジェクションの初期化
 	viewProjection_.Initialize();
 	//自キャラの初期化
-	player_->Initialize(model_);
+	player_->Initialize(model_, winApp_->window_width, winApp_->window_height);
 	//レールカメラの初期化
-	railCamera_->Initialize(Vector3(0, -23, -50), Vector3(0.2, 0, 0));
-	//skydomeの初期化
-	skydome_->Initialize(modelSkydome_);
-	//groundの初期化
-	ground_->Initialize(modelGround_);
+	railCamera_->Initialize(winApp_,Vector3(0, -23, -50), Vector3(0.2, 0, 0));
+	
 	//Selectの初期化
 	select_->Initialize(selectModelGround_, modelDome_);
-	//ボス
-	boss_->Initialize(BossModel_, Vector3(0, 70, 300), BossHandModel_, EnemyModel_);
+	
 
 	//ファイルの読み込み
 	LoadEnemyPopData();
@@ -219,17 +210,14 @@ void GameScene::Update() {
 		player_->worldReticleSet(railCamera_->GetWorldTransform());
 		player_->Update(railCamera_->GetViewProjection());
 
-		boss_->SetGameScene(this);
-		boss_->Update(player_->GetWorldPosition());
-
 		enemyUpdate(0);
 
 		CheckAllCollisions();
 
-		if (boss_->GetBossHp() < 0) {
+		/*if (boss_->GetBossHp() < 0) {
 			secondInitialize();
 			scene_ = Scene::Back;
-		}
+		}*/
 
 
 		break;
@@ -301,13 +289,7 @@ void GameScene::Draw() {
 	if (changeDraw == 0) {
 		select_->Draw(railCamera_->GetViewProjection());
 	}
-	if (changeDraw == 2 || changeDraw == 3 || changeDraw == 4) {
-		skydome_->Draw(railCamera_->GetViewProjection());
-		ground_->Draw(railCamera_->GetViewProjection());
-	}
-	if (changeDraw == 4) {
-		boss_->Draw(railCamera_->GetViewProjection());
-	}
+	
 
 	player_->Draw(railCamera_->GetViewProjection());
 
@@ -344,9 +326,8 @@ void GameScene::Draw() {
 	}
 
 
-	// デバッグテキストの描画
-	debugText_->DrawAll(commandList);
-	//
+	
+	
 	// スプライト描画後処理
 	Sprite::PostDraw();
 
@@ -421,85 +402,85 @@ void GameScene::CheckAllCollisions() {
 
 #pragma region 自弾と敵Bossの当たり判定
 
-	posA = boss_->GetWorldPositionBoss();
+	//posA = boss_->GetWorldPositionBoss();
 
-	//自キャラと敵弾すべての当たり判定
-	for (const std::unique_ptr<PlayerBullet>& bullet : playerBullets) {
-		//自弾の座標
-		posB = bullet->GetWorldPosition();
+	////自キャラと敵弾すべての当たり判定
+	//for (const std::unique_ptr<PlayerBullet>& bullet : playerBullets) {
+	//	//自弾の座標
+	//	posB = bullet->GetWorldPosition();
 
-		float a = posB.x - posA.x;
-		float b = posB.y - posA.y;
-		float c = posB.z - posA.z;
+	//	float a = posB.x - posA.x;
+	//	float b = posB.y - posA.y;
+	//	float c = posB.z - posA.z;
 
-		float d = sqrt(a * a + b * b + c * c);
+	//	float d = sqrt(a * a + b * b + c * c);
 
-		if (d <= playerBulletRadius + bossRadius) {
+	//	if (d <= playerBulletRadius + bossRadius) {
 
-			//敵キャラの衝突時コールバックを呼び出す
-			boss_->OnCollisionBoss();
+	//		//敵キャラの衝突時コールバックを呼び出す
+	//		boss_->OnCollisionBoss();
 
-			//自弾の衝突時コールバックを呼び出す
-			bullet->OnCollision();
+	//		//自弾の衝突時コールバックを呼び出す
+	//		bullet->OnCollision();
 
-		}
-	}
-
-#pragma endregion
-
-#pragma region 自弾と敵BossHandの当たり判定
-
-	posA = boss_->GetWorldPositionRight();
-
-	//自キャラと敵弾すべての当たり判定
-	for (const std::unique_ptr<PlayerBullet>& bullet : playerBullets) {
-		//自弾の座標
-		posB = bullet->GetWorldPosition();
-
-		float a = posB.x - posA.x;
-		float b = posB.y - posA.y;
-		float c = posB.z - posA.z;
-
-		float d = sqrt(a * a + b * b + c * c);
-
-		if (d <= playerBulletRadius + bossHandRadius) {
-
-			//敵キャラの衝突時コールバックを呼び出す
-			boss_->OnCollisionRight();
-
-			//自弾の衝突時コールバックを呼び出す
-			bullet->OnCollision();
-
-		}
-	}
+	//	}
+	//}
 
 #pragma endregion
 
 #pragma region 自弾と敵BossHandの当たり判定
 
-	posA = boss_->GetWorldPositionLeft();
+	//posA = boss_->GetWorldPositionRight();
 
-	//自キャラと敵弾すべての当たり判定
-	for (const std::unique_ptr<PlayerBullet>& bullet : playerBullets) {
-		//自弾の座標
-		posB = bullet->GetWorldPosition();
+	////自キャラと敵弾すべての当たり判定
+	//for (const std::unique_ptr<PlayerBullet>& bullet : playerBullets) {
+	//	//自弾の座標
+	//	posB = bullet->GetWorldPosition();
 
-		float a = posB.x - posA.x;
-		float b = posB.y - posA.y;
-		float c = posB.z - posA.z;
+	//	float a = posB.x - posA.x;
+	//	float b = posB.y - posA.y;
+	//	float c = posB.z - posA.z;
 
-		float d = sqrt(a * a + b * b + c * c);
+	//	float d = sqrt(a * a + b * b + c * c);
 
-		if (d <= playerBulletRadius + bossHandRadius) {
+	//	if (d <= playerBulletRadius + bossHandRadius) {
 
-			//敵キャラの衝突時コールバックを呼び出す
-			boss_->OnCollisionLeft();
+	//		//敵キャラの衝突時コールバックを呼び出す
+	//		boss_->OnCollisionRight();
 
-			//自弾の衝突時コールバックを呼び出す
-			bullet->OnCollision();
+	//		//自弾の衝突時コールバックを呼び出す
+	//		bullet->OnCollision();
 
-		}
-	}
+	//	}
+	//}
+
+#pragma endregion
+
+#pragma region 自弾と敵BossHandの当たり判定
+
+	//posA = boss_->GetWorldPositionLeft();
+
+	////自キャラと敵弾すべての当たり判定
+	//for (const std::unique_ptr<PlayerBullet>& bullet : playerBullets) {
+	//	//自弾の座標
+	//	posB = bullet->GetWorldPosition();
+
+	//	float a = posB.x - posA.x;
+	//	float b = posB.y - posA.y;
+	//	float c = posB.z - posA.z;
+
+	//	float d = sqrt(a * a + b * b + c * c);
+
+	//	if (d <= playerBulletRadius + bossHandRadius) {
+
+	//		//敵キャラの衝突時コールバックを呼び出す
+	//		boss_->OnCollisionLeft();
+
+	//		//自弾の衝突時コールバックを呼び出す
+	//		bullet->OnCollision();
+
+	//	}
+	//}
 
 #pragma endregion
 
@@ -861,11 +842,10 @@ void GameScene::secondInitialize() {
 	//ビュープロジェクションの初期化
 	viewProjection_.Initialize();
 	//自キャラの初期化
-	player_->Initialize(model_);
+	player_->Initialize(model_, winApp_->window_width, winApp_->window_height);
 	//レールカメラの初期化
-	railCamera_->Initialize(Vector3(0, 0, -50), Vector3(0.2, 0, 0));
-	//ボス
-	boss_->Initialize(BossModel_, Vector3(0, 70, 300), BossHandModel_, EnemyModel_);
+	railCamera_->Initialize(winApp_,Vector3(0, 0, -50), Vector3(0.2, 0, 0));
+	
 	LoadEnemyPopData();
 }
 

@@ -65,7 +65,7 @@ public: // ƒƒ“ƒoŠÖ”
 	/// <summary>
 	/// ‰Šú‰»
 	/// </summary>
-	void Initialize();
+	void Initialize(DirectXCore* directXCore);
 
 	/// <summary>
 	/// XV

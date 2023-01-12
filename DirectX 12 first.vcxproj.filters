@@ -79,6 +79,24 @@
     <Filter Include="Engine\ヘッダー\2D">
       <UniqueIdentifier>{c38a081c-e8cd-4328-80bf-75f679fbdd67}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ユーザーソース ファイル\Enemy">
+      <UniqueIdentifier>{e3b8b230-f642-4f8f-9d57-48e59550326b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ユーザーヘッダー ファイル\Enemy">
+      <UniqueIdentifier>{1dac81ab-cda1-46b0-aa7a-bf312e51348b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ユーザーソース ファイル\Player">
+      <UniqueIdentifier>{afe63864-f970-413a-a081-a5d0e58f2a22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ユーザーヘッダー ファイル\Player">
+      <UniqueIdentifier>{dee23e26-c538-4158-9f4d-1d26f3df2143}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ユーザーソース ファイル\RailCamera">
+      <UniqueIdentifier>{eb250baf-8227-4ffc-a11d-a0af84be150b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ユーザーヘッダー ファイル\RailCamra">
+      <UniqueIdentifier>{f5839840-4fa8-4320-8ee8-bee54451aa31}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Obj.hlsli">
@@ -223,6 +241,21 @@
     <ClInclude Include="Drawing\Sprite.h">
       <Filter>Engine\ヘッダー\2D</Filter>
     </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>ユーザーヘッダー ファイル\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyBullet.h">
+      <Filter>ユーザーヘッダー ファイル\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>ユーザーヘッダー ファイル\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerBullet.h">
+      <Filter>ユーザーヘッダー ファイル\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="RailCamera.h">
+      <Filter>ユーザーヘッダー ファイル\RailCamra</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -293,6 +326,21 @@
     </ClCompile>
     <ClCompile Include="Math\MyMath.cpp">
       <Filter>Engine\ソース ファイル\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyBullet.cpp">
+      <Filter>ユーザーソース ファイル\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>ユーザーソース ファイル\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>ユーザーソース ファイル\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerBullet.cpp">
+      <Filter>ユーザーソース ファイル\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="RailCamera.cpp">
+      <Filter>ユーザーソース ファイル\RailCamera</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

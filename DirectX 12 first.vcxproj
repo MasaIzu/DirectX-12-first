@@ -249,6 +249,8 @@
     <ClInclude Include="Drawing\Material.h" />
     <ClInclude Include="Drawing\Sprite.h" />
     <ClInclude Include="Drawing\TextureManager.h" />
+    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="EnemyBullet.h" />
     <ClInclude Include="GameFunction\Input.h" />
     <ClInclude Include="GameFunction\ScoreSprite.h" />
     <ClInclude Include="Math\Affin.h" />
@@ -257,6 +259,9 @@
     <ClInclude Include="Math\Vector2.h" />
     <ClInclude Include="Math\Vector3.h" />
     <ClInclude Include="Math\Vector4.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="PlayerBullet.h" />
+    <ClInclude Include="RailCamera.h" />
     <ClInclude Include="Scene\GameScene.h" />
     <ClInclude Include="Sound\Audio.h" />
   </ItemGroup>
@@ -273,6 +278,8 @@
     <ClCompile Include="Drawing\Material.cpp" />
     <ClCompile Include="Drawing\Sprite.cpp" />
     <ClCompile Include="Drawing\TextureManager.cpp" />
+    <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="EnemyBullet.cpp" />
     <ClCompile Include="GameFunction\Input.cpp" />
     <ClCompile Include="GameFunction\ScoreSprite.cpp" />
     <ClCompile Include="main.cpp" />
@@ -282,6 +289,9 @@
     <ClCompile Include="Math\Vector2.cpp" />
     <ClCompile Include="Math\Vector3.cpp" />
     <ClCompile Include="Math\Vector4.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PlayerBullet.cpp" />
+    <ClCompile Include="RailCamera.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
     <ClCompile Include="Sound\Audio.cpp" />
   </ItemGroup>

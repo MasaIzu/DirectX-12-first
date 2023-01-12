@@ -13,14 +13,10 @@
 /// モデルデータ
 /// </summary>
 class Model {
-private: // エイリアス
+private:
 	// Microsoft::WRL::を省略
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
-	// DirectX::を省略
-	using XMFLOAT2 = DirectX::XMFLOAT2;
-	using XMFLOAT3 = DirectX::XMFLOAT3;
-	using XMFLOAT4 = DirectX::XMFLOAT4;
-	using XMMATRIX = DirectX::XMMATRIX;
+	
 
 public: // 列挙子
 	/// <summary>
@@ -62,9 +58,9 @@ public: // 静的メンバ関数
 	static void InitializeGraphicsPipeline();
 
 	/// <summary>
-/// 3Dモデル生成
-/// </summary>
-/// <returns></returns>
+	/// 3Dモデル生成
+	/// </summary>
+	/// <returns></returns>
 	static Model* Create();
 
 	/// <summary>
@@ -76,9 +72,9 @@ public: // 静的メンバ関数
 	static Model* CreateFromOBJ(const std::string& modelname, bool smoothing = false);
 
 	/// <summary>
-/// 描画前処理
-/// </summary>
-/// <param name="commandList">描画コマンドリスト</param>
+	/// 描画前処理
+	/// </summary>
+	/// <param name="commandList">描画コマンドリスト</param>
 	static void PreDraw(ID3D12GraphicsCommandList* commandList);
 
 	/// <summary>

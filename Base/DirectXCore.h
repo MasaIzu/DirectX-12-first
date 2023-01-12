@@ -57,7 +57,8 @@ private://メンバ変数
 	HWND hwnd_;
 
 private://メンバ変数
-
+	DirectXCore();
+	~DirectXCore();
 
 	// DXGIデバイス初期化
 	void InitializeDevice();

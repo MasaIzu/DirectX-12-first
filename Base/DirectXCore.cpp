@@ -9,6 +9,11 @@
 
 using namespace Microsoft::WRL;
 
+DirectXCore* DirectXCore::GetInstance() {
+	static DirectXCore instance;
+	return &instance;
+}
+
 void DirectXCore::DirectXCoreInitialize(HWND hwnd, int window_width, int window_height) {
 
 	backBufferWidth_ = window_width;

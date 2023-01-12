@@ -4,12 +4,12 @@
 
 using namespace DirectX;
 
-LightGroup* LightGroup::Create() {
+LightGroup* LightGroup::Create(DirectXCore* directXCore) {
 	// 3Dオブジェクトのインスタンスを生成
 	LightGroup* instance = new LightGroup();
 
 	// 初期化
-	instance->Initialize();
+	instance->Initialize(directXCore);
 
 	return instance;
 }

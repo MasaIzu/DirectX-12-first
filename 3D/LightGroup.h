@@ -59,7 +59,7 @@ public: // 静的メンバ関数
 	/// インスタンス生成
 	/// </summary>
 	/// <returns>インスタンス</returns>
-	static LightGroup* Create();
+	static LightGroup* Create(DirectXCore* directXCore);
 
 public: // メンバ関数
 	/// <summary>

@@ -16,7 +16,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// ゲームウィンドウの作成
 	winApp_ = WinApp::GetInstance();
-	winApp_->MakeWindow(L"適当ゲーム");
+	winApp_->MakeWindow(L"Maverick");
 
 	// DirectX初期化処理
 	directXCore_ = DirectXCore::GetInstance();

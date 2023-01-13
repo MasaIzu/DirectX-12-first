@@ -63,29 +63,47 @@ Vector2& Vector2::operator/=(float s)
 //Vector2 ÉNÉâÉXÇ…ëÆÇ≥Ç»Ç¢ä÷êîåQ
 const Vector2 operator+(const Vector2& v1, const Vector2& v2)
 {
-	Vector2 temp(v1);
-	return temp += v2;
+	Vector2 temp = v1;
+	Vector2 temp2 = v2;
+	temp.x = temp.x + temp2.x;
+	temp.y = temp.y + temp2.y;
+
+	return temp;
 }
 
 const Vector2 operator-(const Vector2& v1, const Vector2& v2)
 {
-	Vector2 temp(v1);
-	return temp -= v2;
+	Vector2 temp = v1;
+	Vector2 temp2 = v2;
+	temp.x = temp.x - temp2.x;
+	temp.y = temp.y - temp2.y;
+
+	return temp;
 }
 
 const Vector2 operator*(const Vector2& v, float s)
 {
-	Vector2 temp(v);
-	return temp * s;
+	Vector2 temp;
+	temp.x = v.x * s;
+	temp.y = v.y * s;
+
+	return temp;
 }
 
 const Vector2 operator*(float s, const Vector2& v)
 {
-	return v * s;
+	Vector2 temp;
+	temp.x = v.x * s;
+	temp.y = v.y * s;
+
+	return temp;
 }
 
 const Vector2 operator/(const Vector2& v, float s)
 {
-	Vector2 temp(v);
-	return temp / s;
+	Vector2 temp;
+	temp.x = v.x / s;
+	temp.y = v.y / s;
+
+	return temp;
 }

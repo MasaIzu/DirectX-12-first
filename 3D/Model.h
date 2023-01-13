@@ -4,10 +4,14 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "Mesh.h"
-#include "LightGroup.h"
+#include "Light.h"
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include "Vector2.h"
+#include "Vector3.h"
+#include "Vector4.h"
+#include "Matrix4.h"
 
 /// <summary>
 /// モデルデータ
@@ -18,16 +22,13 @@ private:
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 	
 
-public: // 列挙子
-	/// <summary>
-	/// ルートパラメータ番号
-	/// </summary>
-	enum class RoomParameter {
-		kWorldTransform, // ワールド変換行列
-		kViewProjection, // ビュープロジェクション変換行列
-		kMaterial,       // マテリアル
-		kTexture,        // テクスチャ
-		kLight,          // ライト
+public:
+	
+	// 定数バッファ用データ構造体
+	struct ConstBufferData
+	{
+		Vector4 color;	// 色 (RGBA)
+		Matrix4 mat;	// ３Ｄ変換行列
 	};
 
 private:
@@ -47,76 +48,40 @@ private: // 静的メンバ変数
 	static std::unique_ptr<LightGroup> lightGroup;
 
 public: // 静的メンバ関数
-	/// <summary>
-	/// 静的初期化
-	/// </summary>
-	static void StaticInitialize(DirectXCore* directXCore);
+	// 静的初期化
+	static void StaticInitialize();
 
-	/// <summary>
-	/// グラフィックスパイプラインの初期化
-	/// </summary>
-	static void InitializeGraphicsPipeline(DirectXCore* directXCore);
+	// グラフィックスパイプラインの初期化
+	static void InitializeGraphicsPipeline();
 
-	/// <summary>
-	/// 3Dモデル生成
-	/// </summary>
-	/// <returns></returns>
+	// 3Dモデル生成
 	static Model* Create();
 
-	/// <summary>
-	/// OBJファイルからメッシュ生成
-	/// </summary>
-	/// <param name="modelname">モデル名</param>
-	/// <param name="modelname">エッジ平滑化フラグ</param>
-	/// <returns>生成されたモデル</returns>
+	// OBJファイルからメッシュ生成
 	static Model* CreateFromOBJ(const std::string& modelname, bool smoothing = false);
 
-	/// <summary>
-	/// 描画前処理
-	/// </summary>
-	/// <param name="commandList">描画コマンドリスト</param>
+	// 描画前処理
 	static void PreDraw(ID3D12GraphicsCommandList* commandList);
 
-	/// <summary>
-	/// 描画後処理
-	/// </summary>
+	// 描画後処理
 	static void PostDraw();
 
 public: // メンバ関数
-	/// <summary>
-	/// デストラクタ
-	/// </summary>
+	// デストラクタ
 	~Model();
 
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	/// <param name="modelname">モデル名</param>
-	/// <param name="modelname">エッジ平滑化フラグ</param>
+	// 初期化
 	void Initialize(const std::string& modelname, bool smoothing = false);
 
-	/// <summary>
-	/// 描画
-	/// </summary>
-	/// <param name="worldTransform">ワールドトランスフォーム</param>
-	/// <param name="viewProjection">ビュープロジェクション</param>
+	// 描画
 	void Draw(
 		const WorldTransform& worldTransform, const ViewProjection& viewProjection);
-
-	/// <summary>
-	/// 描画（テクスチャ差し替え）
-	/// </summary>
-	/// <param name="worldTransform">ワールドトランスフォーム</param>
-	/// <param name="viewProjection">ビュープロジェクション</param>
-	/// <param name="textureHadle">テクスチャハンドル</param>
 	void Draw(
 		const WorldTransform& worldTransform, const ViewProjection& viewProjection,
 		uint32_t textureHadle);
 
-	/// <summary>
-	/// メッシュコンテナを取得
-	/// </summary>
-	/// <returns>メッシュコンテナ</returns>
+
+	// メッシュコンテナを取得
 	inline const std::vector<Mesh*>& GetMeshes() { return meshes_; }
 
 private: // メンバ変数
@@ -129,28 +94,18 @@ private: // メンバ変数
 	// デフォルトマテリアル
 	Material* defaultMaterial_ = nullptr;
 
-	DirectXCore* directXCore_ = nullptr;
 
 private: // メンバ関数
-	/// <summary>
-	/// モデル読み込み
-	/// </summary>
-	/// <param name="modelname">モデル名</param>
-	/// <param name="modelname">エッジ平滑化フラグ</param>
+
+	// モデル読み込み
 	void LoadModel(const std::string& modelname, bool smoothing);
 
-	/// <summary>
-	/// マテリアル読み込み
-	/// </summary>
+	// マテリアル読み込み
 	void LoadMaterial(const std::string& directoryPath, const std::string& filename);
 
-	/// <summary>
-	/// マテリアル登録
-	/// </summary>
+	// マテリアル登録
 	void AddMaterial(Material* material);
 
-	/// <summary>
-	/// テクスチャ読み込み
-	/// </summary>
+	// テクスチャ読み込み
 	void LoadTextures();
 };

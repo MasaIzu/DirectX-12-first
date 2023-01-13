@@ -218,194 +218,193 @@ Matrix4 MyMath::setViewportMat(WinApp* window, const Vector3& v) {
 	return matViewport;
 }
 
-//Matrix4 MyMath::MatrixInverse(Matrix4 pOut)
-//{
-//	Matrix4 mat;
-//	int i, j, loop;
-//	double fDat, fDat2;
-//	double mat_8x4[4][8];
-//	int flag;
-//	float* pF;
-//	double* pD;
-//
-//	//8 x 4行列に値を入れる
-//	for (i = 0; i < 4; i++) {
-//		pF = pOut.m[i];
-//		for (j = 0; j < 4; j++, pF++) mat_8x4[i][j] = (double)(*pF);
-//		pD = mat_8x4[i] + 4;
-//		for (j = 0; j < 4; j++) {
-//			if (i == j)   *pD = 1.0;
-//			else         *pD = 0.0;
-//			pD++;
-//		}
-//	}
-//
-//	flag = 1;
-//	for (loop = 0; loop < 4; loop++) {
-//		fDat = mat_8x4[loop][loop];
-//		if (fDat != 1.0) {
-//			if (fDat == 0.0) {
-//				for (i = loop + 1; i < 4; i++) {
-//					fDat = mat_8x4[i][loop];
-//					if (fDat != 0.0) break;
-//				}
-//				if (i >= 4) {
-//					flag = 0;
-//					break;
-//				}
-//				//行を入れ替える
-//				for (j = 0; j < 8; j++) {
-//					fDat = mat_8x4[i][j];
-//					mat_8x4[i][j] = mat_8x4[loop][j];
-//					mat_8x4[loop][j] = fDat;
-//				}
-//				fDat = mat_8x4[loop][loop];
-//			}
-//
-//			for (i = 0; i < 8; i++) mat_8x4[loop][i] /= fDat;
-//		}
-//		for (i = 0; i < 4; i++) {
-//			if (i != loop) {
-//				fDat = mat_8x4[i][loop];
-//				if (fDat != 0.0f) {
-//					//mat[i][loop]をmat[loop]の行にかけて
-//					//(mat[j] - mat[loop] * fDat)を計算
-//					for (j = 0; j < 8; j++) {
-//						fDat2 = mat_8x4[loop][j] * fDat;
-//						mat_8x4[i][j] -= fDat2;
-//					}
-//				}
-//			}
-//		}
-//	}
-//
-//	if (flag) {
-//		for (i = 0; i < 4; i++) {
-//			pF = mat.m[i];
-//			pD = mat_8x4[i] + 4;
-//			for (j = 0; j < 4; j++) {
-//				*pF = (float)(*pD);
-//				pF++;
-//				pD++;
-//			}
-//		}
-//	}
-//	else {
-//		//単位行列を求める
-//		mat = {
-//		1,0,0,0,
-//		0,1,0,0,
-//		0,0,1,0,
-//		0,0,0,1
-//		};
-//	}
-//
-//	pOut = mat;
-//
-//	if (flag) return pOut;
-//	return pOut;
-//}
-
-Matrix4 MyMath::MatrixInverse(const Matrix4* mat)
+Matrix4 MyMath::MatrixInverse(Matrix4 pOut)
 {
+	Matrix4 mat;
+	int i, j, loop;
+	double fDat, fDat2;
+	double mat_8x4[4][8];
+	int flag;
+	float* pF;
+	double* pD;
 
-	//掃き出し法を行う行列
-	float sweep[4][8]{};
-	//定数倍用
-	float constTimes = 0.0f;
-	//許容する誤差
-	float MAX_ERR = 1e-10f;
-	//戻り値用
-	Matrix4 retMat;
-
-	for (int i = 0; i < 4; i++)
-	{
-		for (int j = 0; j < 4; j++)
-		{
-			//weepの左側に逆行列を求める行列をセット
-			sweep[i][j] = mat->m[i][j];
-
-			//sweepの右側に単位行列をセット
-			sweep[i][4 + j] = Initialize().m[i][j];
+	//8 x 4行列に値を入れる
+	for (i = 0; i < 4; i++) {
+		pF = pOut.m[i];
+		for (j = 0; j < 4; j++, pF++) mat_8x4[i][j] = (double)(*pF);
+		pD = mat_8x4[i] + 4;
+		for (j = 0; j < 4; j++) {
+			if (i == j)   *pD = 1.0;
+			else         *pD = 0.0;
+			pD++;
 		}
 	}
 
-	//全ての列の対角成分に対する繰り返し
-	for (int i = 0; i < 4; i++)
-	{
-		//最大の絶対値を注目対角成分の絶対値と仮定
-		float max = std::fabs(sweep[i][i]);
-		int maxIndex = i;
-
-		//i列目が最大の絶対値となる行を探す
-		for (int j = i + 1; j < 4; j++)
-		{
-			if (std::fabs(sweep[j][i]) > max)
-			{
-				max = std::fabs(sweep[j][i]);
-				maxIndex = j;
-			}
-		}
-
-		if (fabs(sweep[maxIndex][i]) <= MAX_ERR)
-		{
-			//逆行列は求められない
-			return Initialize();
-		}
-
-		//操作(1):i行目とmaxIndex行目を入れ替える
-		if (i != maxIndex)
-		{
-			for (int j = 0; j < 8; j++)
-			{
-				float tmp = sweep[maxIndex][j];
-				sweep[maxIndex][j] = sweep[i][j];
-				sweep[i][j] = tmp;
-			}
-		}
-
-		//sweep[i][i]に掛けると1になる値を求める
-		constTimes = 1 / sweep[i][i];
-
-		//操作(2):p行目をa倍する
-		for (int j = 0; j < 8; j++)
-		{
-			//これによりsweep[i][i]が1になる
-			sweep[i][j] *= constTimes;
-		}
-
-		//操作(3)によりi行目以外の行のi列目を0にする
-		for (int j = 0; j < 4; j++)
-		{
-			if (j == i)
-			{
-				//i行目はそのまま
-				continue;
+	flag = 1;
+	for (loop = 0; loop < 4; loop++) {
+		fDat = mat_8x4[loop][loop];
+		if (fDat != 1.0) {
+			if (fDat == 0.0) {
+				for (i = loop + 1; i < 4; i++) {
+					fDat = mat_8x4[i][loop];
+					if (fDat != 0.0) break;
+				}
+				if (i >= 4) {
+					flag = 0;
+					break;
+				}
+				//行を入れ替える
+				for (j = 0; j < 8; j++) {
+					fDat = mat_8x4[i][j];
+					mat_8x4[i][j] = mat_8x4[loop][j];
+					mat_8x4[loop][j] = fDat;
+				}
+				fDat = mat_8x4[loop][loop];
 			}
 
-			//i行目に掛ける値を求める
-			constTimes = -sweep[j][i];
-
-			for (int k = 0; k < 8; k++)
-			{
-				//j行目にi行目をa倍した行を足す
-				//これによりsweep[j][i]が0になる
-				sweep[j][k] += sweep[i][k] * constTimes;
+			for (i = 0; i < 8; i++) mat_8x4[loop][i] /= fDat;
+		}
+		for (i = 0; i < 4; i++) {
+			if (i != loop) {
+				fDat = mat_8x4[i][loop];
+				if (fDat != 0.0f) {
+					//mat[i][loop]をmat[loop]の行にかけて
+					//(mat[j] - mat[loop] * fDat)を計算
+					for (j = 0; j < 8; j++) {
+						fDat2 = mat_8x4[loop][j] * fDat;
+						mat_8x4[i][j] -= fDat2;
+					}
+				}
 			}
 		}
 	}
 
-	//sweepの右半分がmatの逆行列
-	for (int i = 0; i < 4; i++)
-	{
-		for (int j = 0; j < 4; j++)
-		{
-			retMat.m[i][j] = sweep[i][4 + j];
+	if (flag) {
+		for (i = 0; i < 4; i++) {
+			pF = mat.m[i];
+			pD = mat_8x4[i] + 4;
+			for (j = 0; j < 4; j++) {
+				*pF = (float)(*pD);
+				pF++;
+				pD++;
+			}
 		}
 	}
+	else {
+		//単位行列を求める
+		mat = {
+		1,0,0,0,
+		0,1,0,0,
+		0,0,1,0,
+		0,0,0,1
+		};
+	}
 
-	return retMat;
+	pOut = mat;
+
+	if (flag) return pOut;
+	return pOut;
 }
+
+//Matrix4 MakeInverse(Matrix4 mat)
+//{
+//	//掃き出し法を行う行列
+//	float sweep[4][8]{};
+//	//定数倍用
+//	float constTimes = 0.0f;
+//	//許容する誤差
+//	float MAX_ERR = 1e-10f;
+//	//戻り値用
+//	Matrix4 retMat;
+//
+//	for (int i = 0; i < 4; i++)
+//	{
+//		for (int j = 0; j < 4; j++)
+//		{
+//			//weepの左側に逆行列を求める行列をセット
+//			sweep[i][j] = mat.m[i][j];
+//
+//			//sweepの右側に単位行列をセット
+//			sweep[i][4 + j] = MyMath::Initialize().m[i][j];
+//		}
+//	}
+//
+//	//全ての列の対角成分に対する繰り返し
+//	for (int i = 0; i < 4; i++)
+//	{
+//		//最大の絶対値を注目対角成分の絶対値と仮定
+//		float max = std::fabs(sweep[i][i]);
+//		int maxIndex = i;
+//
+//		//i列目が最大の絶対値となる行を探す
+//		for (int j = i + 1; j < 4; j++)
+//		{
+//			if (std::fabs(sweep[j][i]) > max)
+//			{
+//				max = std::fabs(sweep[j][i]);
+//				maxIndex = j;
+//			}
+//		}
+//
+//		if (fabs(sweep[maxIndex][i]) <= MAX_ERR)
+//		{
+//			//逆行列は求められない
+//			return MyMath::Initialize();
+//		}
+//
+//		//操作(1):i行目とmaxIndex行目を入れ替える
+//		if (i != maxIndex)
+//		{
+//			for (int j = 0; j < 8; j++)
+//			{
+//				float tmp = sweep[maxIndex][j];
+//				sweep[maxIndex][j] = sweep[i][j];
+//				sweep[i][j] = tmp;
+//			}
+//		}
+//
+//		//sweep[i][i]に掛けると1になる値を求める
+//		constTimes = 1 / sweep[i][i];
+//
+//		//操作(2):p行目をa倍する
+//		for (int j = 0; j < 8; j++)
+//		{
+//			//これによりsweep[i][i]が1になる
+//			sweep[i][j] *= constTimes;
+//		}
+//
+//		//操作(3)によりi行目以外の行のi列目を0にする
+//		for (int j = 0; j < 4; j++)
+//		{
+//			if (j == i)
+//			{
+//				//i行目はそのまま
+//				continue;
+//			}
+//
+//			//i行目に掛ける値を求める
+//			constTimes = -sweep[j][i];
+//
+//			for (int k = 0; k < 8; k++)
+//			{
+//				//j行目にi行目をa倍した行を足す
+//				//これによりsweep[j][i]が0になる
+//				sweep[j][k] += sweep[i][k] * constTimes;
+//			}
+//		}
+//	}
+//
+//	//sweepの右半分がmatの逆行列
+//	for (int i = 0; i < 4; i++)
+//	{
+//		for (int j = 0; j < 4; j++)
+//		{
+//			retMat.m[i][j] = sweep[i][4 + j];
+//		}
+//	}
+//
+//	return retMat;
+//}
 
 Matrix4 MyMath::ConvertXMMATtoMat4(DirectX::XMMATRIX XMMatrix) {
 	Matrix4 result;
@@ -456,4 +455,47 @@ Matrix4 MyMath::PerspectiveFovLH(float fovAngleY, float aspectRatio, float nearZ
 
 
 	return perspectiveFovLH;
+}
+
+Matrix4 MyMath::MakeIdentity()
+{
+	Matrix4 me;
+	return me;
+}
+
+// 値を範囲内に納める
+float MyMath::Clamp(float Value, const float low, const float high)
+{
+	if (high < Value)
+	{
+		Value = high;
+	}
+
+	if (Value < low)
+	{
+		Value = low;
+	}
+
+	return Value;
+}
+
+Matrix4 MyMath::Matrix4Orthographic(
+	float viewLeft, float viewRight, float viewBottom, float viewTop, float nearZ, float farZ) {
+	assert(fabsf(viewRight - viewLeft) > 0.00001f);
+	assert(fabsf(viewTop - viewBottom) > 0.00001f);
+	assert(fabsf(farZ - nearZ) > 0.00001f);
+
+	float width = 1.0f / (viewRight - viewLeft);
+	float height = 1.0f / (viewTop - viewBottom);
+	float fRange = 1.0f / (farZ - nearZ);
+	float sx = width * 2.0f;
+	float sy = height * 2.0f;
+	float sz = fRange;
+	float tx = -(viewLeft + viewRight) * width;
+	float ty = -(viewTop + viewBottom) * height;
+	float tz = -fRange * nearZ;
+
+	Matrix4 m{ sx, 0.0f, 0.0f, 0.0f, 0.0f, sy, 0.0f, 0.0f, 0.0f, 0.0f, sz, 0.0f, tx, ty, tz, 1.0f };
+
+	return m;
 }

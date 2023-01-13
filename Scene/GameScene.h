@@ -8,14 +8,15 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "affin.h"
-#include "../Player.h"
-#include "../Enemy.h"
+#include "Player.h"
+#include "Enemy.h"
 #include <sstream>
 
-#include "../EnemyBullet.h"
-#include "../Select.h"
-#include "../RailCamera.h"
-
+#include "EnemyBullet.h"
+#include "Select.h"
+#include "RailCamera.h"
+#include "Ground.h"
+#include "Skydome.h"
 
 /// <summary>
 /// ゲームシーン
@@ -185,11 +186,12 @@ private: // メンバ変数
 	std::stringstream enemyPopCommand_phase4;
 
 	//Skydome
+	Skydome* skydome_ = nullptr;
 	Model* modelSkydome_ = nullptr;
 	//レールカメラ
 	RailCamera* railCamera_ = nullptr;
-
 	//Ground
+	Ground* ground_ = nullptr;
 	Model* modelGround_ = nullptr;
 
 	//SelectGround

@@ -1,15 +1,20 @@
 #pragma once
 #include<Windows.h>
 #include <cstdint>
+#include <string>
 
 class WinApp
 {
 public:
 	// ウィンドウサイズ
-	const int window_width = 1280; // 横幅
-	const int window_height = 720; // 縦幅
+	static const int window_width = 1280; // 横幅
+	static const int window_height = 720; // 縦幅
 
 public: // 静的メンバ関数
+
+	// シングルトンインスタンスの取得
+	static WinApp* GetInstance();
+
 	/// <summary>
 	/// ウィンドウプロシージャ
 	/// </summary>
@@ -20,12 +25,18 @@ public://メンバ関数
 	bool ProcessMessage();
 	void DeleteGameWindow();
 
+	HINSTANCE GetHInstance() const { return w.hInstance; }
+
 
 public://GetterSetter
 
 	HWND Gethwnd() { return hwnd; }
 
 private://メンバ変数
+	WinApp() = default;
+	~WinApp() = default;
+	WinApp(const WinApp&) = delete;
+	const WinApp& operator=(const WinApp&) = delete;
 
 	WNDCLASSEX w{};
 	HWND hwnd;

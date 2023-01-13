@@ -39,7 +39,7 @@ void ViewProjection::UpdateMatrix() {
 
 	// ÉrÉÖÅ[çsóÒÇÃê∂ê¨
 	Matrix4 tmp = MyMath::LookAtLH(eye, target, up);
-	matView = MyMath::MatrixInverse(&tmp);
+	matView = MyMath::MatrixInverse(tmp);
 	DirectX::XMVECTOR a = { eye.x,eye.y,eye.z };
 	DirectX::XMVECTOR b = { target.x,target.y,target.z };
 	DirectX::XMVECTOR c = { up.x,up.y,up.z };

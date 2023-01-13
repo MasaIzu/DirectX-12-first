@@ -46,19 +46,13 @@ void GameScene::Initialize(WinApp* winApp,DirectXCore* directXCore) {
 
 
 	//スプライト生成
-	nextSprite.reset(Sprite::
-		Create(nextTexture_, Vector2(winApp_->window_width / 2, winApp_->window_height / 2),
-			Vector4(1, 1, 1, 1), Vector2(0.5, 0.5)));
+	nextSprite.reset(Sprite::Create(nextTexture_));
 
 	//スプライト生成
-	finSprite.reset(Sprite::
-		Create(finTexture_, Vector2(winApp_->window_width / 2, winApp_->window_height / 2),
-			Vector4(1, 1, 1, 1), Vector2(0.5, 0.5)));
+	finSprite.reset(Sprite::Create(finTexture_));
 
 	//スプライト生成
-	loserSprite.reset(Sprite::
-		Create(loserTexture_, Vector2(winApp_->window_width / 2, winApp_->window_height / 2),
-			Vector4(1, 1, 1, 1), Vector2(0.5, 0.5)));
+	loserSprite.reset(Sprite::Create(loserTexture_));
 
 
 	worldTransformDame_.Initialize();
@@ -66,7 +60,8 @@ void GameScene::Initialize(WinApp* winApp,DirectXCore* directXCore) {
 
 	//自キャラの生成
 	player_ = new Player();
-	
+	//Skydome
+	skydome_ = new Skydome();
 	//レールカメラ
 	railCamera_ = new RailCamera();
 	
@@ -80,7 +75,10 @@ void GameScene::Initialize(WinApp* winApp,DirectXCore* directXCore) {
 	player_->Initialize(model_, winApp_->window_width, winApp_->window_height);
 	//レールカメラの初期化
 	railCamera_->Initialize(winApp_,Vector3(0, -23, -50), Vector3(0.2, 0, 0));
-	
+	//skydomeの初期化
+	skydome_->Initialize(modelSkydome_);
+	//groundの初期化
+	//ground_->Initialize(selectModelGround_);
 	//Selectの初期化
 	select_->Initialize(selectModelGround_, modelDome_);
 	
@@ -117,7 +115,7 @@ void GameScene::Update() {
 		player_->Update(railCamera_->GetViewProjection());
 
 		if (input_->TriggerKey(DIK_RETURN)) {
-			sceneChange = 180;
+			sceneChange = 120;
 			scene_ = Scene::Second;
 		}
 		break;
@@ -166,7 +164,7 @@ void GameScene::Update() {
 		CheckAllCollisions();
 
 		if (DeadEnemys == 60) {
-			scene_ = Scene::Four;
+			scene_ = Scene::Back;
 			enemybay();
 			DeadEnemys = 0;
 		}
@@ -244,19 +242,6 @@ void GameScene::Update() {
 		break;
 	}
 
-
-
-	//デバッグ用表示
-#pragma region debugText
-	/*debugText_->SetPos(50, 70);
-	debugText_->Printf(
-		"target:(%f,%f,%f)", viewProjection_.target.x, viewProjection_.target.y,
-		viewProjection_.target.z);*/
-
-		/*debugText_->SetPos(50, 90);
-		debugText_->Printf(
-			"up:(%f,%f,%f)", viewProjection_.up.x, viewProjection_.up.y, viewProjection_.up.z);*/
-#pragma endregion
 }
 
 void GameScene::Draw() {
@@ -289,7 +274,11 @@ void GameScene::Draw() {
 	if (changeDraw == 0) {
 		select_->Draw(railCamera_->GetViewProjection());
 	}
-	
+	if (changeDraw == 2 || changeDraw == 3 || changeDraw == 4) {
+		//skydome_->Draw(railCamera_->GetViewProjection());
+		select_->GameDraw(railCamera_->GetViewProjection());
+		//ground_->Draw(railCamera_->GetViewProjection());
+	}
 
 	player_->Draw(railCamera_->GetViewProjection());
 
@@ -316,13 +305,16 @@ void GameScene::Draw() {
 	player_->DrawSprite();
 
 	if (changeDraw == 1) {
-		nextSprite->Draw();
+		nextSprite->Draw(Vector2(winApp_->window_width / 2, winApp_->window_height / 2),
+			Vector4(1, 1, 1, 1));
 	}
 	if (changeDraw == 5) {
-		finSprite->Draw();
+		finSprite->Draw(Vector2(winApp_->window_width / 2, winApp_->window_height / 2),
+			Vector4(1, 1, 1, 1));
 	}
 	if (changeDraw == 6) {
-		loserSprite->Draw();
+		loserSprite->Draw(Vector2(winApp_->window_width / 2, winApp_->window_height / 2),
+			Vector4(1, 1, 1, 1));
 	}
 
 

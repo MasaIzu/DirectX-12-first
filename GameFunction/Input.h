@@ -7,13 +7,11 @@
 #define DIRECTINPUT_VERSION 0x0800 //DirectInputのバージョン指定
 #include <dinput.h>
 #include "WinApp.h"
+#include "Mouse.h"
 
 // 入力
 class Input
 {
-public:
-	// namespaceの省略
-	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 public: // メンバ関数
 
@@ -24,26 +22,31 @@ public: // メンバ関数
 	// 更新
 	void Update();
 
-	/// <summary>
-	/// キーの押したかをチェック(長押し)
-	/// </summary>
-	/// <param name="keyNumber">キー番号(DIK_0 等)</param>
-	/// <returns>押されているか</returns>
+	// キーの押したかをチェック(長押し)
 	bool PushKey(BYTE keyNumber);
 
-	/// <summary>
-	/// キーのトリガーをチェック(押した瞬間)
-	/// </summary>
-	/// <param name="keyNumber">キー番号(DIK_0 等)</param>
-	/// <returns>トリガーか</returns>
+	// キーのトリガーをチェック(押した瞬間)
 	bool TriggerKey(BYTE keyNumber);
 
-	/// <summary>
-	/// キーのトリガーをチェック(離した瞬間)
-	/// </summary>
-	/// <param name="keyNumber">キー番号(DIK_0 等)</param>
-	/// <returns>トリガーか</returns>
+	// キーのトリガーをチェック(離した瞬間)
 	bool ReleasedKey(BYTE keyNumber);
+
+	// マウスボタンのトリガー入力
+	bool MouseInputTrigger(int button);
+
+
+	// マウスボタンの入力
+	bool MouseInputing(int button);
+
+
+	// マウスボタンの離した瞬間
+	bool MouseOffTrigger(int button);
+
+	// マウスの位置
+	const Vector2 GetMousePos()const;
+
+	// マウスの位置
+	const Vector3 GetMouseMove();
 
 private:
 	Input() = default;
@@ -54,10 +57,10 @@ private:
 private:// 静的メンバ変数
 
 	// DirectInputのインスタンス
-	ComPtr<IDirectInput8> dInput_ = nullptr;
+	Microsoft::WRL::ComPtr<IDirectInput8> dInput_ = nullptr;
 
 	// キーボードのデバイス
-	ComPtr<IDirectInputDevice8> devKeyboard_ = nullptr;
+	Microsoft::WRL::ComPtr<IDirectInputDevice8> devKeyboard_ = nullptr;
 
 	// 全キーの状態
 	BYTE key[256] = {};
@@ -69,4 +72,7 @@ private:// 静的メンバ変数
 	WinApp* winApp_ = nullptr;
 
 	HWND hwnd_;
+
+	//マウス
+	Mouse* mouse = nullptr;
 };

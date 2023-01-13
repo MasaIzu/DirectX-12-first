@@ -1,4 +1,3 @@
-#include "DirectXCore.h"
 #include "Mesh.h"
 #include <cassert>
 #include <d3dcompiler.h>
@@ -38,7 +37,7 @@ void Mesh::CalculateSmoothedVertexNormals() {
 
 void Mesh::SetMaterial(Material* material) { this->material_ = material; }
 
-void Mesh::CreateBuffers(DirectXCore* directXCore) {
+void Mesh::CreateBuffers() {
 	HRESULT result;
 
 	UINT sizeVB = static_cast<UINT>(sizeof(VertexPosNormalUv) * vertices_.size());
@@ -49,7 +48,7 @@ void Mesh::CreateBuffers(DirectXCore* directXCore) {
 	CD3DX12_RESOURCE_DESC resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(sizeVB);
 
 	// 頂点バッファ生成
-	result = directXCore->GetDevice()->CreateCommittedResource(
+	result = DirectXCore::GetInstance()->GetDevice()->CreateCommittedResource(
 		&heapProps, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
 		IID_PPV_ARGS(&vertBuff_));
 	assert(SUCCEEDED(result));
@@ -76,7 +75,7 @@ void Mesh::CreateBuffers(DirectXCore* directXCore) {
 	// リソース設定
 	resourceDesc.Width = sizeIB;
 	// インデックスバッファ生成
-	result = directXCore->GetDevice()->CreateCommittedResource(
+	result = DirectXCore::GetInstance()->GetDevice()->CreateCommittedResource(
 		&heapProps, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
 		IID_PPV_ARGS(&indexBuff_));
 	if (FAILED(result)) {

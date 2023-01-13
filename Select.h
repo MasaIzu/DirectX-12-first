@@ -24,6 +24,7 @@ public:
 	/// •`‰æ
 	/// </summary>
 	void Draw(ViewProjection viewProjection_);
+	void GameDraw(ViewProjection viewProjection_);
 
 private:
 

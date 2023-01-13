@@ -16,8 +16,13 @@ LRESULT WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 	return DefWindowProc(hwnd, msg, wparam, lparam);
 }
 
-void WinApp::MakeWindow(std::wstring title) {
+WinApp* WinApp::GetInstance() {
+	static WinApp instance;
+	return &instance;
+}
 
+
+void WinApp::MakeWindow(std::wstring title) {
 
 	// ウィンドウクラスの設定
 	w.cbSize = sizeof(WNDCLASSEX);

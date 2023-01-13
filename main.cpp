@@ -15,11 +15,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	GameScene* gameScene_ = nullptr;
 
 	// ゲームウィンドウの作成
-	winApp_ = new WinApp;
+	winApp_ = WinApp::GetInstance();
 	winApp_->MakeWindow(L"適当ゲーム");
 
 	// DirectX初期化処理
-	directXCore_ = new DirectXCore;
+	directXCore_ = DirectXCore::GetInstance();
 	directXCore_->DirectXCoreInitialize(winApp_->Gethwnd(), winApp_->window_width, winApp_->window_height);
 
 #pragma region 汎用機能初期化
@@ -33,9 +33,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	TextureManager::Load("white1x1.png");
 
 	// スプライト静的初期化
-	Sprite::StaticInitialize(directXCore_->GetDevice(), winApp_->window_width, winApp_->window_height);
-
-	// デバッグテキスト初期化
+	Sprite::StaticInitialize(directXCore_->GetDevice());
 	
 
 	// 3Dモデル静的初期化
@@ -46,7 +44,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// ゲームシーンの初期化
 	gameScene_ = new GameScene();
-	gameScene_->Initialize(directXCore_);
+	gameScene_->Initialize(winApp_,directXCore_);
 
 	FPS* fps = new FPS;
 
@@ -76,6 +74,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//FPS固定
 		fps->FpsControlEnd();
+
+		if (input_->TriggerKey(DIK_ESCAPE)) {
+			break;
+		}
 	}
 
 	// 各種解放

@@ -134,4 +134,6 @@ private:
 
 	int isHit = 0;
 
+	float Window_Width;
+	float Window_Height;
 };

@@ -1,164 +1,152 @@
 #pragma once
 
+#include "Vector2.h"
+#include "Vector3.h"
+#include "Vector4.h"
+#include "Matrix4.h"
 #include <Windows.h>
-#include <wrl.h>
 #include <d3d12.h>
-#include"Vector3.h"
-#include"Vector2.h"
-#include"Vector4.h"
-#include"Matrix4.h"
-#include"MyMath.h"
+#include <string>
+#include <wrl.h>
 
 /// <summary>
 /// スプライト
 /// </summary>
-class Sprite
-{
-private: 
-	// Microsoft::WRL::を省略
-	template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+class Sprite {
 
 public: // サブクラス
-	// 頂点データ構造体
-	struct VertexPosUv
-	{
+	/// <summary>
+	/// 頂点データ構造体
+	/// </summary>
+	struct VertexPosUv {
 		Vector3 pos; // xyz座標
 		Vector2 uv;  // uv座標
 	};
 
-	// 定数バッファ用データ構造体
-	struct ConstBufferData
-	{
-		Vector4 color;	// 色 (RGBA)
-		Matrix4 mat;	// ３Ｄ変換行列
+	/// <summary>
+	/// 定数バッファ用データ構造体
+	/// </summary>
+	struct ConstBufferData {
+		Vector4 color; // 色 (RGBA)
+		Matrix4 mat;   // ３Ｄ変換行列
 	};
 
 public: // 静的メンバ関数
 
-	/// 静的初期化
-	static void StaticInitialize(ID3D12Device* device, int window_width, int window_height);
-
-	// テクスチャ読み込み
-	static void LoadTexture(UINT texnumber, const wchar_t* filename);
+	// 静的初期化
+	static void StaticInitialize(ID3D12Device* device,const std::wstring& directoryPath = L"Resources/");
 
 	// 描画前処理
-	static void PreDraw(ID3D12GraphicsCommandList* cmdList);
+	static void PreDraw(ID3D12GraphicsCommandList* cmdList, int blendMode = 1);
 
-	// 描画後処理
+	/// 描画後処理
 	static void PostDraw();
 
+
 	// スプライト生成
-	static Sprite* Create(UINT texNumber, Vector2 position, Vector4 color = { 1, 1, 1, 1 }, Vector2 anchorpoint = { 0.0f, 0.0f }, bool isFlipX = false, bool isFlipY = false);
-
-	// 座標の取得
-	const Vector2& GetPosition() { return position; }
-
-	//カラー替え
-	void SetColor(const Vector4& color) { this->color = color; }
-
-
+	static Sprite* Create(uint32_t textureHandle);
 
 private: // 静的メンバ変数
-	// テクスチャの最大枚数
-	static const int srvCount = 512;
 	// 頂点数
-	static const int vertNum = 4;
+	static const int kVertNum = 4;
 	// デバイス
-	static ID3D12Device* device;
+	static ID3D12Device* Device_;
 	// デスクリプタサイズ
-	static UINT descriptorSize;
+	static UINT DescriptorHandleSize_;
 	// コマンドリスト
-	static ID3D12GraphicsCommandList* cmdList;
+	static ID3D12GraphicsCommandList* CommandList_;
 	// ルートシグネチャ
-	static ComPtr<ID3D12RootSignature> rootSignature;
+	static Microsoft::WRL::ComPtr<ID3D12RootSignature> RootSignature_;
 	// パイプラインステートオブジェクト
-	static ComPtr<ID3D12PipelineState> pipelineState;
+	static std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>, 6>PipelineStates_;
 	// 射影行列
-	static Matrix4 matProjection;
-	// デスクリプタヒープ
-	static ComPtr<ID3D12DescriptorHeap> descHeap;
-	// テクスチャバッファ
-	static ComPtr<ID3D12Resource> texBuff[srvCount];
+	static Matrix4 Matrix4Projection_;
 
 public: // メンバ関数
 
 	// コンストラクタ
-	Sprite(UINT texNumber, Vector2 position, Vector2 size, Vector4 color, Vector2 anchorpoint, bool isFlipX, bool isFlipY);
+	Sprite();
+	// コンストラクタ
+	Sprite(uint32_t textureHandle,Vector2 size);
+
 
 	// 初期化
 	bool Initialize();
 
-	// 角度の設定
-	void SetRotation(float rotation);
+	// テクスチャハンドルの設定
+	void SetTextureHandle(uint32_t textureHandle);
+
+	uint32_t GetTextureHandle() { return textureHandle_; }
+
 
 	// 座標の設定
 	void SetPosition(const Vector2& position);
 
+	const Vector2& GetPosition() { return position_; }
+
+	// 角度の設定
+	void SetRotation(float rotation);
+
+	float GetRotation() { return rotation_; }
+
 	// サイズの設定
 	void SetSize(const Vector2& size);
+
+	const Vector2& GetSize() { return size_; }
 
 	// アンカーポイントの設定
 	void SetAnchorPoint(const Vector2& anchorpoint);
 
+	const Vector2& GetAnchorPoint() { return anchorPoint_; }
+
+	// 色の設定
+	void SetColor(const Vector4& color) { color_ = color; };
+
+	const Vector4& GetColor() { return color_; }
+
 	// 左右反転の設定
 	void SetIsFlipX(bool isFlipX);
+
+	bool GetIsFlipX() { return isFlipX_; }
 
 	// 上下反転の設定
 	void SetIsFlipY(bool isFlipY);
 
+	bool GetIsFlipY() { return isFlipY_; }
+
 	// テクスチャ範囲設定
 	void SetTextureRect(const Vector2& texBase, const Vector2& texSize);
+
+	void SetDrawUpdate(Vector2 Position, Vector4 Color);
+
 
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw();
+	void Draw(Vector2 Position,Vector4 Color);
 
 private: // メンバ変数
-
-	// 頂点バッファ
-	ComPtr<ID3D12Resource> vertBuff;
-
-	// 定数バッファ
-	ComPtr<ID3D12Resource> constBuff;
-
-	// 頂点バッファビュー
-	D3D12_VERTEX_BUFFER_VIEW vbView{};
-
-	// テクスチャ番号
-	UINT texNumber = 0;
-
-	// Z軸回りの回転角
-	float rotation = 0.0f;
-
-	// 座標
-	Vector2 position{};
-
-	// スプライト幅、高さ
-	Vector2 size = { 100.0f, 100.0f };
-
-	// アンカーポイント
-	Vector2 anchorpoint = { 0, 0 };
-
-	// ワールド行列
-	Matrix4 matWorld{};
-
-	// 色
-	Vector4 color = { 1, 1, 1, 1 };
-
-	// 左右反転
-	bool isFlipX = false;
-
-	// 上下反転
-	bool isFlipY = false;
-
-	// テクスチャ始点
-	Vector2 texBase = { 0, 0 };
-
-	// テクスチャ幅、高さ
-	Vector2 texSize = { 100.0f, 100.0f };
+	Microsoft::WRL::ComPtr<ID3D12Resource> vertBuff_;
+	Microsoft::WRL::ComPtr<ID3D12Resource> constBuff_;
+	VertexPosUv* vertMap_ = nullptr;
+	ConstBufferData* constMap_ = nullptr;
+	D3D12_VERTEX_BUFFER_VIEW vbView_{};
+	UINT textureHandle_ = 0;
+	float rotation_ = 0.0f;
+	Vector2 position_{};
+	Vector2 size_ = { 100.0f, 100.0f };
+	Vector2 anchorPoint_ = { 0, 0 };
+	Matrix4 matWorld_{};
+	Vector4 color_ = { 1, 1, 1, 1 };
+	bool isFlipX_ = false;
+	bool isFlipY_ = false;
+	Vector2 texBase_ = { 0, 0 };
+	Vector2 texSize_ = { 100.0f, 100.0f };
+	D3D12_RESOURCE_DESC resourceDesc_;
 
 private: // メンバ関数
-	// 頂点データ転送
+	/// <summary>
+	/// 頂点データ転送
+	/// </summary>
 	void TransferVertices();
 };

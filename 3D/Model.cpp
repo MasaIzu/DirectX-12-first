@@ -22,22 +22,21 @@ ComPtr<ID3D12RootSignature> Model::sRootSignature_;
 ComPtr<ID3D12PipelineState> Model::sPipelineState_;
 std::unique_ptr<LightGroup> Model::lightGroup;
 
-void Model::StaticInitialize(DirectXCore* directXCore) {
+void Model::StaticInitialize() {
 
 	// パイプライン初期化
-	InitializeGraphicsPipeline(directXCore);
+	InitializeGraphicsPipeline();
 
 	// ライト生成
 	lightGroup.reset(LightGroup::Create());
 }
 
-void Model::InitializeGraphicsPipeline(DirectXCore* directXCore) {
+void Model::InitializeGraphicsPipeline() {
 	HRESULT result = S_FALSE;
 	ComPtr<ID3DBlob> vsBlob;    // 頂点シェーダオブジェクト
 	ComPtr<ID3DBlob> psBlob;    // ピクセルシェーダオブジェクト
 	ComPtr<ID3DBlob> errorBlob; // エラーオブジェクト
 
-	directXCore_ = directXCore
 
 	// 頂点シェーダの読み込みとコンパイル
 	result = D3DCompileFromFile(
@@ -149,7 +148,7 @@ void Model::InitializeGraphicsPipeline(DirectXCore* directXCore) {
 	rootparams[3].InitAsDescriptorTable(1, &descRangeSRV, D3D12_SHADER_VISIBILITY_ALL);
 	rootparams[4].InitAsConstantBufferView(3, 0, D3D12_SHADER_VISIBILITY_ALL);
 
-	// スタティックサンプラー
+	// スタティックサンプル
 	CD3DX12_STATIC_SAMPLER_DESC samplerDesc = CD3DX12_STATIC_SAMPLER_DESC(0);
 
 	// ルートシグネチャの設定
@@ -278,9 +277,9 @@ void Model::LoadModel(const std::string& modelname, bool smoothing) {
 	int indexCountTex = 0;
 	int indexCountNoTex = 0;
 
-	vector<XMFLOAT3> positions; // 頂点座標
-	vector<XMFLOAT3> normals;   // 法線ベクトル
-	vector<XMFLOAT2> texcoords; // テクスチャUV
+	vector<Vector3> positions; // 頂点座標
+	vector<Vector3> normals;   // 法線ベクトル
+	vector<Vector2> texcoords; // テクスチャUV
 	// 1行ずつ読み込む
 	string line;
 	while (getline(file, line)) {
@@ -325,7 +324,7 @@ void Model::LoadModel(const std::string& modelname, bool smoothing) {
 		// 先頭文字列がvなら頂点座標
 		if (key == "v") {
 			// X,Y,Z座標読み込み
-			XMFLOAT3 position{};
+			Vector3 position{};
 			line_stream >> position.x;
 			line_stream >> position.y;
 			line_stream >> position.z;
@@ -334,7 +333,7 @@ void Model::LoadModel(const std::string& modelname, bool smoothing) {
 		// 先頭文字列がvtならテクスチャ
 		if (key == "vt") {
 			// U,V成分読み込み
-			XMFLOAT2 texcoord{};
+			Vector2 texcoord{};
 			line_stream >> texcoord.x;
 			line_stream >> texcoord.y;
 			// V方向反転
@@ -345,7 +344,7 @@ void Model::LoadModel(const std::string& modelname, bool smoothing) {
 		// 先頭文字列がvnなら法線ベクトル
 		if (key == "vn") {
 			// X,Y,Z成分読み込み
-			XMFLOAT3 normal{};
+			Vector3 normal{};
 			line_stream >> normal.x;
 			line_stream >> normal.y;
 			line_stream >> normal.z;
@@ -570,22 +569,19 @@ void Model::LoadTextures() {
 void Model::Draw(
 	const WorldTransform& worldTransform, const ViewProjection& viewProjection) {
 
+
 	// ライトの描画
-	lightGroup->Draw(sCommandList_, static_cast<UINT>(RoomParameter::kLight));
+	lightGroup->Draw(sCommandList_, 4);
 
 	// CBVをセット（ワールド行列）
-	sCommandList_->SetGraphicsRootConstantBufferView(
-		static_cast<UINT>(RoomParameter::kWorldTransform),
-		worldTransform.constBuff_->GetGPUVirtualAddress());
+	sCommandList_->SetGraphicsRootConstantBufferView(0,worldTransform.constBuff_->GetGPUVirtualAddress());
 
 	// CBVをセット（ビュープロジェクション行列）
-	sCommandList_->SetGraphicsRootConstantBufferView(
-		static_cast<UINT>(RoomParameter::kViewProjection),
-		viewProjection.constBuff_->GetGPUVirtualAddress());
+	sCommandList_->SetGraphicsRootConstantBufferView(1,viewProjection.constBuff_->GetGPUVirtualAddress());
 
 	// 全メッシュを描画
 	for (auto& mesh : meshes_) {
-		mesh->Draw(sCommandList_, (UINT)RoomParameter::kMaterial, (UINT)RoomParameter::kTexture);
+		mesh->Draw(sCommandList_, 2, 3);
 	}
 }
 
@@ -594,22 +590,18 @@ void Model::Draw(
 	uint32_t textureHadle) {
 
 	// ライトの描画
-	lightGroup->Draw(sCommandList_, static_cast<UINT>(RoomParameter::kLight));
+	lightGroup->Draw(sCommandList_, 4);
 
 	// CBVをセット（ワールド行列）
-	sCommandList_->SetGraphicsRootConstantBufferView(
-		static_cast<UINT>(RoomParameter::kWorldTransform),
-		worldTransform.constBuff_->GetGPUVirtualAddress());
+	sCommandList_->SetGraphicsRootConstantBufferView(0,worldTransform.constBuff_->GetGPUVirtualAddress());
 
 	// CBVをセット（ビュープロジェクション行列）
-	sCommandList_->SetGraphicsRootConstantBufferView(
-		static_cast<UINT>(RoomParameter::kViewProjection),
-		viewProjection.constBuff_->GetGPUVirtualAddress());
+	sCommandList_->SetGraphicsRootConstantBufferView(1,viewProjection.constBuff_->GetGPUVirtualAddress());
 
 	// 全メッシュを描画
 	for (auto& mesh : meshes_) {
 		mesh->Draw(
-			sCommandList_, (UINT)RoomParameter::kMaterial, (UINT)RoomParameter::kTexture,
+			sCommandList_, 2, 3,
 			textureHadle);
 	}
 }

@@ -25,13 +25,19 @@ namespace MyMath {
 	Vector3 DivVecMat(const Vector3& vector3, const Matrix4& matrix4);
 
 	Matrix4 setViewportMat(WinApp* window, const Vector3& v);
-	Matrix4 MatrixInverse(const Matrix4* pOut);
+	Matrix4 MatrixInverse(Matrix4 pOut);
 
 	Matrix4 ConvertXMMATtoMat4(DirectX::XMMATRIX XMMatrix);
 
 	Matrix4 LookAtLH(Vector3 eye, Vector3 target, Vector3 up);
 	Matrix4 PerspectiveFovLH(float fovAngleY, float  aspectRatio, float  nearZ, float farZ);
 
+	Matrix4 MakeIdentity();
 
+	// ’l‚ð”ÍˆÍ“à‚É”[‚ß‚é
+	float Clamp(float Value, const float low, const float high);
+
+	Matrix4 Matrix4Orthographic(
+		float viewLeft, float viewRight, float viewBottom, float viewTop, float nearZ, float farZ);
 
 };

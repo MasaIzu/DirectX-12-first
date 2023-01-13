@@ -11,6 +11,8 @@ void Player::Initialize(Model* model,float WindowWidth,float WindowHeight) {
 	//シングルインスタンスを取得する
 	input_ = Input::GetInstance();
 
+	Window_Width = WindowWidth;
+	Window_Height = WindowHeight;
 
 	//ワールド変換の初期化
 	worldTransform_.Initialize();
@@ -26,8 +28,7 @@ void Player::Initialize(Model* model,float WindowWidth,float WindowHeight) {
 	textureReticle = TextureManager::Load("aim.png");
 	//スプライト生成
 	sprite2DReticle_.reset(Sprite::
-		Create(textureReticle, Vector2(WindowWidth / 2, WindowHeight / 2 + 12),
-			Vector4(1, 1, 1, 1), Vector2(0.5, 0.5)));
+		Create(textureReticle));
 
 	textureReticle_FULL = TextureManager::Load("HPbar/HPfull.png");
 	textureReticle_1 = TextureManager::Load("HPbar/HP_1.png");
@@ -44,21 +45,21 @@ void Player::Initialize(Model* model,float WindowWidth,float WindowHeight) {
 
 
 	spriteHP_FULL.reset(Sprite::
-		Create(textureReticle_FULL, Vector2(300, 640), Vector4(1, 1, 1, 1), Vector2(0.5, 0.5)));
+		Create(textureReticle_FULL));
 	spriteHP_1.reset(Sprite::
-		Create(textureReticle_1, Vector2(300, 640), Vector4(1, 1, 1, 1), Vector2(0.5, 0.5)));
+		Create(textureReticle_1));
 	spriteHP_2.reset(Sprite::
-		Create(textureReticle_2, Vector2(300, 640), Vector4(1, 1, 1, 1), Vector2(0.5, 0.5)));
+		Create(textureReticle_2));
 	spriteHP_3.reset(Sprite::
-		Create(textureReticle_3, Vector2(300, 640), Vector4(1, 1, 1, 1), Vector2(0.5, 0.5)));
+		Create(textureReticle_3));
 	spriteHP_4.reset(Sprite::
-		Create(textureReticle_4, Vector2(300, 640), Vector4(1, 1, 1, 1), Vector2(0.5, 0.5)));
+		Create(textureReticle_4));
 	spriteHP_5.reset(Sprite::
-		Create(textureReticle_5, Vector2(300, 640), Vector4(1, 1, 1, 1), Vector2(0.5, 0.5)));
+		Create(textureReticle_5));
 	spriteHP_6.reset(Sprite::
-		Create(textureReticle_6, Vector2(300, 640), Vector4(1, 1, 1, 1), Vector2(0.5, 0.5)));
+		Create(textureReticle_6));
 	spriteHP_7.reset(Sprite::
-		Create(textureReticle_7, Vector2(300, 640), Vector4(1, 1, 1, 1), Vector2(0.5, 0.5)));
+		Create(textureReticle_7));
 
 	DrawHpSelect = 0;
 	playerHp = 7;
@@ -130,60 +131,61 @@ void Player::Draw(ViewProjection viewProjection_) {
 
 
 void Player::Attack(const ViewProjection& viewProjection_) {
-	//if (input_->IsTriggerMouse(0) || input_->IsPressMouse(0)) {
+	if (input_->MouseInputTrigger(0) || input_->MouseInputing(0)) {
 
 
-	//	//弾の速度
-	//	const float kBulletSpeed = 4.0f;
-	//	Vector3 velocity(0, 0, kBulletSpeed);
+		//弾の速度ssssss
+		const float kBulletSpeed = 4.0f;
+		Vector3 velocity(0, 0, kBulletSpeed);
 
 
-	//	//速度ベクトルを自機の向きに合わせて回転させる
-	//	velocity = bVelocity(velocity, worldTransform_);
+		//速度ベクトルを自機の向きに合わせて回転させる
+		velocity = bVelocity(velocity, worldTransform_);
 
-	//	//自機から照準オブジェクトへのベクトル
-	//	velocity = viewProjection_.target - viewProjection_.eye;
-	//	velocity = MyMath::vector3Normalize(velocity) * kBulletSpeed;
+		//自機から照準オブジェクトへのベクトル
+		velocity = viewProjection_.target - viewProjection_.eye;
+		velocity = MyMath::vector3Normalize(velocity) * kBulletSpeed;
 
-	//	//弾を生成し初期化
-	//	std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
-	//	newBullet->worldSet(&worldTransform_);
-	//	//弾をカメラ位置にセット
-	//	newBullet->Initialize(modelBullet_, MyMath::GetWorldTransform(worldTransform_.parent_->matWorld_), velocity, texture2dame, texture4dame);
+		//弾を生成し初期化
+		std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
+		//newBullet->worldSet(&worldTransform_);
+		//弾をカメラ位置にセット
+		newBullet->Initialize(modelBullet_, viewProjection_.eye, velocity, texture2dame, texture4dame);
 
-	//	//弾の登録
-	//	bullets_.push_back(std::move(newBullet));
-	//}
+		//弾の登録
+		bullets_.push_back(std::move(newBullet));
+	}
 
 }
 
 void Player::DrawSprite() {
-	sprite2DReticle_->Draw();
+	sprite2DReticle_->Draw(Vector2(Window_Width / 2, Window_Height / 2 + 12),
+		Vector4(1, 1, 1, 1));
 
 	if (DrawHpSelect == 0) {
 		if (playerHp == 7) {
-			spriteHP_FULL->Draw();
+			spriteHP_FULL->Draw(Vector2(300, 640), Vector4(1, 1, 1, 1));
 		}
 		else if (playerHp == 6) {
-			spriteHP_1->Draw();
+			spriteHP_1->Draw(Vector2(300, 640), Vector4(1, 1, 1, 1));
 		}
 		else if (playerHp == 5) {
-			spriteHP_2->Draw();
+			spriteHP_2->Draw(Vector2(300, 640), Vector4(1, 1, 1, 1));
 		}
 		else if (playerHp == 4) {
-			spriteHP_3->Draw();
+			spriteHP_3->Draw(Vector2(300, 640), Vector4(1, 1, 1, 1));
 		}
 		else if (playerHp == 3) {
-			spriteHP_4->Draw();
+			spriteHP_4->Draw(Vector2(300, 640), Vector4(1, 1, 1, 1));
 		}
 		else if (playerHp == 2) {
-			spriteHP_5->Draw();
+			spriteHP_5->Draw(Vector2(300, 640), Vector4(1, 1, 1, 1));
 		}
 		else if (playerHp == 1) {
-			spriteHP_6->Draw();
+			spriteHP_6->Draw(Vector2(300, 640), Vector4(1, 1, 1, 1));
 		}
 		else {
-			spriteHP_7->Draw();
+			spriteHP_7->Draw(Vector2(300, 640), Vector4(1, 1, 1, 1));
 		}
 	}
 

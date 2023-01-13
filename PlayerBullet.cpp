@@ -34,7 +34,7 @@ void PlayerBullet::Update(const ViewProjection& viewProjection) {
 
 	//行列更新
 	AffinTrans::affin(worldTransform_);
-	worldTransform_.matWorld_ *= viewProjection.matView;
+	//worldTransform_.matWorld_ *= viewProjection.matView;
 	worldTransform_.TransferMatrix();
 
 	//時間でデス

@@ -205,25 +205,13 @@
     <ClInclude Include="Base\WinApp.h">
       <Filter>Engine\ヘッダー\Base</Filter>
     </ClInclude>
-    <ClInclude Include="3D\CircleShadow.h">
-      <Filter>Engine\ヘッダー\3D</Filter>
-    </ClInclude>
-    <ClInclude Include="3D\DirectionalLight.h">
-      <Filter>Engine\ヘッダー\3D</Filter>
-    </ClInclude>
-    <ClInclude Include="3D\LightGroup.h">
+    <ClInclude Include="3D\Light.h">
       <Filter>Engine\ヘッダー\3D</Filter>
     </ClInclude>
     <ClInclude Include="3D\Mesh.h">
       <Filter>Engine\ヘッダー\3D</Filter>
     </ClInclude>
     <ClInclude Include="3D\Model.h">
-      <Filter>Engine\ヘッダー\3D</Filter>
-    </ClInclude>
-    <ClInclude Include="3D\PointLight.h">
-      <Filter>Engine\ヘッダー\3D</Filter>
-    </ClInclude>
-    <ClInclude Include="3D\SpotLight.h">
       <Filter>Engine\ヘッダー\3D</Filter>
     </ClInclude>
     <ClInclude Include="3D\WorldTransform.h">
@@ -241,12 +229,6 @@
     <ClInclude Include="Drawing\Sprite.h">
       <Filter>Engine\ヘッダー\2D</Filter>
     </ClInclude>
-    <ClInclude Include="Enemy.h">
-      <Filter>ユーザーヘッダー ファイル\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="EnemyBullet.h">
-      <Filter>ユーザーヘッダー ファイル\Enemy</Filter>
-    </ClInclude>
     <ClInclude Include="Player.h">
       <Filter>ユーザーヘッダー ファイル\Player</Filter>
     </ClInclude>
@@ -258,6 +240,27 @@
     </ClInclude>
     <ClInclude Include="Select.h">
       <Filter>ユーザーヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameFunction\Mouse.h">
+      <Filter>Engine\ヘッダー\GameFunction</Filter>
+    </ClInclude>
+    <ClInclude Include="Skydome.h">
+      <Filter>ユーザーヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Ground.h">
+      <Filter>ユーザーヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy\Enemy.h">
+      <Filter>ユーザーヘッダー ファイル\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy\EnemyBullet.h">
+      <Filter>ユーザーヘッダー ファイル\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteCommon.h">
+      <Filter>Engine\ヘッダー\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstantBuffer.h">
+      <Filter>Engine\ヘッダー\3D</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -300,10 +303,7 @@
     <ClCompile Include="Base\FPS.cpp">
       <Filter>Engine\ソース ファイル\Base</Filter>
     </ClCompile>
-    <ClCompile Include="Base\WinApp.cpp">
-      <Filter>Engine\ソース ファイル\Base</Filter>
-    </ClCompile>
-    <ClCompile Include="3D\LightGroup.cpp">
+    <ClCompile Include="3D\Light.cpp">
       <Filter>Engine\ソース ファイル\3D</Filter>
     </ClCompile>
     <ClCompile Include="3D\Mesh.cpp">
@@ -327,15 +327,6 @@
     <ClCompile Include="Drawing\Sprite.cpp">
       <Filter>Engine\ソース ファイル\2D</Filter>
     </ClCompile>
-    <ClCompile Include="Math\MyMath.cpp">
-      <Filter>Engine\ソース ファイル\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="EnemyBullet.cpp">
-      <Filter>ユーザーソース ファイル\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemy.cpp">
-      <Filter>ユーザーソース ファイル\Enemy</Filter>
-    </ClCompile>
     <ClCompile Include="Player.cpp">
       <Filter>ユーザーソース ファイル\Player</Filter>
     </ClCompile>
@@ -347,6 +338,33 @@
     </ClCompile>
     <ClCompile Include="Select.cpp">
       <Filter>ユーザーソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\WinApp.cpp">
+      <Filter>Engine\ソース ファイル\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="GameFunction\Mouse.cpp">
+      <Filter>Engine\ソース ファイル\GameFunction</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\MyMath.cpp">
+      <Filter>Engine\ソース ファイル\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Skydome.cpp">
+      <Filter>ユーザーソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Ground.cpp">
+      <Filter>ユーザーソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy\Enemy.cpp">
+      <Filter>ユーザーソース ファイル\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy\EnemyBullet.cpp">
+      <Filter>ユーザーソース ファイル\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="SpriteCommon.cpp">
+      <Filter>Engine\ソース ファイル\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="ConstantBuffer.cpp">
+      <Filter>Engine\ソース ファイル\3D</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

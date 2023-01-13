@@ -12,6 +12,9 @@ class DirectXCore {
 
 public://メンバ関数
 
+	// シングルトンインスタンスの取得
+	static DirectXCore* GetInstance();
+
 	void DirectXCoreInitialize(HWND hwnd, int window_width, int window_height);
 
 
@@ -56,9 +59,12 @@ private://メンバ変数
 
 	HWND hwnd_;
 
+
 private://メンバ変数
-	DirectXCore();
-	~DirectXCore();
+	DirectXCore() = default;
+	~DirectXCore() = default;
+	DirectXCore(const DirectXCore&) = delete;
+	const DirectXCore& operator=(const DirectXCore&) = delete;
 
 	// DXGIデバイス初期化
 	void InitializeDevice();

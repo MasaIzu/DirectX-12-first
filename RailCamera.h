@@ -33,6 +33,9 @@ public:
 	void setShake(int x);
 	//void SetMouseMovemont(Vector3 mouseMovement);
 	void MousePosInitialize();
+
+	void SetEye(Vector3 eye);
+
 private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;

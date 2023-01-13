@@ -26,7 +26,7 @@ void RailCamera::Update() {
 	}
 
 	//カメラの移動の速さ
-	float kCharacterSpeed = 0.2f;
+	float kCharacterSpeed = 0.6f;
 	//カメラの移動ベクトル
 	Vector3 cameraDownMove = { 0, 0, 0 };
 	Vector3 cameraMoveX = { 0, 0, 0 };
@@ -79,12 +79,12 @@ void RailCamera::Update() {
 #pragma endregion
 
 	if (cameraMoveFlag == 0) {
-		if (input_->PushKey(DIK_LSHIFT)) {
-			kCharacterSpeed = kCharacterSpeed + 0.15;
+		/*if (input_->PushKey(DIK_LSHIFT)) {
+			kCharacterSpeed = kCharacterSpeed + 0.3;
 			if (viewProjection_.fovAngleY < 1.3) {
-				viewProjection_.fovAngleY += 0.03f;
+				viewProjection_.fovAngleY += 0.1f;
 			}
-		}
+		}*/
 
 		//押した方向で移動ベクトルを変更
 		if (input_->PushKey(DIK_S)) {
@@ -101,7 +101,7 @@ void RailCamera::Update() {
 		}
 
 		if (input_->PushKey(DIK_SPACE)) {
-			cameraMoveY += {0, 0.00225f, 0};
+			cameraMoveY += {0, 0.015f, 0};
 		}
 	}
 
@@ -115,7 +115,7 @@ void RailCamera::Update() {
 		worldTransform_.translation_.y = -20;
 	}
 	else {
-		cameraMoveY += { 0, -0.0014f, 0 };
+		cameraMoveY += { 0, -0.007f, 0 };
 	}
 	//行列更新
 	AffinTrans::affin(worldTransform_);
@@ -206,4 +206,7 @@ void RailCamera::cameraSet(int x) {
 
 void RailCamera::setShake(int x) {
 	isShake = x;
+}
+void RailCamera::SetEye(Vector3 eye) {
+	viewProjection_.eye = eye;
 }

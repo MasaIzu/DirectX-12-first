@@ -32,7 +32,7 @@ void Input::Initialize()
 {
 	WinApp* winApp = WinApp::GetInstance();
 
-	hwnd_ = winApp->GetHwnd();
+	hwnd_ = winApp->Gethwnd();
 	HRESULT result = S_FALSE;
 
 	// DirectInputオブジェクトの生成
@@ -52,6 +52,10 @@ void Input::Initialize()
 	result = devKeyboard_->SetCooperativeLevel(
 		hwnd_, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
 	assert(SUCCEEDED(result));
+
+	//マウスデバイスの初期化
+	mouse = new Mouse;
+	mouse->Initialize(dInput_.Get());
 }
 
 void Input::Update()
@@ -65,6 +69,8 @@ void Input::Update()
 	// 全キーの入力状態を取得する
 	devKeyboard_->GetDeviceState(sizeof(key), key);
 
+	//マウス更新
+	mouse->Update();
 }
 
 bool Input::PushKey(BYTE keyNumber)
@@ -98,4 +104,29 @@ bool Input::ReleasedKey(BYTE keyNumber)
 
 	// そうでなければfalseを返す
 	return false;
+}
+
+bool Input::MouseInputTrigger(int button)
+{
+	return mouse->MouseInputTrigger(button);
+}
+
+bool Input::MouseInputing(int button)
+{
+	return mouse->MouseInput(button);
+}
+
+bool Input::MouseOffTrigger(int button)
+{
+	return mouse->MouseOffTrigger(button);
+}
+
+const Vector2 Input::GetMousePos()const
+{
+	return mouse->GetMousePos();
+}
+
+const Vector3 Input::GetMouseMove()
+{
+	return mouse->GetMouseMove();
 }

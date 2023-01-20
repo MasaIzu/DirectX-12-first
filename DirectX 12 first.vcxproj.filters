@@ -217,9 +217,6 @@
     <ClInclude Include="3D\WorldTransform.h">
       <Filter>Engine\ヘッダー\3D</Filter>
     </ClInclude>
-    <ClInclude Include="Collision\Collision.h">
-      <Filter>Engine\ヘッダー\Collision</Filter>
-    </ClInclude>
     <ClInclude Include="GameFunction\ScoreSprite.h">
       <Filter>Engine\ヘッダー\GameFunction</Filter>
     </ClInclude>
@@ -261,6 +258,42 @@
     </ClInclude>
     <ClInclude Include="ConstantBuffer.h">
       <Filter>Engine\ヘッダー\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision\BaseCollider.h">
+      <Filter>Engine\ヘッダー\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision\BoxCollision.h">
+      <Filter>Engine\ヘッダー\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision\Collision.h">
+      <Filter>Engine\ヘッダー\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision\CollisionAttribute.h">
+      <Filter>Engine\ヘッダー\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision\CollisionInfo.h">
+      <Filter>Engine\ヘッダー\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision\CollisionManager.h">
+      <Filter>Engine\ヘッダー\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision\CollisionPrimitive.h">
+      <Filter>Engine\ヘッダー\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision\CollisionTypes.h">
+      <Filter>Engine\ヘッダー\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision\MeshCollider.h">
+      <Filter>Engine\ヘッダー\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision\QueryCallback.h">
+      <Filter>Engine\ヘッダー\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision\RaycastHit.h">
+      <Filter>Engine\ヘッダー\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision\SphereCollider.h">
+      <Filter>Engine\ヘッダー\Collision</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -315,9 +348,6 @@
     <ClCompile Include="3D\WorldTransform.cpp">
       <Filter>Engine\ソース ファイル\3D</Filter>
     </ClCompile>
-    <ClCompile Include="Collision\Collision.cpp">
-      <Filter>Engine\ソース ファイル\Collision</Filter>
-    </ClCompile>
     <ClCompile Include="GameFunction\ScoreSprite.cpp">
       <Filter>Engine\ソース ファイル\GameFunction</Filter>
     </ClCompile>
@@ -365,6 +395,24 @@
     </ClCompile>
     <ClCompile Include="ConstantBuffer.cpp">
       <Filter>Engine\ソース ファイル\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Collision\BoxCollision.cpp">
+      <Filter>Engine\ソース ファイル\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Collision\Collision.cpp">
+      <Filter>Engine\ソース ファイル\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Collision\CollisionManager.cpp">
+      <Filter>Engine\ソース ファイル\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Collision\CollisionPrimitive.cpp">
+      <Filter>Engine\ソース ファイル\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Collision\MeshCollider.cpp">
+      <Filter>Engine\ソース ファイル\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Collision\SphereCollider.cpp">
+      <Filter>Engine\ソース ファイル\Collision</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

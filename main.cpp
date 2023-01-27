@@ -5,6 +5,8 @@
 #include "Audio.h"
 #include "ErrorException.h"
 #include "FPS.h"
+#include "ImGuiManager.h"
+#include <imgui.h>
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -13,6 +15,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// 汎用機能
 	Input* input_ = nullptr;
 	GameScene* gameScene_ = nullptr;
+
 
 	// ゲームウィンドウの作成
 	winApp_ = WinApp::GetInstance();
@@ -46,6 +49,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	gameScene_ = new GameScene();
 	gameScene_->Initialize(winApp_,directXCore_);
 
+	ImGuiManager* imGui = nullptr;
+	imGui = new ImGuiManager();
+	imGui->Initialize(winApp_, directXCore_);
+
 	FPS* fps = new FPS;
 
 	// メインループ
@@ -63,11 +70,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// ゲームシーンの毎フレーム処理
 		gameScene_->Update();
 		
+		//Imguiの更新
+		imGui->Bigin();
+
+		//デモウィンドウの表示オン
+		ImGui::ShowDemoWindow();
+
+		imGui->End();
 
 		// 描画開始
 		directXCore_->PreDraw();
 		// ゲームシーンの描画
 		gameScene_->Draw();
+
+		//ImGui描画
+		imGui->Draw();
 		
 		// 描画終了
 		directXCore_->PostDraw();
@@ -81,7 +98,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	}
 
 	// 各種解放
-	
+	imGui->Finalize();
 
 	// ゲームウィンドウの破棄
 #pragma region  WindowsAPI後始末

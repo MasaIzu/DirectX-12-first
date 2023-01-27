@@ -36,6 +36,9 @@ public://メンバ関数
 	// 描画コマンドリストの取得
 	ID3D12GraphicsCommandList* GetCommandList() { return commandList.Get(); }
 
+	//バックバッファの数を取得
+	size_t GetBackBufferCount()const { return backBuffers.size(); }
+
 private://メンバ変数
 
 	// Direct3D関連

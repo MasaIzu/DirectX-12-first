@@ -295,6 +295,9 @@
     <ClInclude Include="Collision\SphereCollider.h">
       <Filter>Engine\ヘッダー\Collision</Filter>
     </ClInclude>
+    <ClInclude Include="ImGuiManager.h">
+      <Filter>Engine\ヘッダー</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -413,6 +416,9 @@
     </ClCompile>
     <ClCompile Include="Collision\SphereCollider.cpp">
       <Filter>Engine\ソース ファイル\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGuiManager.cpp">
+      <Filter>Engine\ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

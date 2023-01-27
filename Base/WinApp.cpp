@@ -9,7 +9,7 @@ LRESULT WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 	case WM_DESTROY:
 		//OSに対して、アプリの終了を伝える
 		PostQuitMessage(0);
-		return 0;
+		return false;
 	}
 
 	//標準のメッセージ処理を行う

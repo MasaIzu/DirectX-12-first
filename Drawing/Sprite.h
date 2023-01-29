@@ -123,7 +123,7 @@ public: // ƒƒ“ƒoŠÖ”
 	/// <summary>
 	/// •`‰æ
 	/// </summary>
-	void Draw(Vector2 Position,Vector4 Color);
+	void Draw(Vector2 Position,Vector4 Color, int blendMode = 1);
 
 private: // ƒƒ“ƒo•Ï”
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertBuff_;

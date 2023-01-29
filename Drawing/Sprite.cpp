@@ -5,6 +5,7 @@
 #include <d3dx12.h>
 #include "MyMath.h"
 #include "WinApp.h"
+#include "DirectXCore.h"
 
 #pragma comment(lib, "d3dcompiler.lib")
 
@@ -396,7 +397,7 @@ void Sprite::SetDrawUpdate(Vector2 Position, Vector4 Color){
 	SetPosition(Position);
 }
 
-void Sprite::Draw(Vector2 Position, Vector4 Color) {
+void Sprite::Draw(Vector2 Position, Vector4 Color, int blendMode) {
 
 	SetDrawUpdate(Position, Color);
 
@@ -408,6 +409,17 @@ void Sprite::Draw(Vector2 Position, Vector4 Color) {
 	// 定数バッファにデータ転送
 	constMap_->color = color_;
 	constMap_->mat = matWorld_ * Matrix4Projection_; // 行列の合成
+
+
+	// コマンドリストをセット
+	CommandList_ = DirectXCore::GetInstance()->GetCommandList();
+
+	// パイプラインステートの設定
+	CommandList_->SetPipelineState(PipelineStates_[blendMode].Get());
+	// ルートシグネチャの設定
+	CommandList_->SetGraphicsRootSignature(RootSignature_.Get());
+	// プリミティブ形状を設定
+	CommandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
 	// 頂点バッファの設定
 	CommandList_->IASetVertexBuffers(0, 1, &vbView_);

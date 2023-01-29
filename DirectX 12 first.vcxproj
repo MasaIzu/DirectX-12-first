@@ -240,6 +240,8 @@
     <ClInclude Include="3D\Mesh.h" />
     <ClInclude Include="3D\Model.h" />
     <ClInclude Include="3D\WorldTransform.h" />
+    <ClInclude Include="AbstractSceneFactory.h" />
+    <ClInclude Include="BaseScene.h" />
     <ClInclude Include="Base\DirectXCore.h" />
     <ClInclude Include="Base\ErrorException.h" />
     <ClInclude Include="Base\FPS.h" />
@@ -264,6 +266,7 @@
     <ClInclude Include="Drawing\TextureManager.h" />
     <ClInclude Include="Enemy\Enemy.h" />
     <ClInclude Include="Enemy\EnemyBullet.h" />
+    <ClInclude Include="Framework.h" />
     <ClInclude Include="GameFunction\Input.h" />
     <ClInclude Include="GameFunction\Mouse.h" />
     <ClInclude Include="GameFunction\ScoreSprite.h" />
@@ -275,20 +278,24 @@
     <ClInclude Include="Math\Vector2.h" />
     <ClInclude Include="Math\Vector3.h" />
     <ClInclude Include="Math\Vector4.h" />
+    <ClInclude Include="MainGame.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerBullet.h" />
     <ClInclude Include="RailCamera.h" />
+    <ClInclude Include="SceneFactory.h" />
+    <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Scene\GameScene.h" />
     <ClInclude Include="Select.h" />
     <ClInclude Include="Skydome.h" />
     <ClInclude Include="Sound\Audio.h" />
-    <ClInclude Include="SpriteCommon.h" />
+    <ClInclude Include="TitleScene.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3D\Light.cpp" />
     <ClCompile Include="3D\Mesh.cpp" />
     <ClCompile Include="3D\Model.cpp" />
     <ClCompile Include="3D\WorldTransform.cpp" />
+    <ClCompile Include="BaseScene.cpp" />
     <ClCompile Include="Base\DirectXCore.cpp" />
     <ClCompile Include="Base\FPS.cpp" />
     <ClCompile Include="Base\WinApp.cpp" />
@@ -299,12 +306,12 @@
     <ClCompile Include="Collision\CollisionPrimitive.cpp" />
     <ClCompile Include="Collision\MeshCollider.cpp" />
     <ClCompile Include="Collision\SphereCollider.cpp" />
-    <ClCompile Include="ConstantBuffer.cpp" />
     <ClCompile Include="Drawing\Material.cpp" />
     <ClCompile Include="Drawing\Sprite.cpp" />
     <ClCompile Include="Drawing\TextureManager.cpp" />
     <ClCompile Include="Enemy\Enemy.cpp" />
     <ClCompile Include="Enemy\EnemyBullet.cpp" />
+    <ClCompile Include="Framework.cpp" />
     <ClCompile Include="GameFunction\Input.cpp" />
     <ClCompile Include="GameFunction\Mouse.cpp" />
     <ClCompile Include="GameFunction\ScoreSprite.cpp" />
@@ -317,14 +324,17 @@
     <ClCompile Include="Math\Vector2.cpp" />
     <ClCompile Include="Math\Vector3.cpp" />
     <ClCompile Include="Math\Vector4.cpp" />
+    <ClCompile Include="MainGame.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerBullet.cpp" />
     <ClCompile Include="RailCamera.cpp" />
+    <ClCompile Include="SceneFactory.cpp" />
+    <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
     <ClCompile Include="Select.cpp" />
     <ClCompile Include="Skydome.cpp" />
     <ClCompile Include="Sound\Audio.cpp" />
-    <ClCompile Include="SpriteCommon.cpp" />
+    <ClCompile Include="TitleScene.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

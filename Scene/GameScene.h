@@ -18,10 +18,13 @@
 #include "Ground.h"
 #include "Skydome.h"
 
+#include "BaseScene.h"
+#include "SceneManager.h"
+
 /// <summary>
 /// ゲームシーン
 /// </summary>
-class GameScene {
+class GameScene : public BaseScene{
 
 public: // メンバ関数
 	/// <summary>
@@ -40,17 +43,20 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(WinApp* winApp,DirectXCore* directXCore);
+	void Initialize() override;
 
 	/// <summary>
 	/// 毎フレーム処理
 	/// </summary>
-	void Update();
+	void Update() override;
 
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw();
+	void Draw() override;
+
+	// 終了処理
+	void Finalize() override;
 
 	/// <summary>
 	/// 衝突判定と応答
@@ -210,6 +216,8 @@ private: // メンバ変数
 
 	//描画用の切り替え
 	int changeDraw = 0;
+
+	SceneManager* sceneManager_ = nullptr;
 
 	/// <summary>
 	/// ゲームシーン用

@@ -14,10 +14,10 @@ GameScene::~GameScene() {
 	delete modelSkydome_;
 }
 
-void GameScene::Initialize(WinApp* winApp,DirectXCore* directXCore) {
+void GameScene::Initialize() {
 
-	dxCommon_ = directXCore;
-	winApp_ = winApp;
+	dxCommon_ = DirectXCore::GetInstance();
+	winApp_ = WinApp::GetInstance();
 	input_ = Input::GetInstance();
 
 	textureHandle_ = TextureManager::Load("Black.png");
@@ -82,6 +82,7 @@ void GameScene::Initialize(WinApp* winApp,DirectXCore* directXCore) {
 	//Selectの初期化
 	select_->Initialize(selectModelGround_, modelDome_);
 	
+	sceneManager_ = SceneManager::GetInstance();
 
 	//ファイルの読み込み
 	LoadEnemyPopData();
@@ -93,7 +94,10 @@ void GameScene::Update() {
 	if (sceneChange > 0) {
 		sceneChange--;
 	}
-
+	if (input_->TriggerKey(DIK_SPACE))
+	{
+		sceneManager_->ChangeScene("TITLE");
+	}
 
 	switch (scene_) {
 	case Scene::First://タイトル
@@ -324,6 +328,10 @@ void GameScene::Draw() {
 	Sprite::PostDraw();
 
 #pragma endregion
+}
+
+void GameScene::Finalize()
+{
 }
 
 void GameScene::CheckAllCollisions() {

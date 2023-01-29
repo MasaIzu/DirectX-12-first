@@ -97,6 +97,12 @@
     <Filter Include="ユーザーヘッダー ファイル\RailCamra">
       <UniqueIdentifier>{f5839840-4fa8-4320-8ee8-bee54451aa31}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\ソース ファイル\Framework">
+      <UniqueIdentifier>{6d38218d-f280-42d3-832d-3a2aea03586a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\ヘッダー\Framework">
+      <UniqueIdentifier>{43530153-5faa-47bc-ac5d-9d0c8f845283}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Obj.hlsli">
@@ -253,9 +259,6 @@
     <ClInclude Include="Enemy\EnemyBullet.h">
       <Filter>ユーザーヘッダー ファイル\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="SpriteCommon.h">
-      <Filter>Engine\ヘッダー\2D</Filter>
-    </ClInclude>
     <ClInclude Include="ConstantBuffer.h">
       <Filter>Engine\ヘッダー\3D</Filter>
     </ClInclude>
@@ -297,6 +300,27 @@
     </ClInclude>
     <ClInclude Include="ImGuiManager.h">
       <Filter>Engine\ヘッダー</Filter>
+    </ClInclude>
+    <ClInclude Include="MainGame.h">
+      <Filter>Engine\ヘッダー\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework.h">
+      <Filter>Engine\ヘッダー\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="TitleScene.h">
+      <Filter>Engine\ヘッダー\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseScene.h">
+      <Filter>Engine\ヘッダー\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>Engine\ヘッダー\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="AbstractSceneFactory.h">
+      <Filter>Engine\ヘッダー\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneFactory.h">
+      <Filter>Engine\ヘッダー\Framework</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -393,12 +417,6 @@
     <ClCompile Include="Enemy\EnemyBullet.cpp">
       <Filter>ユーザーソース ファイル\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="SpriteCommon.cpp">
-      <Filter>Engine\ソース ファイル\2D</Filter>
-    </ClCompile>
-    <ClCompile Include="ConstantBuffer.cpp">
-      <Filter>Engine\ソース ファイル\3D</Filter>
-    </ClCompile>
     <ClCompile Include="Collision\BoxCollision.cpp">
       <Filter>Engine\ソース ファイル\Collision</Filter>
     </ClCompile>
@@ -419,6 +437,24 @@
     </ClCompile>
     <ClCompile Include="ImGuiManager.cpp">
       <Filter>Engine\ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGame.cpp">
+      <Filter>Engine\ソース ファイル\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework.cpp">
+      <Filter>Engine\ソース ファイル\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="TitleScene.cpp">
+      <Filter>Engine\ソース ファイル\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseScene.cpp">
+      <Filter>Engine\ソース ファイル\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>Engine\ソース ファイル\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneFactory.cpp">
+      <Filter>Engine\ソース ファイル\Framework</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

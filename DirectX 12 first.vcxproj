@@ -285,7 +285,6 @@
     <ClInclude Include="SceneFactory.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Scene\GameScene.h" />
-    <ClInclude Include="Select.h" />
     <ClInclude Include="Skydome.h" />
     <ClInclude Include="Sound\Audio.h" />
     <ClInclude Include="TitleScene.h" />
@@ -310,7 +309,6 @@
     <ClCompile Include="Drawing\Sprite.cpp" />
     <ClCompile Include="Drawing\TextureManager.cpp" />
     <ClCompile Include="Enemy\Enemy.cpp" />
-    <ClCompile Include="Enemy\EnemyBullet.cpp" />
     <ClCompile Include="Framework.cpp" />
     <ClCompile Include="GameFunction\Input.cpp" />
     <ClCompile Include="GameFunction\Mouse.cpp" />
@@ -326,12 +324,10 @@
     <ClCompile Include="Math\Vector4.cpp" />
     <ClCompile Include="MainGame.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="PlayerBullet.cpp" />
     <ClCompile Include="RailCamera.cpp" />
     <ClCompile Include="SceneFactory.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
-    <ClCompile Include="Select.cpp" />
     <ClCompile Include="Skydome.cpp" />
     <ClCompile Include="Sound\Audio.cpp" />
     <ClCompile Include="TitleScene.cpp" />

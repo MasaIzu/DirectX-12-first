@@ -21,6 +21,8 @@
 #include "BaseScene.h"
 #include "SceneManager.h"
 
+#include<memory>
+
 /// <summary>
 /// ƒQ[ƒ€ƒV[ƒ“
 /// </summary>

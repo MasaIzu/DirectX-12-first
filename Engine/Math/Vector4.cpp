@@ -83,10 +83,6 @@ Vector4& Vector4::Vector3Normal()
 	return *this;
 }
 
-float Vector4::Vector3Dot(const Vector4& v) const
-{
-	return x * v.x + y * v.y + z * v.z;
-}
 
 Vector4 Vector4::Vector3Cross(const Vector4& v) const
 {

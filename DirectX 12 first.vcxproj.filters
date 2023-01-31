@@ -262,9 +262,6 @@
     <ClInclude Include="UserApplication\Enemy\Enemy.h">
       <Filter>ユーザーヘッダー ファイル\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="UserApplication\Enemy\EnemyBullet.h">
-      <Filter>ユーザーヘッダー ファイル\Enemy</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Collision\BaseCollider.h">
       <Filter>Engine\ヘッダー\Collision</Filter>
     </ClInclude>
@@ -301,9 +298,6 @@
     <ClInclude Include="Engine\Collision\SphereCollider.h">
       <Filter>Engine\ヘッダー\Collision</Filter>
     </ClInclude>
-    <ClInclude Include="UserApplication\base\MainGame.h">
-      <Filter>Engine\ヘッダー\Framework</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Framework\Framework.h">
       <Filter>Engine\ヘッダー\Framework</Filter>
     </ClInclude>
@@ -333,6 +327,12 @@
     </ClInclude>
     <ClInclude Include="UserApplication\Skydome\Skydome.h">
       <Filter>ユーザーヘッダー ファイル\Skydome</Filter>
+    </ClInclude>
+    <ClInclude Include="UserApplication\base\MainGame.h">
+      <Filter>Engine\ヘッダー\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Math\Quaternion.h">
+      <Filter>Engine\ヘッダー\Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -426,9 +426,6 @@
     <ClCompile Include="Engine\Collision\SphereCollider.cpp">
       <Filter>Engine\ソース ファイル\Collision</Filter>
     </ClCompile>
-    <ClCompile Include="UserApplication\base\MainGame.cpp">
-      <Filter>Engine\ソース ファイル\Framework</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Framework\Framework.cpp">
       <Filter>Engine\ソース ファイル\Framework</Filter>
     </ClCompile>
@@ -455,6 +452,12 @@
     </ClCompile>
     <ClCompile Include="UserApplication\Skydome\Skydome.cpp">
       <Filter>ユーザーソース ファイル\Skydome</Filter>
+    </ClCompile>
+    <ClCompile Include="UserApplication\base\MainGame.cpp">
+      <Filter>Engine\ソース ファイル\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Math\Quaternion.cpp">
+      <Filter>Engine\ソース ファイル\Math</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

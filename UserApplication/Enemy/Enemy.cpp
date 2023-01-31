@@ -5,7 +5,7 @@
 
 void Enemy::Initialize(Model* model) {
 	//NULLポインタチェック
-	model_ = model;
+	model_.reset(model);
 
 	//ワールド変換の初期化
 	worldTransform_.Initialize();

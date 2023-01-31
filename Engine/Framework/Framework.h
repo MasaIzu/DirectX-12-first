@@ -45,15 +45,16 @@ protected:
 	//シングルトン
 	WinApp* winApp_ = nullptr;
 	DirectXCore* directXCore_ = nullptr;
-	// 汎用機能
 	Input* input_ = nullptr;
+	SceneManager* sceneManager_;
 
-
+	//シングルトン以外
 	std::unique_ptr<ImGuiManager> imGui;
 	std::unique_ptr <FPS> fps;
-
-	SceneManager* sceneManager_;
 	std::unique_ptr <AbstractSceneFactory> sceneFactory_;
+
+
+
 
 	bool isEndRequst = false;
 };

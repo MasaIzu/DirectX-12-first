@@ -24,8 +24,8 @@ public:
 
 private:
     // スプライト
-    Sprite* scoresprite[10];
-    Sprite* scoresprite2[10];
+    std::unique_ptr <Sprite> scoresprite[10];
+    std::unique_ptr <Sprite> scoresprite2[10];
 
     // 初期化用変数
     Vector4 color = { 1, 1, 1, 1 };

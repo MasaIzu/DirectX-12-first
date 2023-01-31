@@ -4,9 +4,10 @@ void TitleScene::Initialize()
 {
 	input = Input::GetInstance();
 
-	loserTexture_ = TextureManager::Load("Loser.png");
+	loserTexture_ = TextureManager::Load("kyomu.png");
 	sprite_=  Sprite::Create(loserTexture_);
 	sceneManager_ = SceneManager::GetInstance();
+
 }
 
 void TitleScene::Update()
@@ -19,7 +20,7 @@ void TitleScene::Update()
 
 void TitleScene::Draw()
 {
-	sprite_->Draw({50,50},{1,1,1,1});
+	sprite_->Draw({640,360},{1,1,1,1});
 }
 
 void TitleScene::Finalize()

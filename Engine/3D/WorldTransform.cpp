@@ -1,6 +1,7 @@
 #include "WorldTransform.h"
 #include "DirectXCore.h"
 #include <cassert>
+#include "Quaternion.h"
 
 void WorldTransform::Initialize(){
 	CreateConstBuffer();
@@ -38,17 +39,17 @@ void WorldTransform::Map(){
 void WorldTransform::TransferMatrix(){
 
 	Matrix4 matScale, matRot, matTrans;
+	Quaternion QuaternionMatRot = { rotation_.x,rotation_.y,rotation_.z,0 };
 
 	//スケール、回転、平行移動行列の計算
 	matScale = MyMath::Scale(scale_);
 	matRot = MyMath::Initialize();
-	matRot *= MyMath::Rotation(rotation_,6);
 	matTrans = MyMath::Translation(translation_);
 
 	//ワールド行列の合成
 	matWorld_ = MyMath::Initialize();//変形をリセット
 	matWorld_ *= matScale;//ワールド行列にスケーリングを反映
-	matWorld_ *= matRot;//ワールド行列に回転を反映
+	matWorld_ *= QuaternionMatRot.MakeRotateMatrix();//ワールド行列に回転を反映
 	matWorld_ *= matTrans;//ワールド行列に平行移動を反映
 
 	//親オブジェクトがあれば

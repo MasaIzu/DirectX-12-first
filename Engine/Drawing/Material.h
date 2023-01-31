@@ -90,7 +90,7 @@ private:
 	// 定数バッファ
 	ComPtr<ID3D12Resource> constBuff_;
 	// 定数バッファのマップ
-	ConstBufferData* constMap_ = nullptr;
+	std::unique_ptr <ConstBufferData> constMap_;
 	// テクスチャハンドル
 	uint32_t textureHandle_ = 0;
 

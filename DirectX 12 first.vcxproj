@@ -236,6 +236,7 @@
     <ClInclude Include="Engine\3D\Mesh.h" />
     <ClInclude Include="Engine\3D\Model.h" />
     <ClInclude Include="Engine\3D\WorldTransform.h" />
+    <ClInclude Include="Engine\Math\Quaternion.h" />
     <ClInclude Include="Engine\Scene\AbstractSceneFactory.h" />
     <ClInclude Include="Engine\Scene\BaseScene.h" />
     <ClInclude Include="Engine\Base\DirectXCore.h" />
@@ -260,7 +261,6 @@
     <ClInclude Include="Engine\2D\Sprite.h" />
     <ClInclude Include="Engine\Drawing\TextureManager.h" />
     <ClInclude Include="UserApplication\Enemy\Enemy.h" />
-    <ClInclude Include="UserApplication\Enemy\EnemyBullet.h" />
     <ClInclude Include="Engine\Framework\Framework.h" />
     <ClInclude Include="Engine\GameFunction\Input.h" />
     <ClInclude Include="Engine\GameFunction\Mouse.h" />
@@ -287,6 +287,7 @@
     <ClCompile Include="Engine\3D\Mesh.cpp" />
     <ClCompile Include="Engine\3D\Model.cpp" />
     <ClCompile Include="Engine\3D\WorldTransform.cpp" />
+    <ClCompile Include="Engine\Math\Quaternion.cpp" />
     <ClCompile Include="Engine\Scene\BaseScene.cpp" />
     <ClCompile Include="Engine\Base\DirectXCore.cpp" />
     <ClCompile Include="Engine\Base\FPS.cpp" />

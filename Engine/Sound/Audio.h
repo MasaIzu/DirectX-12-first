@@ -66,6 +66,6 @@ private:
 	//再生する波形データの設定
 	XAUDIO2_BUFFER buf{};
 	//波形フォーマットからSourceVoiceの生成
-	IXAudio2SourceVoice* sourceVoice = nullptr;
+	std::unique_ptr <IXAudio2SourceVoice> sourceVoice = nullptr;
 	HRESULT result;
 };

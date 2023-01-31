@@ -17,9 +17,17 @@ void GameScene::Initialize() {
 	winApp_ = WinApp::GetInstance();
 	input_ = Input::GetInstance();
 
-	model_.reset(Model::Create());
+	model_.reset(Model::CreateFromOBJ("UFO", true));
 
 	sceneManager_ = SceneManager::GetInstance();
+
+	viewProjection_.Initialize();
+	viewProjection_.eye = { 0,0,-20 };
+	viewProjection_.UpdateMatrix();
+
+	worldTransform_.Initialize();
+	worldTransform_.translation_ = { 0,0,5 };
+	worldTransform_.TransferMatrix();
 }
 
 void GameScene::Update() {
@@ -47,7 +55,7 @@ void GameScene::Draw() {
 	// 3Dオブジェクト描画前処理
 	Model::PreDraw(commandList);
 
-	
+	model_->Draw(worldTransform_, viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();

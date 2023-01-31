@@ -3,7 +3,7 @@
 void Ground::Initialize(Model* model) {
 	//NULLポインタチェック
 	assert(model);
-	model_ = model;
+	model_.reset(model);
 	//ワールド変換の初期化
 	worldTransform_.Initialize();
 

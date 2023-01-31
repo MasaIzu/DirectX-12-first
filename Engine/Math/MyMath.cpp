@@ -208,6 +208,19 @@ Vector3 MyMath::DivVecMat(const Vector3& vector3, const Matrix4& matrix4)
 	return { V3.x, V3.y, V3.z };
 }
 
+Vector4 MyMath::Vec4Mat4Mul(const Vector4& vec, const Matrix4& mat)
+{
+	Vector4 retVec = {};
+
+	retVec.x = vec.x * mat.m[0][0] + vec.y * mat.m[1][0] + vec.z * mat.m[2][0] + vec.w * mat.m[3][0];
+
+	retVec.y = vec.x * mat.m[0][1] + vec.y * mat.m[1][1] + vec.z * mat.m[2][1] + vec.w * mat.m[3][1];
+
+	retVec.z = vec.x * mat.m[0][2] + vec.y * mat.m[1][2] + vec.z * mat.m[2][2] + vec.w * mat.m[3][2];
+
+	return retVec;
+}
+
 Matrix4 MyMath::setViewportMat(WinApp* window, const Vector3& v) {
 	//単位行列の設定
 	Matrix4 matViewport = Initialize();
@@ -306,9 +319,8 @@ Matrix4 MyMath::MatrixInverse(Matrix4 pOut)
 	return pOut;
 }
 
-Matrix4 MakeInverse(const Matrix4* mat)
+Matrix4 MyMath::MakeInverse(const Matrix4* mat)
 {
-
 
 	//掃き出し法を行う行列
 	float sweep[4][8]{};
@@ -502,16 +514,3 @@ Matrix4 MyMath::Matrix4Orthographic(
 	return m;
 }
 
-// ベクトルと行列の掛け算
-Vector4 Vec4Mat4Mul(const Vector4& vec, const Matrix4& mat)
-{
-	Vector4 retVec = {};
-
-	retVec.x = vec.x * mat.m[0][0] + vec.y * mat.m[1][0] + vec.z * mat.m[2][0] + vec.w * mat.m[3][0];
-
-	retVec.y = vec.x * mat.m[0][1] + vec.y * mat.m[1][1] + vec.z * mat.m[2][1] + vec.w * mat.m[3][1];
-
-	retVec.z = vec.x * mat.m[0][2] + vec.y * mat.m[1][2] + vec.z * mat.m[2][2] + vec.w * mat.m[3][2];
-
-	return retVec;
-}

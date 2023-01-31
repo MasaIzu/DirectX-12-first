@@ -55,13 +55,13 @@ void Framework::Update()
 	// 入力関連の毎フレーム処理
 	input_->Update();
 
-	////Imguiの更新
-	//imGui->Bigin();
+	//Imguiの更新
+	imGui->Bigin();
 
-	////デモウィンドウの表示オン
-	//ImGui::ShowDemoWindow();
+	//デモウィンドウの表示オン
+	ImGui::ShowDemoWindow();
 
-	//imGui->End();
+	imGui->End();
 
 	//シーンマネージャーの更新
 	sceneManager_->Update();
@@ -74,14 +74,15 @@ void Framework::Finalize()
 {
 	// 各種解放
 	imGui->Finalize();
-
 	sceneFactory_.reset();
-	// ゲームウィンドウの破棄
-#pragma region  WindowsAPI後始末
 
+
+
+
+	// ゲームウィンドウの破棄
 	winApp_->DeleteGameWindow();
 
-#pragma endregion
+
 }
 
 bool Framework::isPlayMyGame()
@@ -110,7 +111,7 @@ void Framework::Run()
 		Draw();
 
 		//ImGui描画
-		//imGui->Draw();
+		imGui->Draw();
 
 
 		// 描画終了

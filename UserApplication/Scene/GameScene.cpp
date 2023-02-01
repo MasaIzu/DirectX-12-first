@@ -27,6 +27,7 @@ void GameScene::Initialize() {
 
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = { 0,0,5 };
+	worldTransform_.rotation_ = { 0,0,0 };
 	worldTransform_.TransferMatrix();
 }
 

@@ -110,9 +110,11 @@ void Framework::Run()
 
 		Draw();
 
+
 		//ImGui•`‰æ
 		imGui->Draw();
 
+		
 
 		// •`‰æI—¹
 		directXCore_->PostDraw();

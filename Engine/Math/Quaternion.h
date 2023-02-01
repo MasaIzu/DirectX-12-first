@@ -1,6 +1,9 @@
 #pragma once
-#include"vector3.h"
+#include"ErrorException.h"
+#include"Vector4.h"
+#include"Vector3.h"
 #include"Matrix4.h"
+
 class Quaternion
 {
 public:
@@ -9,56 +12,78 @@ public:
 	float z;
 	float w;
 
-	Quaternion();
-	Quaternion(float x, float y, float z, float w);
-	 
-	//Quaternionの積
-	Quaternion Multiply(Quaternion quaternion);
-	//単位Quaternionを返す
-	Quaternion IdentityQuaternion();
-	//共役Quaternionを返す
-	Quaternion Conjugate();
-	//Quaternionのnormを返す
-	float Norm() const;
-	//正規化したQuaternionを返す
-	Quaternion Normalize();
-	//逆Quaternionを返す
-	Quaternion Inverse();
-	//ベクトルをQuaternionで回転させた結果のベクトルを求める
-	Vector3 RotateVector(const Vector3& vector);
-	//Quaternionから回転行列を求める
-	Matrix4 MakeRotateMatrix();
+	//クオータニオンを作成
+
+	//成分を指定して クォータニオンを作成
+	Quaternion(float x = 0.0f, float y = 0.0f, float z = 0.0f, float w = 1.0f);
+
+	//任意軸まわりの回転の指定からクォータニオンを作成
+	Quaternion(const Vector3& v, float angle);
+
+	//回転行列からクォータニオンを作成
+	Quaternion(const Matrix4& m);
+
+
+	Quaternion(const Vector4& v);
+
+	//ベクトルからベクトルの角度
+	Quaternion(const Vector3& u, const Vector3& v);
+
+	//内積を求める
+	float Dot(const Quaternion& q)const;
+
+	//ノルムを求める
+	float Norm()const;
+
+	//正規化する
+	Quaternion Normalize() const;
+
+	//単位クオータニオン
+	Quaternion Identity() const;
+
+	// 共役クオータニオン
+	Quaternion Conjugate() const;
+
+	// 逆クオータニオン
+	Quaternion Inverse() const;
+
+	//クオータニオン球面線形補間
+	Quaternion Slerp(const Quaternion& q, float t);
+
+	//クオータニオン線形補間
+	Quaternion Lerp(const Quaternion& q, float t);
+
+	//クオータニオンから回転行列を求める
+	Matrix4 Rotate();
+
+	//回転軸の算出
+	Vector3 GetAxis();
+
+	//オイラー角に変換
+	Vector3 GetEulerAngles();
+
+	//オイラー角からクオータニオンに変換
+	void SeTEuler(const Vector3& rot);
 
 	//単項演算子オーバーロード
-	Quaternion operator+() const;
-	Quaternion operator-() const;
+	Quaternion operator + ();
+	Quaternion operator - ()const;
 
 	//代入演算子オーバーロード
-	Quaternion& operator+=(const Quaternion& v);
-	Quaternion& operator-=(const Quaternion& v);
-	Quaternion& operator*=(float s);
-	Quaternion& operator/=(float s);
+	Quaternion& operator += (const Quaternion& q);
+	Quaternion& operator -= (const Quaternion& q);
+	Quaternion& operator *= (float s);
+	Quaternion& operator /= (float s);
+	Quaternion& operator *= (const Quaternion& q);
 
-	
 };
 
-Vector3 MatVector(const Vector3& vector, const Matrix4& matrix);
-
-//任意軸回転を表すQuaternionの生成
-Quaternion MakeAxisAngle(const Vector3& axis, float radian);
-
-//
-Quaternion Slerp(const Quaternion& q0, const Quaternion& q1, float t);
-
-//
-Quaternion DirectionToDirection(const Vector3& u, const Vector3& v);
-
 //2項演算子オーバーロード
-//いろんな引数(引数の型と順序)のパターンに対応するため、以下のように準備している
-const Quaternion operator+(const Quaternion& v1, const Quaternion& v2);
-const Quaternion operator-(const Quaternion& v1, const Quaternion& v2);
-const Quaternion operator*(const Quaternion& v, float s);
-const Quaternion operator*(float s, const Quaternion& v);
-
-const Quaternion operator/(const Quaternion& v, float s);
+const Quaternion operator + (const Quaternion& q1, const Quaternion& q2);
+const Quaternion operator - (const Quaternion& q1, const Quaternion& q2);
+const Quaternion operator * (const Quaternion& q1, const Quaternion& q2);
+const Quaternion operator * (const Quaternion& q, float s);
+const Quaternion operator * (float s, const Quaternion& q);
+const Quaternion operator / (const Quaternion& q, float s);
+const Vector3 operator*(Quaternion q, Vector3 vec);
 

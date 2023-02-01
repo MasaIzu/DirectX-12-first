@@ -25,6 +25,18 @@ Vector3& Vector3::normalize() {
 	return *this;
 }
 
+Vector3 Vector3::norm()const
+{
+	Vector3 nor = *this;
+
+	float len = length();
+	if (len != 0) {
+		return nor /= len;
+	}
+	
+	return nor;
+}
+
 float Vector3::dot(const Vector3& v) const
 {
 	return x * v.x + y * v.y + z * v.x + x * v.z;

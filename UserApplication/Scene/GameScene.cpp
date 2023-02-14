@@ -3,7 +3,7 @@
 #include <cassert>
 #include <random>
 #include <fstream>
-
+#include "FbxLoader.h"
 
 GameScene::GameScene() {}
 
@@ -22,13 +22,18 @@ void GameScene::Initialize() {
 	sceneManager_ = SceneManager::GetInstance();
 
 	viewProjection_.Initialize();
-	viewProjection_.eye = { 0,0,-20 };
+	viewProjection_.eye = { 0,0,-100 };
 	viewProjection_.UpdateMatrix();
 
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = { 0,0,5 };
 	worldTransform_.rotation_ = { 0,0,0 };
 	worldTransform_.TransferMatrix();
+
+	fbxmodel = new FbxModel();
+
+	fbxmodel = FbxLoader::GetInstance()->LoadModelFromFile("lowpoliHitokunBoss");
+
 }
 
 void GameScene::Update() {
@@ -56,10 +61,18 @@ void GameScene::Draw() {
 	// 3Dオブジェクト描画前処理
 	Model::PreDraw(commandList);
 
-	model_->Draw(worldTransform_, viewProjection_);
+	//model_->Draw(worldTransform_, viewProjection_);
+
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
+
+	FbxModel::PreDraw(commandList);
+
+	fbxmodel->Draw(worldTransform_, viewProjection_);
+
+	FbxModel::PostDraw();
+
 #pragma endregion
 
 #pragma region 前景スプライト描画

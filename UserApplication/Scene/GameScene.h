@@ -12,6 +12,8 @@
 #include "BaseScene.h"
 #include "SceneManager.h"
 
+#include "FbxModel.h"
+
 #include<memory>
 
 /// <summary>
@@ -70,5 +72,7 @@ private: // メンバ変数
 	//シーンマネージャー
 	SceneManager* sceneManager_ = nullptr;
 
+	//Fbxモデル
+	FbxModel* fbxmodel;
 
 };

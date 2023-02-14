@@ -8,6 +8,7 @@
 #include "ImGuiManager.h"
 
 #include "SceneManager.h"
+#include "FbxModel.h"
 
 #include <memory>
 
@@ -52,7 +53,7 @@ protected:
 	std::unique_ptr<ImGuiManager> imGui;
 	std::unique_ptr <FPS> fps;
 	std::unique_ptr <AbstractSceneFactory> sceneFactory_;
-
+	std::unique_ptr<FbxModel> fbx;
 
 
 

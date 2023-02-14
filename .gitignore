@@ -363,3 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 /lib/fbx_sdk
 /External/FBXSDK/lib/fbx_sdk
+/Engine/assimp/x64-windows/lib
+/Engine/assimp/x64-windows-static/lib

@@ -1,4 +1,6 @@
 #include "Framework.h"
+#include <FbxLoader.h>
+#include "FbxModel.h"
 
 void Framework::Initialize()
 {
@@ -21,18 +23,25 @@ void Framework::Initialize()
 	TextureManager::GetInstance()->Initialize(directXCore_->GetDevice());
 	TextureManager::Load("white1x1.png");
 
+	// FBX関連静的初期化
+	FbxLoader::GetInstance()->Initialize(directXCore_->GetDevice());
+
 	// スプライト静的初期化
 	Sprite::StaticInitialize(directXCore_->GetDevice());
 
 
 	// 3Dモデル静的初期化
 	Model::StaticInitialize();
+	FbxModel::StaticInitialize();
 
 	//Imgui初期化
 	imGui = std::make_unique <ImGuiManager>();
 	imGui->Initialize(winApp_, directXCore_);
 
 	fps = std::make_unique<FPS>();
+
+	
+
 #pragma endregion
 
 	//シーンマネージャーの生成
@@ -112,7 +121,7 @@ void Framework::Run()
 
 
 		//ImGui描画
-		imGui->Draw();
+		//imGui->Draw();
 
 		
 

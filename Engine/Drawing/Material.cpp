@@ -56,7 +56,7 @@ void Material::LoadTexture(const std::string& directoryPath) {
 	string filepath = directoryPath + textureFilename_;
 
 	// テクスチャ読み込み
-	textureHandle_ = TextureManager::Load(filepath);
+	textureHandle_.push_back(TextureManager::Load(filepath));
 }
 
 void Material::Update() {
@@ -69,11 +69,11 @@ void Material::Update() {
 
 void Material::SetGraphicsCommand(
 	ID3D12GraphicsCommandList* commandList, UINT rooParameterIndexMaterial,
-	UINT rooParameterIndexTexture) {
+	UINT rooParameterIndexTexture, size_t index) {
 
 	// SRVをセット
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(
-		commandList, rooParameterIndexTexture, textureHandle_);
+		commandList, rooParameterIndexTexture, textureHandle_[index]);
 
 	// マテリアルの定数バッファをセット
 	commandList->SetGraphicsRootConstantBufferView(

@@ -137,7 +137,7 @@ public: // ƒƒ“ƒoŠÖ”
 	~FbxModel();
 
 	// ‰Šú‰»
-	void Initialize(const std::string& modelname, bool smoothing = false);
+	void Initialize();
 
 	// •`‰æ
 	//void Draw(

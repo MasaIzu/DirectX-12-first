@@ -85,6 +85,9 @@ public: // メンバ関数
 	/// <param name="material">マテリアル</param>
 	void SetMaterial(Material* material);
 
+	
+	void SetLight(Vector3 ambient, Vector3 diffuse, Vector3 specular, float alpha);
+
 	/// <summary>
 	/// バッファの生成
 	/// </summary>

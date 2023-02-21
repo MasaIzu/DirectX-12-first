@@ -5,6 +5,7 @@
 #include <d3dx12.h>
 #include <string>
 #include <wrl.h>
+#include "Vector3.h"
 
 /// <summary>
 /// マテリアル
@@ -88,6 +89,8 @@ public:
 
 	// テクスチャハンドル
 	uint32_t GetTextureHadle(size_t index) { return textureHandle_[index]; }
+
+	void SetLight(Vector3 ambient, Vector3 diffuse, Vector3 specular, float alpha);
 
 private:
 	// 定数バッファ

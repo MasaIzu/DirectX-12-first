@@ -178,7 +178,7 @@ void FbxModel::InitializeGraphicsPipeline() {
 FbxModel* FbxModel::Create() {
 	// メモリ確保
 	FbxModel* instance = new FbxModel;
-	instance->Initialize(kDefaultModelName, false);
+	instance->Initialize();
 
 	return instance;
 }
@@ -186,7 +186,7 @@ FbxModel* FbxModel::Create() {
 FbxModel* FbxModel::CreateFromFbx(const std::string& modelname, bool smoothing) {
 	// メモリ確保
 	FbxModel* instance = new FbxModel;
-	instance->Initialize(modelname, smoothing);
+	instance->Initialize();
 
 	return instance;
 }
@@ -223,7 +223,7 @@ FbxModel::~FbxModel() {
 	materials_.clear();
 }
 
-void FbxModel::Initialize(const std::string& modelname, bool smoothing) {
+void FbxModel::Initialize() {
 	// モデル読み込み
 	//LoadModelFromFile(modelname);
 
@@ -244,11 +244,20 @@ void FbxModel::Initialize(const std::string& modelname, bool smoothing) {
 
 	// メッシュのバッファ生成
 	for (auto& m : meshes_) {
+
+		Vector3 ambient_ = { 1.0f, 1.0f, 1.0f };
+		Vector3 diffuse_ = { 0.0f, 0.0f, 0.0f };
+		Vector3 specular_ = { 0.0f, 0.0f, 0.0f };
+		float alpha_ = 1.0f;
+
+		m->SetLight(ambient_, diffuse_, specular_, alpha_);
+
 		m->CreateBuffers();
 	}
 
 	// マテリアルの数値を定数バッファに反映
 	for (auto& m : materials_) {
+
 		m.second->Update();
 	}
 
@@ -271,7 +280,7 @@ void FbxModel::Draw(
 
 
 		// 全メッシュを描画
-		meshes_[i]->Draw(sCommandList_, 2, 3,i);
+		meshes_[i]->Draw(sCommandList_, 2, 3,3);
 	}
 }
 //

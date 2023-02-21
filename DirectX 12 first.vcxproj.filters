@@ -153,6 +153,9 @@
     <None Include="Resources\Shaders\SpriteShaderHeader.hlsli">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="test.hlsli">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\Shaders\ObjPS.hlsl">
@@ -189,6 +192,12 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Resources\Shaders\SpriteVertexShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="testPS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="testVS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

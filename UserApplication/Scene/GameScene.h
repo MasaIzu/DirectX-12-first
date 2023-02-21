@@ -75,4 +75,6 @@ private: // ƒƒ“ƒo•Ï”
 	//Fbxƒ‚ƒfƒ‹
 	FbxModel* fbxmodel;
 
+
+
 };

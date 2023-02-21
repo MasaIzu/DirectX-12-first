@@ -294,8 +294,9 @@ void FbxLoader::ParseMeshFaces(FbxModel* model, aiMesh* fbxMesh)
 	for (int i = 0; i < polygonCount; i++) {
 		aiVector3D* uv = (fbxMesh->HasTextureCoords(0)) ? &(fbxMesh->mTextureCoords[0][i]) : &zero3D;
 
+		vertices[i].uv = Vector2(uv->x,uv->y);
 	}
-
+	
 	indices.resize(fbxMesh->mNumFaces * 3);
 
 	for (UINT i = 0; i < fbxMesh->mNumFaces; i++) {
@@ -316,7 +317,7 @@ void FbxLoader::ParseMaterial(FbxModel* model, aiMesh* fbxMesh, aiMaterial* aima
 
 	material = Material::Create();
 
-	aiColor3D ambient(0.0f, 0.0f, 0.0f);
+	aiColor3D ambient(0.3f, 0.3f, 0.3f);
 	aimaterial->Get(AI_MATKEY_COLOR_AMBIENT, ambient);
 	material->ambient_ = XMFLOAT3(ambient.r, ambient.g, ambient.b);
 

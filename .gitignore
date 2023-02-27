@@ -362,3 +362,5 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /lib/fbx_sdk
+/assimp-vc143-mtd.lib
+/pugixml.lib

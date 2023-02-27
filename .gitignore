@@ -363,3 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 /lib/fbx_sdk
 /External/FBXSDK/lib/fbx_sdk
+/assimp-vc143-mtd.lib
+/pugixml.lib

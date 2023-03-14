@@ -58,7 +58,7 @@ public:
 	FbxModel* LoadModelFromFile(const string& modelName);
 
 
-	/*void ParseSkin(FbxModel* model);*/
+	void ParseSkin(FbxModel* model, aiMesh* fbxMesh);
 
 
 	void GetNodeNum(const aiNode* node, UINT32& num);

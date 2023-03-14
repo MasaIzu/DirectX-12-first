@@ -35,13 +35,16 @@ void FbxLoader::Initialize(ID3D12Device* device)
 	// 引数からメンバ変数に代入
 	this->device = device;
 
-	flag |= aiProcess_Triangulate;
-	flag |= aiProcess_PreTransformVertices;
-	flag |= aiProcess_CalcTangentSpace;
-	flag |= aiProcess_GenSmoothNormals;
-	flag |= aiProcess_GenUVCoords;
-	flag |= aiProcess_RemoveRedundantMaterials;
-	flag |= aiProcess_OptimizeMeshes;
+	flag |= aiProcess_Triangulate; //三角面化
+	flag |= aiProcess_CalcTangentSpace; //接線ベクトル生成
+	flag |= aiProcess_GenSmoothNormals; //スムージングベクトル生成
+	flag |= aiProcess_GenUVCoords; //非マッピングを適切なUV座標に変換
+	flag |= aiProcess_RemoveRedundantMaterials; //冗長なマテリアルを削除
+	flag |= aiProcess_OptimizeMeshes; //メッシュ数を最適化
+	flag |= aiProcess_MakeLeftHanded; //ノードを左手座標系に
+	flag |= aiProcess_JoinIdenticalVertices;//インデックスを生成
+	flag |= aiProcess_LimitBoneWeights;//各頂点が影響を受けるボーンを4に制限
+
 
 	flag |= aiProcess_ConvertToLeftHanded;
 }
@@ -79,115 +82,101 @@ FbxModel* FbxLoader::LoadModelFromFile(const string& modelName)
 	// あらかじめ必要数分のメモリを確保することで、アドレスがずれるのを予防
 	model->nodes.reserve(nodeCount);
 
+	model->globalInverseTransform = MyMath::AssimpMatrix(mScene->mRootNode->mTransformation);
+
 
 	// ルートノードから順に解析してモデルに流し込む
 	ParseNodeRecursive(model, mScene->mRootNode);
 	// FBXシーン解放
 	aiReleaseImport(mScene);
 
+	for (size_t i = 0; i < model->nodes.size(); i++)
+	{
+		if (model->nodes[i].parent)
+		{
+			auto itr = std::find_if(model->nodes.begin(), model->nodes.end(), [&](Node& node)
+				{
+					return node.name == model->nodes[i].parent->name;
+				});
+
+			itr->childrens.push_back(&model->nodes[i]);
+		}
+	}
+
 	return model;
 }
 
-//void FbxLoader::ParseSkin(Model* model, FbxMesh* fbxMesh) {
-//
-//	FbxSkin* fbxSkin = static_cast<FbxSkin*>(fbxMesh->GetDeformer(0, FbxDeformer::eSkin));
-//
-//	if (fbxSkin == nullptr) {
-//
-//		//各頂点について処理
-//		for (int i = 0; i < model->vertices.size(); i++) {
-//			//最初のボーン(単位行列)の影響を100%にする
-//			model->vertices[i].boneIndex[0] = 0;
-//			model->vertices[i].boneWeight[0] = 1.0f;
-//		}
-//
-//		return;
-//	}
-//
-//	std::vector<Model::Bone>& bones = model->bones;
-//
-//	int clusterCount = fbxSkin->GetClusterCount();
-//	bones.reserve(clusterCount);
-//
-//	for (int i = 0; i < clusterCount; i++) {
-//
-//		FbxCluster* fbxCluster = fbxSkin->GetCluster(i);
-//
-//		const char* boneName = fbxCluster->GetLink()->GetName();
-//
-//		bones.emplace_back(Model::Bone(boneName));
-//		Model::Bone& bone = bones.back();
-//
-//		bone.fbxCluster = fbxCluster;
-//
-//		FbxAMatrix fbxMat;
-//		fbxCluster->GetTransformLinkMatrix(fbxMat);
-//
-//		XMMATRIX initialPose;
-//		ConvertMatrixFromFbx(&initialPose, fbxMat);
-//
-//		bone.invInitialPose = XMMatrixInverse(nullptr, initialPose);
-//
-//	}
-//
-//	struct WeightSet {
-//		UINT index;
-//		float weight;
-//	};
-//
-//	std::vector<std::list<WeightSet>> weightLists(model->vertices.size());
-//
-//	for (int i = 0; i < clusterCount; i++) {
-//
-//		FbxCluster* fbxCluster = fbxSkin->GetCluster(i);
-//
-//		int controlPointIndicesCount = fbxCluster->GetControlPointIndicesCount();
-//
-//		int* controlPointIndices = fbxCluster->GetControlPointIndices();
-//		double* controlPointWeights = fbxCluster->GetControlPointWeights();
-//
-//		for (int j = 0; j < controlPointIndicesCount; j++) {
-//			int vertIndex = controlPointIndices[j];
-//
-//			float weight = (float)controlPointWeights[j];
-//
-//			weightLists[vertIndex].emplace_back(WeightSet{ (UINT)i,weight });
-//		}
-//	}
-//
-//	auto& vertices = model->vertices;
-//
-//	for (int i = 0; i < vertices.size(); i++) {
-//
-//		auto& weightList = weightLists[i];
-//
-//		weightList.sort([](auto const& lhs, auto const& rhs) {
-//
-//			return lhs.weight > rhs.weight;
-//			});
-//
-//		int weightArrayIndex = 0;
-//
-//		for (auto& weightSet : weightList) {
-//
-//			vertices[i].boneIndex[weightArrayIndex] = weightSet.index;
-//			vertices[i].boneWeight[weightArrayIndex] = weightSet.weight;
-//
-//			if (++weightArrayIndex >= FbxModel::MAX_BONE_INDICES) {
-//				float weight = 0.0f;
-//
-//				for (int j = 1; j < Model::MAX_BONE_INDICES; j++) {
-//					weight += vertices[i].boneWeight[j];
-//				}
-//				vertices[i].boneWeight[0] = 1.0f - weight;
-//				break;
-//			}
-//
-//		}
-//
-//	}
-//
-//}
+void FbxLoader::ParseSkin(FbxModel* model, aiMesh* fbxMesh) {
+
+	auto& vertices = model->meshes_.back()->vertices_;
+
+	struct WeightSet {
+		UINT index;
+		float weight;
+	};
+
+	std::vector<std::list<WeightSet>> weightLists(vertices.size());
+
+	if (fbxMesh->mNumBones == 0) {
+		return;
+	}
+
+	for (int i = 0; i < fbxMesh->mNumBones; i++) {
+
+
+		auto& meshBone = fbxMesh->mBones[i];
+
+		//ボーン自体のノードの名前を取得
+		const char* boneName = meshBone->mName.C_Str();
+
+		//新しくボーンを追加し、追加したボーンの参照を得る
+		Mesh::Bone bone;
+
+		bone.name = boneName;
+
+		//FBXから初期姿勢行列を取得する
+
+		//初期姿勢行列の逆行列を得る
+		bone.offsetMatirx = MyMath::AssimpMatrix(meshBone->mOffsetMatrix);
+		bone.index = i;
+
+		model->meshes_.back()->vecBones.push_back(bone);
+		model->meshes_.back()->bones[bone.name] = &model->meshes_.back()->vecBones.back();
+
+		for (int j = 0; j < meshBone->mNumWeights; j++) {
+			int vertIndex = meshBone->mWeights[j].mVertexId;
+
+			float weight = (float)meshBone->mWeights[j].mWeight;
+
+			weightLists[vertIndex].emplace_back(WeightSet{ (UINT)i,weight });
+		}
+	}
+
+	//各頂点について処理
+	for (size_t j = 0; j < vertices.size(); j++)
+	{
+		//頂点のウェイトから最も大きい4つを選択
+		auto& weightList = weightLists[j];
+
+		size_t weightArrayIndex = 0;
+		//降順ソート済みのウェイトリストから
+
+		for (auto& weightSet : weightList)
+		{
+			//頂点データに書き込み
+			vertices[j].boneIndex[weightArrayIndex] = weightSet.index;
+			vertices[j].boneWeight[weightArrayIndex] = weightSet.weight;
+
+			//4つに達したら修了
+			if (++weightArrayIndex >= Mesh::MAX_BONE_INDICES)
+			{
+				break;
+			}
+
+		}
+	}
+
+}
 
 void FbxLoader::ParseNodeRecursive(FbxModel* model, aiNode* fbxNode, Node* parent)
 {
@@ -221,6 +210,7 @@ void FbxLoader::ParseNodeRecursive(FbxModel* model, aiNode* fbxNode, Node* paren
 		if (aimesh) {
 			model->meshes_.emplace_back();
 			model->meshes_.back() = new Mesh();
+
 			model->meshes_.back()->name_ = aimesh->mName.C_Str();
 
 			ParseMesh(model, aimesh);
@@ -243,8 +233,11 @@ void FbxLoader::ParseMesh(FbxModel* model, aiMesh* fbxMesh)
 	// マテリアルの読み取り
 	ParseMaterial(model, fbxMesh, mScene->mMaterials[fbxMesh->mMaterialIndex]);
 
-	//スキニング情報の読み取り
-	//ParseSkin(model, fbxMesh);
+	if (fbxMesh->HasBones()) {
+		//スキニング情報の読み取り
+		ParseSkin(model, fbxMesh);
+	}
+
 
 }
 

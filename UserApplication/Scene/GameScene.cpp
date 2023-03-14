@@ -33,7 +33,7 @@ void GameScene::Initialize() {
 
 	fbxmodel = new FbxModel();
 	
-	fbxmodel = FbxLoader::GetInstance()->LoadModelFromFile("lowpoliHitokunBoss");
+	fbxmodel = FbxLoader::GetInstance()->LoadModelFromFile("hand");
 	fbxmodel->Initialize();
 
 }

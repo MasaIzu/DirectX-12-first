@@ -18,20 +18,17 @@
 // ノード
 struct Node
 {
-	// 名前
+	//名前
 	std::string name;
-	// ローカルスケール
-	DirectX::XMVECTOR scaling = { 1,1,1,0 };
-	// ローカル回転角
-	DirectX::XMVECTOR rotation = { 0,0,0,0 };
-	// ローカル移動
-	DirectX::XMVECTOR translation = { 0,0,0,1 };
-	// ローカル変形行列
-	DirectX::XMMATRIX transform;
-	// グローバル変形行列
-	DirectX::XMMATRIX globalTransform;
-	// 親ノード
+	//ローカル変形行列
+	Matrix4 transform;
+	//グローバル変形行列
+	Matrix4 globalTransform;
+	//親ノード
 	Node* parent = nullptr;
+	//子ノード
+	std::vector<Node*>childrens;
+
 };
 
 class FbxModel
@@ -69,19 +66,6 @@ public: // サブクラス
 		float boneWeight[MAX_BONE_INDICES];
 	};
 
-	//ボーン構造体
-	struct Bone {
-		std::string name;
-
-		DirectX::XMMATRIX invInitialPose;
-
-
-
-		Bone(const std::string& name) {
-			this->name = name;
-		}
-
-	};
 
 private:
 	// Microsoft::WRL::を省略
@@ -145,19 +129,35 @@ public: // メンバ関数
 
 	void Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection);
 
+	void ModelAnimation(float frame,aiAnimation* Animation);
+
+	void ReadNodeHeirarchy(Mesh* mesh, aiAnimation* Animation, FLOAT AnimationTime, Node*pNode,Matrix4& mxIdentity);
+
+	aiNodeAnim* FindNodeAnim(const aiAnimation* pAnimation, const std::string& strNodeName);
+	
+	void CalcInterpolatedScaling(Vector3& mxOut, float AnimationTime, const aiNodeAnim* pNodeAnim);
+
+	bool FindScaling(float AnimationTime, const aiNodeAnim* pNodeAnim, UINT& nScalingIndex);
+	
+	void CalcInterpolatedRotation(Vector4& mxOut, float AnimationTime, const aiNodeAnim* pNodeAnim);
+
+	bool FindRotation(float AnimationTime, const aiNodeAnim* pNodeAnim, UINT& nRotationIndex);
+	
+	void CalcInterpolatedPosition(Vector3& mxOut, float AnimationTime, const aiNodeAnim* pNodeAnim);
+	
+	bool FindPosition(float AnimationTime, const aiNodeAnim* pNodeAnim, UINT& nPosIndex);
+	
 
 	// メッシュコンテナを取得
 	inline const std::vector<Mesh*>& GetMeshes() { return meshes_; }
-
-	std::vector<Bone>& GetBones() { return bones; }
 
 private:
 
 	// ノード配列
 	std::vector<Node> nodes;
-	
-	std::vector<Bone> bones;
 
+
+	Matrix4 globalInverseTransform;
 
 	// 名前
 	std::string name_;

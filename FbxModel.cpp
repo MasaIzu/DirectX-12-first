@@ -6,6 +6,8 @@
 #include <fstream>
 #include <sstream>
 
+#include<atldef.h>
+
 #pragma comment(lib, "d3dcompiler.lib")
 
 using namespace std;
@@ -304,3 +306,226 @@ void FbxModel::Draw(
 //			textureHadle);
 //	}
 //}
+
+
+void FbxModel::ModelAnimation(float frame, aiAnimation* Animation) {
+
+	Matrix4 mxIdentity = MyMath::MakeIdentity();
+	Node* pNode = &nodes[0];
+	
+
+	FLOAT TicksPerSecond = (FLOAT)(Animation->mTicksPerSecond != 0 ? Animation->mTicksPerSecond : 25.0f);
+
+	FLOAT TimeInTicks = frame * TicksPerSecond;
+	FLOAT AnimationTime = fmod(TimeInTicks, (FLOAT)Animation->mDuration);
+
+	for (Mesh* mesh : meshes_)
+	{
+		ReadNodeHeirarchy(mesh, Animation, AnimationTime, pNode, mxIdentity);
+
+		UINT nNumBones = (UINT)mesh->bones.size();
+
+		for (UINT i = 0; i < nNumBones; i++)
+		{
+			mesh->vecBones[i].matrix = mesh->bones[mesh->vecBones[i].name]->matrix;
+		}
+	}
+}
+
+
+void FbxModel::ReadNodeHeirarchy(Mesh* mesh, aiAnimation* Animation, FLOAT AnimationTime, Node* pNode, Matrix4& mxIdentity) {
+
+	Matrix4 mxNodeTransformation = MyMath::MakeIdentity();
+	mxNodeTransformation = pNode->transform;
+
+	Matrix4 mxThisTrans = mxNodeTransformation;
+
+	std::string strNodeName(pNode->name);
+
+	const aiNodeAnim* pNodeAnim = FindNodeAnim(Animation, strNodeName);
+
+	if (pNodeAnim)
+	{
+		//ÉXÉPÅ[ÉäÉìÉO
+		Vector3 vScaling = {};
+		CalcInterpolatedScaling(vScaling, AnimationTime, pNodeAnim);
+		Matrix4 mxScaling;
+		mxScaling = MyMath::Rotation(vScaling,6);
+
+		//âÒì]äp
+		Vector4 vRotationQ = {};
+		CalcInterpolatedRotation(vRotationQ, AnimationTime, pNodeAnim);
+		Matrix4 mxRotationM = Quaternion(vRotationQ).Rotate();
+
+		//à⁄ìÆ
+		Vector3 vTranslation = {};
+		CalcInterpolatedPosition(vTranslation, AnimationTime, pNodeAnim);
+		Matrix4 mxTranslationM;
+		mxTranslationM = MyMath::Translation(vTranslation);
+
+		Matrix4 affin = MyMath::Initialize();
+		affin *= mxScaling;
+		affin *= mxRotationM;
+		affin *= mxTranslationM;
+
+		mxNodeTransformation = affin;
+	}
+
+}
+
+
+aiNodeAnim* FbxModel::FindNodeAnim(const aiAnimation* pAnimation, const std::string& strNodeName)
+{
+	for (UINT i = 0; i < pAnimation->mNumChannels; i++)
+	{
+		if (std::string(pAnimation->mChannels[i]->mNodeName.data) == strNodeName)
+		{
+			return pAnimation->mChannels[i];
+		}
+	}
+
+	return nullptr;
+}
+
+void FbxModel::CalcInterpolatedScaling(Vector3& mxOut, float AnimationTime, const aiNodeAnim* pNodeAnim)
+{
+	if (pNodeAnim->mNumScalingKeys == 1)
+	{
+		mxOut = MyMath::AssimpVector3(pNodeAnim->mScalingKeys[0].mValue);
+		return;
+	}
+
+	UINT ScalingIndex = 0;
+	if (!FindScaling(AnimationTime, pNodeAnim, ScalingIndex))
+	{
+		mxOut = Vector3(1.0f, 1.0f, 1.0f);
+		return;
+	}
+
+	UINT NextScalingIndex = (ScalingIndex + 1);
+	ATLASSERT(NextScalingIndex < pNodeAnim->mNumScalingKeys);
+	float DeltaTime = (float)(pNodeAnim->mScalingKeys[NextScalingIndex].mTime - pNodeAnim->mScalingKeys[ScalingIndex].mTime);
+	float Factor = (AnimationTime - (float)pNodeAnim->mScalingKeys[ScalingIndex].mTime) / DeltaTime;
+	ATLASSERT(Factor >= 0.0f && Factor <= 1.0f);
+
+	mxOut = lerp(MyMath::AssimpVector3(pNodeAnim->mScalingKeys[ScalingIndex].mValue), MyMath::AssimpVector3(pNodeAnim->mScalingKeys[NextScalingIndex].mValue), Factor);
+
+}
+
+void FbxModel::CalcInterpolatedRotation(Vector4& mxOut, float AnimationTime, const aiNodeAnim* pNodeAnim)
+{
+	if (pNodeAnim->mNumRotationKeys == 1)
+	{
+		mxOut = MyMath::AssimpQuaternionVec4(pNodeAnim->mRotationKeys[0].mValue);
+		return;
+	}
+
+	UINT RotationIndex = 0;
+	if (!FindRotation(AnimationTime, pNodeAnim, RotationIndex))
+	{
+		mxOut = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
+		return;
+	}
+
+	UINT NextRotationIndex = (RotationIndex + 1);
+	ATLASSERT(NextRotationIndex < pNodeAnim->mNumRotationKeys);
+	float DeltaTime = (float)(pNodeAnim->mRotationKeys[NextRotationIndex].mTime
+		- pNodeAnim->mRotationKeys[RotationIndex].mTime);
+	float Factor = (AnimationTime - (float)pNodeAnim->mRotationKeys[RotationIndex].mTime) / DeltaTime;
+	ATLASSERT(Factor >= 0.0f && Factor <= 1.0f);
+
+	mxOut = MyMath::QuaternionSlerp(
+		pNodeAnim->mRotationKeys[RotationIndex].mValue
+		, pNodeAnim->mRotationKeys[NextRotationIndex].mValue
+		, Factor);
+
+}
+
+void FbxModel::CalcInterpolatedPosition(Vector3& mxOut, float AnimationTime, const aiNodeAnim* pNodeAnim)
+{
+	if (pNodeAnim->mNumPositionKeys == 1)
+	{
+		mxOut = MyMath::AssimpVector3(pNodeAnim->mPositionKeys[0].mValue);
+		return;
+	}
+
+	UINT PositionIndex = 0;
+	if (!FindPosition(AnimationTime, pNodeAnim, PositionIndex))
+	{
+		mxOut = Vector3(0.0f, 0.0f, 0.0f);
+		return;
+	}
+
+	UINT NextPositionIndex = (PositionIndex + 1);
+
+	ATLASSERT(NextPositionIndex < pNodeAnim->mNumPositionKeys);
+	float DeltaTime = (float)(pNodeAnim->mPositionKeys[NextPositionIndex].mTime - pNodeAnim->mPositionKeys[PositionIndex].mTime);
+	float Factor = (AnimationTime - (float)pNodeAnim->mPositionKeys[PositionIndex].mTime) / DeltaTime;
+	ATLASSERT(Factor >= 0.0f && Factor <= 1.0f);
+
+	mxOut = lerp(MyMath::AssimpVector3(pNodeAnim->mPositionKeys[PositionIndex].mValue), MyMath::AssimpVector3(pNodeAnim->mPositionKeys[NextPositionIndex].mValue), Factor);
+}
+
+bool FbxModel::FindPosition(float AnimationTime, const aiNodeAnim* pNodeAnim, UINT& nPosIndex)
+{
+	nPosIndex = 0;
+	if (!(pNodeAnim->mNumPositionKeys > 0))
+	{
+		return FALSE;
+	}
+
+	for (UINT i = 0; i < pNodeAnim->mNumPositionKeys - 1; i++)
+	{
+		if ((AnimationTime >= (float)pNodeAnim->mPositionKeys[i].mTime)
+			&& (AnimationTime < (float)pNodeAnim->mPositionKeys[i + 1].mTime))
+		{
+			nPosIndex = i;
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+bool FbxModel::FindRotation(float AnimationTime, const aiNodeAnim* pNodeAnim, UINT& nRotationIndex)
+{
+	nRotationIndex = 0;
+	if (!(pNodeAnim->mNumRotationKeys > 0))
+	{
+		return FALSE;
+	}
+
+	for (UINT i = 0; i < pNodeAnim->mNumRotationKeys - 1; i++)
+	{
+
+		if ((AnimationTime >= (float)pNodeAnim->mRotationKeys[i].mTime)
+			&& (AnimationTime < (float)pNodeAnim->mRotationKeys[i + 1].mTime))
+		{
+			nRotationIndex = i;
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+bool FbxModel::FindScaling(float AnimationTime, const aiNodeAnim* pNodeAnim, UINT& nScalingIndex)
+{
+	nScalingIndex = 0;
+	if (!(pNodeAnim->mNumScalingKeys > 0))
+	{
+		return FALSE;
+	}
+
+	for (UINT i = 0; i < pNodeAnim->mNumScalingKeys - 1; i++)
+	{
+		if ((AnimationTime >= (float)pNodeAnim->mScalingKeys[i].mTime)
+			&& (AnimationTime < (float)pNodeAnim->mScalingKeys[i + 1].mTime))
+		{
+			nScalingIndex = i;
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}

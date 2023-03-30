@@ -552,7 +552,7 @@ Vector3 MyMath::AssimpVector3(aiVector3D assimpVec3) {
 	return vec3;
 }
 
-Vector4 AssimpQuaternionVec4(aiQuaternion assimpaiQuaternion) {
+Vector4 MyMath::AssimpQuaternionVec4(aiQuaternion assimpaiQuaternion) {
 
 	Vector4 quaternion;
 
@@ -564,7 +564,7 @@ Vector4 AssimpQuaternionVec4(aiQuaternion assimpaiQuaternion) {
 	return quaternion;
 }
 
-Quaternion AssimpQuaternion(aiQuaternion assimpaiQuaternion) {
+Quaternion MyMath::AssimpQuaternion(aiQuaternion assimpaiQuaternion) {
 
 	Quaternion quaternion;
 
@@ -576,7 +576,7 @@ Quaternion AssimpQuaternion(aiQuaternion assimpaiQuaternion) {
 	return quaternion;
 }
 
-Vector4 QuaternionSlerp(aiQuaternion assimpaiQuaternion, aiQuaternion assimpaiQuaternion2, float t) {
+Vector4 MyMath::QuaternionSlerp(aiQuaternion& assimpaiQuaternion, aiQuaternion& assimpaiQuaternion2, float t){
 
 	Quaternion assimQ1 = AssimpQuaternion(assimpaiQuaternion);
 	Quaternion assimQ2 = AssimpQuaternion(assimpaiQuaternion2);

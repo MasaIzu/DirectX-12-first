@@ -15,6 +15,8 @@
 #include <WorldTransform.h>
 #include <ViewProjection.h>
 
+
+
 // ノード
 struct Node
 {
@@ -40,19 +42,6 @@ public:
 public://定数
 	static const int MAX_BONE_INDICES = 4;
 
-private: // エイリアス
-	// Microsoft::WRL::を省略
-	template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
-	// DirectX::を省略
-	using XMFLOAT2 = DirectX::XMFLOAT2;
-	using XMFLOAT3 = DirectX::XMFLOAT3;
-	using XMFLOAT4 = DirectX::XMFLOAT4;
-	using XMMATRIX = DirectX::XMMATRIX;
-	using TexMetadata = DirectX::TexMetadata;
-	using ScratchImage = DirectX::ScratchImage;
-	// std::を省略
-	using string = std::string;
-	template <class T> using vector = std::vector<T>;
 
 public: // サブクラス
 	// 頂点データ構造体
@@ -81,6 +70,17 @@ public:
 		Matrix4 mat;	// ３Ｄ変換行列
 	};
 
+	//1メッシュに持てるボーンの最大個数
+	static const int MAX_BONES = 128;
+	
+	//定数バッファ用データ構造体
+	struct ConstBufferDataSkin {
+		Matrix4 bones[MAX_BONES];
+	};
+
+	//定数バッファ(スキン)
+	static Microsoft::WRL::ComPtr<ID3D12Resource> constBuffSkin_;
+
 private:
 	static const std::string kBaseDirectory;
 	static const std::string kDefaultModelName;
@@ -96,6 +96,7 @@ private: // 静的メンバ変数
 	static Microsoft::WRL::ComPtr<ID3D12PipelineState> sPipelineState_;
 	// ライト
 	static std::unique_ptr<LightGroup> lightGroup;
+
 
 public: // 静的メンバ関数
 	// 静的初期化
@@ -122,6 +123,9 @@ public: // メンバ関数
 
 	// 初期化
 	void Initialize();
+
+	void FbxUpdate(float frem);
+
 
 	// 描画
 	//void Draw(
@@ -153,6 +157,9 @@ public: // メンバ関数
 
 private:
 
+	Matrix4 Test;
+
+
 	// ノード配列
 	std::vector<Node> nodes;
 
@@ -167,7 +174,6 @@ private:
 	std::unordered_map<std::string, Material*> materials_;
 	// デフォルトマテリアル
 	Material* defaultMaterial_ = nullptr;
-
 
 
 

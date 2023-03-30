@@ -141,7 +141,7 @@ void FbxLoader::ParseSkin(FbxModel* model, aiMesh* fbxMesh) {
 		bone.index = i;
 
 		model->meshes_.back()->vecBones.push_back(bone);
-		model->meshes_.back()->bones[bone.name] = &model->meshes_.back()->vecBones.back();
+		//model->meshes_.back()->bones[bone.name] = &model->meshes_.back()->vecBones.back();
 
 		for (int j = 0; j < meshBone->mNumWeights; j++) {
 			int vertIndex = meshBone->mWeights[j].mVertexId;

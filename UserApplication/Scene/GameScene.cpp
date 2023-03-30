@@ -28,13 +28,18 @@ void GameScene::Initialize() {
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = { 0,0,0 };
 	worldTransform_.rotation_ = { 0,0,0 };
-	worldTransform_.scale_ = { 0.1f,0.1f,0.1f };
+	worldTransform_.scale_ = { 0.5f,0.5f,0.5f };
 	worldTransform_.TransferMatrix();
 
 	fbxmodel = new FbxModel();
 	
-	fbxmodel = FbxLoader::GetInstance()->LoadModelFromFile("hand");
+	fbxmodel = FbxLoader::GetInstance()->LoadModelFromFile("kurukuru");
 	fbxmodel->Initialize();
+
+	modelAnim = new FbxAnimation();
+	modelAnim->Load("kurukuru");
+
+
 
 }
 
@@ -45,6 +50,25 @@ void GameScene::Update() {
 		sceneManager_->ChangeScene("TITLE");
 	}
 
+	if (input_->PushKey(DIK_UP)) {
+		viewProjection_.eye += Vector3(0, 0, 1.0f);
+	}
+	if (input_->PushKey(DIK_DOWN)) {
+		viewProjection_.eye += Vector3(0, 0, -1.0f);
+	}
+
+	if (input_->PushKey(DIK_LEFT)) {
+		viewProjection_.eye += Vector3(1.0f, 0, 0);
+	}
+	if (input_->PushKey(DIK_RIGHT)) {
+		viewProjection_.eye += Vector3(-1.0f, 0, 0);
+	}
+
+	viewProjection_.UpdateMatrix();
+
+	frem += 1.0f;
+
+	fbxmodel->ModelAnimation(frem, modelAnim->GetAnimation());
 
 }
 
@@ -63,7 +87,7 @@ void GameScene::Draw() {
 	// 3Dオブジェクト描画前処理
 	Model::PreDraw(commandList);
 
-	model_->Draw(worldTransform_, viewProjection_);
+	//model_->Draw(worldTransform_, viewProjection_);
 
 
 	// 3Dオブジェクト描画後処理

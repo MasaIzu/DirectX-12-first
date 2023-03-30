@@ -12,6 +12,7 @@
 
 using namespace std;
 using namespace Microsoft::WRL;
+using namespace DirectX;
 
 /// <summary>
 /// 静的メンバ変数の実体
@@ -23,6 +24,8 @@ ID3D12GraphicsCommandList* FbxModel::sCommandList_ = nullptr;
 ComPtr<ID3D12RootSignature> FbxModel::sRootSignature_;
 ComPtr<ID3D12PipelineState> FbxModel::sPipelineState_;
 std::unique_ptr<LightGroup> FbxModel::lightGroup;
+
+Microsoft::WRL::ComPtr<ID3D12Resource> FbxModel::constBuffSkin_;
 
 void FbxModel::StaticInitialize() {
 
@@ -42,7 +45,7 @@ void FbxModel::InitializeGraphicsPipeline() {
 
 	// 頂点シェーダの読み込みとコンパイル
 	result = D3DCompileFromFile(
-		L"Resources/shaders/ObjVS.hlsl", // シェーダファイル名
+		L"Resources/Shaders/FBXVS.hlsl", // シェーダファイル名
 		nullptr,
 		D3D_COMPILE_STANDARD_FILE_INCLUDE, // インクルード可能にする
 		"main", "vs_5_0", // エントリーポイント名、シェーダーモデル指定
@@ -63,7 +66,7 @@ void FbxModel::InitializeGraphicsPipeline() {
 
 	// ピクセルシェーダの読み込みとコンパイル
 	result = D3DCompileFromFile(
-		L"Resources/shaders/ObjPS.hlsl", // シェーダファイル名
+		L"Resources/Shaders/FBXPS.hlsl", // シェーダファイル名
 		nullptr,
 		D3D_COMPILE_STANDARD_FILE_INCLUDE, // インクルード可能にする
 		"main", "ps_5_0", // エントリーポイント名、シェーダーモデル指定
@@ -93,6 +96,18 @@ void FbxModel::InitializeGraphicsPipeline() {
 	  {// uv座標(1行で書いたほうが見やすい)
 	   "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,    0, D3D12_APPEND_ALIGNED_ELEMENT,
 	   D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+
+	  {//影響を受けるボーン番号
+		"BONEINDICES",0,DXGI_FORMAT_R32G32B32A32_UINT,0,
+		D3D12_APPEND_ALIGNED_ELEMENT,
+		D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0
+	  },
+	  {//ボーンのスキンウェイト(4つ)
+		"BONEWEIGHTS",0,DXGI_FORMAT_R32G32B32A32_FLOAT,0,
+		D3D12_APPEND_ALIGNED_ELEMENT,
+		D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0
+	  },
+
 	};
 
 	// グラフィックスパイプラインの流れを設定
@@ -175,6 +190,27 @@ void FbxModel::InitializeGraphicsPipeline() {
 	result = DirectXCore::GetInstance()->GetDevice()->CreateGraphicsPipelineState(
 		&gpipeline, IID_PPV_ARGS(&sPipelineState_));
 	assert(SUCCEEDED(result));
+
+
+	// ヒーププロパティ
+	CD3DX12_HEAP_PROPERTIES heapProps = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+	// リソース設定
+	CD3DX12_RESOURCE_DESC resourceDesc = CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataSkin) + 0xff) & ~0xff);
+
+	// 定数バッファの生成
+	result = DirectXCore::GetInstance()->GetDevice()->CreateCommittedResource(
+		&heapProps, // アップロード可能
+		D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
+		IID_PPV_ARGS(&constBuffSkin_));
+
+	//定数バッファへデータ転送
+	ConstBufferDataSkin* constMapSkin = nullptr;
+	result = constBuffSkin_->Map(0, nullptr, (void**)&constMapSkin);
+	for (int i = 0; i < MAX_BONES; i++) {
+		constMapSkin->bones[i] = MyMath::MakeIdentity();
+	}
+	constBuffSkin_->Unmap(0, nullptr);
+
 }
 
 FbxModel* FbxModel::Create() {
@@ -255,6 +291,8 @@ void FbxModel::Initialize() {
 		m->SetLight(ambient_, diffuse_, specular_, alpha_);
 
 		m->CreateBuffers();
+
+		
 	}
 
 	// マテリアルの数値を定数バッファに反映
@@ -262,6 +300,42 @@ void FbxModel::Initialize() {
 
 		m.second->Update();
 	}
+
+	for (auto& m : meshes_) {
+		for (auto& b : m->vecBones) {
+
+			m->bones[b.name] = &b;
+
+			//model->meshes_.back()->bones[bone.name] = &model->meshes_.back()->vecBones.back();
+
+		}
+
+	}
+	
+
+
+}
+
+void FbxModel::FbxUpdate(float frem)
+{
+	HRESULT result = S_FALSE;
+
+	std::unordered_map<std::string, Mesh::Bone*> bones = model->GetBones();
+
+	//定数バッファへのデータ転送
+	ConstBufferDataSkin* constMapSkin = nullptr;
+	result = constBuffSkin->Map(0, nullptr, (void**)&constMapSkin);
+	for (int i = 0; i < bones.size(); i++) {
+		//今の姿勢行列
+		XMMATRIX matCurrentPose;
+		//今の姿勢行列を取得
+		FbxAMatrix fbxCurrentPose = bones[i].fbxCluster->GetLink()->EvaluateGlobalTransform(currentTime);
+		//XMMATRIXに変換
+		FbxLoader::ConvertMatrixFromFbx(&matCurrentPose, fbxCurrentPose);
+		//合成してスキニング行列に
+		constMapSkin->bones[i] = bones[i].invInitialPose * matCurrentPose;
+	}
+	constBuffSkin->Unmap(0, nullptr);
 
 }
 
@@ -280,11 +354,14 @@ void FbxModel::Draw(
 		// CBVをセット（ビュープロジェクション行列）
 		sCommandList_->SetGraphicsRootConstantBufferView(1, viewProjection.constBuff_->GetGPUVirtualAddress());
 
+		// CBVをセット（ボーン行列）
+		sCommandList_->SetGraphicsRootConstantBufferView(4, constBuffSkin_->GetGPUVirtualAddress());
 
 		// 全メッシュを描画
 		meshes_[i]->Draw(sCommandList_, 2, 3,3);
 	}
 }
+
 //
 //void FbxModel::Draw(
 //	const WorldTransform& worldTransform, const ViewProjection& viewProjection,
@@ -330,10 +407,11 @@ void FbxModel::ModelAnimation(float frame, aiAnimation* Animation) {
 			mesh->vecBones[i].matrix = mesh->bones[mesh->vecBones[i].name]->matrix;
 		}
 	}
+
 }
 
 
-void FbxModel::ReadNodeHeirarchy(Mesh* mesh, aiAnimation* Animation, FLOAT AnimationTime, Node* pNode, Matrix4& mxIdentity) {
+void FbxModel::ReadNodeHeirarchy(Mesh* mesh, aiAnimation* pAnimation, FLOAT AnimationTime, Node* pNode, Matrix4& mxParentTransform) {
 
 	Matrix4 mxNodeTransformation = MyMath::MakeIdentity();
 	mxNodeTransformation = pNode->transform;
@@ -342,7 +420,7 @@ void FbxModel::ReadNodeHeirarchy(Mesh* mesh, aiAnimation* Animation, FLOAT Anima
 
 	std::string strNodeName(pNode->name);
 
-	const aiNodeAnim* pNodeAnim = FindNodeAnim(Animation, strNodeName);
+	const aiNodeAnim* pNodeAnim = FindNodeAnim(pAnimation, strNodeName);
 
 	if (pNodeAnim)
 	{
@@ -370,6 +448,32 @@ void FbxModel::ReadNodeHeirarchy(Mesh* mesh, aiAnimation* Animation, FLOAT Anima
 
 		mxNodeTransformation = affin;
 	}
+
+	Matrix4 mxGlobalTransformation = mxNodeTransformation * mxParentTransform;
+
+	Matrix4 offsetMatirx;
+	Matrix4 matirx;
+
+	if (mesh->bones.find(strNodeName) != mesh->bones.end())
+	{
+		offsetMatirx = mesh->bones[strNodeName]->offsetMatirx;
+
+		matirx = offsetMatirx * mxGlobalTransformation * globalInverseTransform;
+
+		mesh->bones[strNodeName]->matrix = matirx;
+
+	}
+
+	for (UINT i = 0; i < pNode->childrens.size(); i++)
+	{
+		ReadNodeHeirarchy(mesh
+			, pAnimation
+			, AnimationTime
+			, pNode->childrens[i]
+			, mxGlobalTransformation);
+	}
+
+
 
 }
 

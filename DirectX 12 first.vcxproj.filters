@@ -156,6 +156,9 @@
     <None Include="test.hlsli">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="Resources\Shaders\FBX.hlsli">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\Shaders\ObjPS.hlsl">
@@ -198,6 +201,12 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="testVS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\FBXPS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\FBXVS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>
@@ -355,6 +364,9 @@
     <ClInclude Include="FbxLoader.h">
       <Filter>Engine\ヘッダー\FBX</Filter>
     </ClInclude>
+    <ClInclude Include="FbxAnimation.h">
+      <Filter>Engine\ヘッダー\3D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -485,6 +497,9 @@
     </ClCompile>
     <ClCompile Include="FbxLoader.cpp">
       <Filter>Engine\ソース ファイル\FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="FbxAnimation.cpp">
+      <Filter>Engine\ソース ファイル\3D</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -166,13 +166,19 @@ public: // メンバ関数
 
 	std::vector<Bone>& GetBones() { return vecBones; }
 
+	
+
 private: // メンバ変数
-  // 名前
+	// 名前
 	std::string name_;
 	// 頂点バッファ
 	ComPtr<ID3D12Resource> vertBuff_;
 	// インデックスバッファ
 	ComPtr<ID3D12Resource> indexBuff_;
+
+	//ボーンバッファ
+	ComPtr<ID3D12Resource> BoneBuff_;
+
 	// 頂点バッファビュー
 	D3D12_VERTEX_BUFFER_VIEW vbView_ = {};
 	// インデックスバッファビュー
@@ -189,4 +195,7 @@ private: // メンバ変数
 	std::unordered_map<std::string, Bone*> bones;
 
 	std::vector<Bone> vecBones;
+
+	// マッピング済みアドレス
+	Bone* constMap = nullptr;
 };

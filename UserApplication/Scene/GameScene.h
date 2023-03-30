@@ -15,6 +15,7 @@
 #include "FbxModel.h"
 
 #include<memory>
+#include "FbxAnimation.h"
 
 /// <summary>
 /// ゲームシーン
@@ -75,6 +76,8 @@ private: // メンバ変数
 	//Fbxモデル
 	FbxModel* fbxmodel;
 
+	FbxAnimation* modelAnim;
 
+	float frem = 0;
 
 };

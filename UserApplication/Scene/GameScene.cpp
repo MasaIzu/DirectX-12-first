@@ -66,6 +66,10 @@ void GameScene::Update() {
 
 	viewProjection_.UpdateMatrix();
 
+	if (input_->PushKey(DIK_P)) {
+		frem = 0;
+	}
+
 	frem += 1.0f;
 
 	fbxmodel->ModelAnimation(frem, modelAnim->GetAnimation());

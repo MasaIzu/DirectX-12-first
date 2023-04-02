@@ -306,8 +306,6 @@ void FbxModel::Initialize() {
 
 			m->bones[b.name] = &b;
 
-			//model->meshes_.back()->bones[bone.name] = &model->meshes_.back()->vecBones.back();
-
 		}
 
 	}
@@ -320,22 +318,22 @@ void FbxModel::FbxUpdate(float frem)
 {
 	HRESULT result = S_FALSE;
 
-	std::unordered_map<std::string, Mesh::Bone*> bones = model->GetBones();
+	//std::unordered_map<std::string, Mesh::Bone*> bones = model->GetBones();
 
-	//定数バッファへのデータ転送
-	ConstBufferDataSkin* constMapSkin = nullptr;
-	result = constBuffSkin->Map(0, nullptr, (void**)&constMapSkin);
-	for (int i = 0; i < bones.size(); i++) {
-		//今の姿勢行列
-		XMMATRIX matCurrentPose;
-		//今の姿勢行列を取得
-		FbxAMatrix fbxCurrentPose = bones[i].fbxCluster->GetLink()->EvaluateGlobalTransform(currentTime);
-		//XMMATRIXに変換
-		FbxLoader::ConvertMatrixFromFbx(&matCurrentPose, fbxCurrentPose);
-		//合成してスキニング行列に
-		constMapSkin->bones[i] = bones[i].invInitialPose * matCurrentPose;
-	}
-	constBuffSkin->Unmap(0, nullptr);
+	////定数バッファへのデータ転送
+	//ConstBufferDataSkin* constMapSkin = nullptr;
+	//result = constBuffSkin->Map(0, nullptr, (void**)&constMapSkin);
+	//for (int i = 0; i < bones.size(); i++) {
+	//	//今の姿勢行列
+	//	XMMATRIX matCurrentPose;
+	//	//今の姿勢行列を取得
+	//	FbxAMatrix fbxCurrentPose = bones[i].fbxCluster->GetLink()->EvaluateGlobalTransform(currentTime);
+	//	//XMMATRIXに変換
+	//	FbxLoader::ConvertMatrixFromFbx(&matCurrentPose, fbxCurrentPose);
+	//	//合成してスキニング行列に
+	//	constMapSkin->bones[i] = bones[i].invInitialPose * matCurrentPose;
+	//}
+	//constBuffSkin->Unmap(0, nullptr);
 
 }
 
@@ -387,6 +385,8 @@ void FbxModel::Draw(
 
 void FbxModel::ModelAnimation(float frame, aiAnimation* Animation) {
 
+	HRESULT result = S_FALSE;
+
 	Matrix4 mxIdentity = MyMath::MakeIdentity();
 	Node* pNode = &nodes[0];
 	
@@ -395,6 +395,10 @@ void FbxModel::ModelAnimation(float frame, aiAnimation* Animation) {
 
 	FLOAT TimeInTicks = frame * TicksPerSecond;
 	FLOAT AnimationTime = fmod(TimeInTicks, (FLOAT)Animation->mDuration);
+
+	//定数バッファへデータ転送
+	ConstBufferDataSkin* constMapSkin = nullptr;
+	result = constBuffSkin_->Map(0, nullptr, (void**)&constMapSkin);
 
 	for (Mesh* mesh : meshes_)
 	{
@@ -405,9 +409,13 @@ void FbxModel::ModelAnimation(float frame, aiAnimation* Animation) {
 		for (UINT i = 0; i < nNumBones; i++)
 		{
 			mesh->vecBones[i].matrix = mesh->bones[mesh->vecBones[i].name]->matrix;
+
+			constMapSkin->bones[i] = mesh->vecBones[i].matrix;
 		}
 	}
 
+
+	constBuffSkin_->Unmap(0, nullptr);
 }
 
 

@@ -365,3 +365,5 @@ FodyWeavers.xsd
 /External/FBXSDK/lib/fbx_sdk
 /Engine/assimp/x64-windows/lib
 /Engine/assimp/x64-windows-static/lib
+/assimp-vc143-mtd.lib
+/pugixml.lib

@@ -33,11 +33,11 @@ void GameScene::Initialize() {
 
 	fbxmodel = new FbxModel();
 	
-	fbxmodel = FbxLoader::GetInstance()->LoadModelFromFile("kurukuru");
+	fbxmodel = FbxLoader::GetInstance()->LoadModelFromFile("Player");
 	fbxmodel->Initialize();
 
 	modelAnim = new FbxAnimation();
-	modelAnim->Load("kurukuru");
+	modelAnim->Load("Player");
 
 
 
@@ -51,26 +51,40 @@ void GameScene::Update() {
 	}
 
 	if (input_->PushKey(DIK_UP)) {
+		viewProjection_.target += Vector3(0, 0, 1.0f);
 		viewProjection_.eye += Vector3(0, 0, 1.0f);
 	}
 	if (input_->PushKey(DIK_DOWN)) {
+		viewProjection_.target += Vector3(0, 0, -1.0f);
 		viewProjection_.eye += Vector3(0, 0, -1.0f);
 	}
 
 	if (input_->PushKey(DIK_LEFT)) {
+		viewProjection_.target += Vector3(1.0f, 0, 0);
 		viewProjection_.eye += Vector3(1.0f, 0, 0);
 	}
 	if (input_->PushKey(DIK_RIGHT)) {
+		viewProjection_.target += Vector3(-1.0f, 0, 0);
 		viewProjection_.eye += Vector3(-1.0f, 0, 0);
+	}
+
+	if (input_->PushKey(DIK_W)) {
+		viewProjection_.target += Vector3(0, 1.0f, 0);
+		viewProjection_.eye += Vector3(0, 1.0f, 0);
+	}
+	if (input_->PushKey(DIK_S)) {
+		viewProjection_.target += Vector3(0, -1.0f, 0);
+		viewProjection_.eye += Vector3(0, -1.0f, 0);
 	}
 
 	viewProjection_.UpdateMatrix();
 
+
+	frem += 1.0f;
+
 	if (input_->PushKey(DIK_P)) {
 		frem = 0;
 	}
-
-	frem += 1.0f;
 
 	fbxmodel->ModelAnimation(frem, modelAnim->GetAnimation());
 

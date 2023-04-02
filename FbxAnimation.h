@@ -4,7 +4,8 @@
 #include<assimp/postprocess.h>
 #include<assimp/cimport.h>
 
-
+#include <d3d12.h>
+#include <d3dx12.h>
 
 class FbxAnimation {
 public:
@@ -22,7 +23,6 @@ public: // ’è”
 private:
 
 	aiAnimation* modelAnimation;
-	int flag = 0;
 	const aiScene* mScene;
 
 };

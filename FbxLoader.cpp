@@ -35,18 +35,6 @@ void FbxLoader::Initialize(ID3D12Device* device)
 	// 引数からメンバ変数に代入
 	this->device = device;
 
-	flag |= aiProcess_Triangulate; //三角面化
-	flag |= aiProcess_CalcTangentSpace; //接線ベクトル生成
-	flag |= aiProcess_GenSmoothNormals; //スムージングベクトル生成
-	flag |= aiProcess_GenUVCoords; //非マッピングを適切なUV座標に変換
-	flag |= aiProcess_RemoveRedundantMaterials; //冗長なマテリアルを削除
-	flag |= aiProcess_OptimizeMeshes; //メッシュ数を最適化
-	flag |= aiProcess_MakeLeftHanded; //ノードを左手座標系に
-	flag |= aiProcess_JoinIdenticalVertices;//インデックスを生成
-	flag |= aiProcess_LimitBoneWeights;//各頂点が影響を受けるボーンを4に制限
-
-
-	flag |= aiProcess_ConvertToLeftHanded;
 }
 
 void FbxLoader::Finalize()
@@ -137,7 +125,10 @@ void FbxLoader::ParseSkin(FbxModel* model, aiMesh* fbxMesh) {
 		//FBXから初期姿勢行列を取得する
 
 		//初期姿勢行列の逆行列を得る
-		bone.offsetMatirx = MyMath::AssimpMatrix(meshBone->mOffsetMatrix);
+		bone.offsetMatirx = MyMath::AssimpMatrix(meshBone->mOffsetMatrix.Transpose());
+
+
+
 		bone.index = i;
 
 		model->meshes_.back()->vecBones.push_back(bone);
@@ -213,6 +204,8 @@ void FbxLoader::ParseNodeRecursive(FbxModel* model, aiNode* fbxNode, Node* paren
 
 			model->meshes_.back()->name_ = aimesh->mName.C_Str();
 
+			model->meshes_.back()->node = &node;
+
 			ParseMesh(model, aimesh);
 		}
 	}
@@ -287,7 +280,7 @@ void FbxLoader::ParseMeshFaces(FbxModel* model, aiMesh* fbxMesh)
 	for (int i = 0; i < polygonCount; i++) {
 		aiVector3D* uv = (fbxMesh->HasTextureCoords(0)) ? &(fbxMesh->mTextureCoords[0][i]) : &zero3D;
 
-		vertices[i].uv = Vector2(uv->x,uv->y);
+		vertices[i].uv = Vector2(uv->x,-uv->y);
 	}
 	
 	indices.resize(fbxMesh->mNumFaces * 3);

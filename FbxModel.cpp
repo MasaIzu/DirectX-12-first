@@ -26,6 +26,7 @@ ComPtr<ID3D12PipelineState> FbxModel::sPipelineState_;
 std::unique_ptr<LightGroup> FbxModel::lightGroup;
 
 Microsoft::WRL::ComPtr<ID3D12Resource> FbxModel::constBuffSkin_;
+Microsoft::WRL::ComPtr<ID3D12Resource> FbxModel::constBuffNothing_;
 
 void FbxModel::StaticInitialize() {
 
@@ -118,11 +119,25 @@ void FbxModel::InitializeGraphicsPipeline() {
 	// サンプルマスク
 	gpipeline.SampleMask = D3D12_DEFAULT_SAMPLE_MASK; // 標準設定
 	// ラスタライザステート
-	gpipeline.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+	//gpipeline.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+
+	// ラスタライザステート
+	gpipeline.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+	gpipeline.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
+	gpipeline.RasterizerState.DepthClipEnable = true;
+
+
 	// gpipeline.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
 	// gpipeline.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
 	//  デプスステンシルステート
-	gpipeline.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+	//gpipeline.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+
+	//  デプスステンシルステート
+	gpipeline.DepthStencilState.DepthEnable = true;
+	gpipeline.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	gpipeline.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+	gpipeline.DSVFormat = DXGI_FORMAT_D32_FLOAT;
+
 
 	// レンダーターゲットのブレンド設定
 	D3D12_RENDER_TARGET_BLEND_DESC blenddesc{};
@@ -158,12 +173,13 @@ void FbxModel::InitializeGraphicsPipeline() {
 	descRangeSRV.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0); // t0 レジスタ
 
 	// ルートパラメータ
-	CD3DX12_ROOT_PARAMETER rootparams[5];
+	CD3DX12_ROOT_PARAMETER rootparams[6];
 	rootparams[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
 	rootparams[1].InitAsConstantBufferView(1, 0, D3D12_SHADER_VISIBILITY_ALL);
 	rootparams[2].InitAsConstantBufferView(2, 0, D3D12_SHADER_VISIBILITY_ALL);
 	rootparams[3].InitAsDescriptorTable(1, &descRangeSRV, D3D12_SHADER_VISIBILITY_ALL);
 	rootparams[4].InitAsConstantBufferView(3, 0, D3D12_SHADER_VISIBILITY_ALL);
+	rootparams[5].InitAsConstantBufferView(4, 0, D3D12_SHADER_VISIBILITY_ALL);
 
 	// スタティックサンプル
 	CD3DX12_STATIC_SAMPLER_DESC samplerDesc = CD3DX12_STATIC_SAMPLER_DESC(0);
@@ -196,12 +212,21 @@ void FbxModel::InitializeGraphicsPipeline() {
 	CD3DX12_HEAP_PROPERTIES heapProps = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
 	// リソース設定
 	CD3DX12_RESOURCE_DESC resourceDesc = CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataSkin) + 0xff) & ~0xff);
+	// リソース設定
+	CD3DX12_RESOURCE_DESC resourceDescNothing = CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataInitialMatrix) + 0xff) & ~0xff);
 
 	// 定数バッファの生成
 	result = DirectXCore::GetInstance()->GetDevice()->CreateCommittedResource(
 		&heapProps, // アップロード可能
 		D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
 		IID_PPV_ARGS(&constBuffSkin_));
+
+	// 定数バッファの生成
+	result = DirectXCore::GetInstance()->GetDevice()->CreateCommittedResource(
+		&heapProps, // アップロード可能
+		D3D12_HEAP_FLAG_NONE, &resourceDescNothing, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
+		IID_PPV_ARGS(&constBuffNothing_));
+
 
 	//定数バッファへデータ転送
 	ConstBufferDataSkin* constMapSkin = nullptr;
@@ -292,7 +317,7 @@ void FbxModel::Initialize() {
 
 		m->CreateBuffers();
 
-		
+
 	}
 
 	// マテリアルの数値を定数バッファに反映
@@ -309,7 +334,7 @@ void FbxModel::Initialize() {
 		}
 
 	}
-	
+
 
 
 }
@@ -352,11 +377,27 @@ void FbxModel::Draw(
 		// CBVをセット（ビュープロジェクション行列）
 		sCommandList_->SetGraphicsRootConstantBufferView(1, viewProjection.constBuff_->GetGPUVirtualAddress());
 
+		if (meshes_[i]->node) {
+
+			HRESULT result = S_FALSE;
+
+			//定数バッファへデータ転送
+			ConstBufferDataInitialMatrix* constMapSkin = nullptr;
+			result = constBuffNothing_->Map(0, nullptr, (void**)&constMapSkin);
+			constMapSkin->InitialMatrix = meshes_[i]->node->globalTransform;
+
+			constBuffNothing_->Unmap(0, nullptr);
+
+
+			sCommandList_->SetGraphicsRootConstantBufferView(5, constBuffNothing_->GetGPUVirtualAddress());
+
+		}
+
 		// CBVをセット（ボーン行列）
 		sCommandList_->SetGraphicsRootConstantBufferView(4, constBuffSkin_->GetGPUVirtualAddress());
 
 		// 全メッシュを描画
-		meshes_[i]->Draw(sCommandList_, 2, 3,3);
+		meshes_[i]->Draw(sCommandList_, 2, 3, 3);
 	}
 }
 
@@ -389,7 +430,7 @@ void FbxModel::ModelAnimation(float frame, aiAnimation* Animation) {
 
 	Matrix4 mxIdentity = MyMath::MakeIdentity();
 	Node* pNode = &nodes[0];
-	
+
 
 	FLOAT TicksPerSecond = (FLOAT)(Animation->mTicksPerSecond != 0 ? Animation->mTicksPerSecond : 25.0f);
 
@@ -436,7 +477,7 @@ void FbxModel::ReadNodeHeirarchy(Mesh* mesh, aiAnimation* pAnimation, FLOAT Anim
 		Vector3 vScaling = {};
 		CalcInterpolatedScaling(vScaling, AnimationTime, pNodeAnim);
 		Matrix4 mxScaling;
-		mxScaling = MyMath::Rotation(vScaling,6);
+		mxScaling = MyMath::Scale(vScaling);
 
 		//回転角
 		Vector4 vRotationQ = {};
@@ -450,14 +491,16 @@ void FbxModel::ReadNodeHeirarchy(Mesh* mesh, aiAnimation* pAnimation, FLOAT Anim
 		mxTranslationM = MyMath::Translation(vTranslation);
 
 		Matrix4 affin = MyMath::Initialize();
-		affin *= mxScaling;
+		/*affin *= mxScaling;
 		affin *= mxRotationM;
-		affin *= mxTranslationM;
+		affin *= mxTranslationM;*/
+
+		affin = mxScaling.MatMul(mxRotationM).MatMul(mxTranslationM);
 
 		mxNodeTransformation = affin;
 	}
 
-	Matrix4 mxGlobalTransformation = mxNodeTransformation * mxParentTransform;
+	Matrix4 mxGlobalTransformation = mxNodeTransformation.MatMul(mxParentTransform);
 
 	Matrix4 offsetMatirx;
 	Matrix4 matirx;
@@ -466,7 +509,7 @@ void FbxModel::ReadNodeHeirarchy(Mesh* mesh, aiAnimation* pAnimation, FLOAT Anim
 	{
 		offsetMatirx = mesh->bones[strNodeName]->offsetMatirx;
 
-		matirx = offsetMatirx * mxGlobalTransformation * globalInverseTransform;
+		matirx = offsetMatirx.MatMul(mxGlobalTransformation).MatMul(globalInverseTransform);
 
 		mesh->bones[strNodeName]->matrix = matirx;
 

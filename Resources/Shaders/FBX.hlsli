@@ -40,3 +40,8 @@ cbuffer skinning:register(b3)//ボーンのスキニング行列が入る
 {
 	matrix matSkinning[MAX_BONES];
 }
+
+cbuffer initialMatrix : register(b4)//ボーンのスキニング行列が入る
+{
+	matrix initialMatrix;
+}

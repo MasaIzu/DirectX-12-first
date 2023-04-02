@@ -581,10 +581,20 @@ Vector4 MyMath::QuaternionSlerp(aiQuaternion& assimpaiQuaternion, aiQuaternion& 
 	Quaternion assimQ1 = AssimpQuaternion(assimpaiQuaternion);
 	Quaternion assimQ2 = AssimpQuaternion(assimpaiQuaternion2);
 
-	assimQ1.Slerp(assimQ2, t);
+	/*assimQ1.Slerp(assimQ2, t);
 	
-	Vector4 slrap = { assimQ1.x,assimQ1.y,assimQ1.z,assimQ1.w };
+	Vector4 slrap = { assimQ1.x,assimQ1.y,assimQ1.z,assimQ1.w };*/
 
-	return slrap;
+
+
+	DirectX::XMVECTOR start = { assimQ1.x, assimQ1.y ,assimQ1.z ,assimQ1.w };
+
+	DirectX::XMVECTOR end = { assimQ2.x, assimQ2.y ,assimQ2.z ,assimQ2.w };
+
+	DirectX::XMVECTOR vOut = DirectX::XMQuaternionSlerp(start, end, t);
+
+	Vector4 slrapKari = { vOut.m128_f32[0],vOut.m128_f32[1],vOut.m128_f32[2],vOut.m128_f32[3] };
+
+	return slrapKari;
 }
 

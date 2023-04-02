@@ -16,24 +16,6 @@
 #include <ViewProjection.h>
 
 
-
-// ノード
-struct Node
-{
-	//名前
-	std::string name;
-	//ローカル変形行列
-	Matrix4 transform;
-	//グローバル変形行列
-	Matrix4 globalTransform;
-	//親ノード
-	Node* parent = nullptr;
-	//子ノード
-	std::vector<Node*>childrens;
-
-};
-
-
 class FbxModel
 {
 public:
@@ -79,8 +61,16 @@ public:
 		Matrix4 bones[MAX_BONES];
 	};
 
+	//アニメーションがない場合
+	struct ConstBufferDataInitialMatrix {
+		Matrix4 InitialMatrix;
+	};
+
+
 	//定数バッファ(スキン)
 	static Microsoft::WRL::ComPtr<ID3D12Resource> constBuffSkin_;
+	//定数バッファ(アニメーションなし)
+	static Microsoft::WRL::ComPtr<ID3D12Resource> constBuffNothing_;
 
 private:
 	static const std::string kBaseDirectory;

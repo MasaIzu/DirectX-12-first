@@ -13,6 +13,22 @@
 #include "Vector4.h"
 #include "Matrix4.h"
 
+// ノード
+struct Node
+{
+	//名前
+	std::string name;
+	//ローカル変形行列
+	Matrix4 transform;
+	//グローバル変形行列
+	Matrix4 globalTransform;
+	//親ノード
+	Node* parent = nullptr;
+	//子ノード
+	std::vector<Node*>childrens;
+
+};
+
 /// <summary>
 /// 形状データ
 /// </summary>
@@ -195,6 +211,9 @@ private: // メンバ変数
 	std::unordered_map<std::string, Bone*> bones;
 
 	std::vector<Bone> vecBones;
+
+	Node* node = nullptr;
+
 
 	// マッピング済みアドレス
 	Bone* constMap = nullptr;

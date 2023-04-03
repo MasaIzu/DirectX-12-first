@@ -28,16 +28,16 @@ void GameScene::Initialize() {
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = { 0,0,0 };
 	worldTransform_.rotation_ = { 0,0,0 };
-	worldTransform_.scale_ = { 0.5f,0.5f,0.5f };
+	worldTransform_.scale_ = { 0.1f,0.1f,0.1f };
 	worldTransform_.TransferMatrix();
 
 	fbxmodel = new FbxModel();
 	
-	fbxmodel = FbxLoader::GetInstance()->LoadModelFromFile("Player");
+	fbxmodel = FbxLoader::GetInstance()->LoadModelFromFile("3dGameKyaraGunpuku1");
 	fbxmodel->Initialize();
 
 	modelAnim = new FbxAnimation();
-	modelAnim->Load("Player");
+	modelAnim->Load("3dGameKyaraGunpuku1");
 
 
 
@@ -80,7 +80,7 @@ void GameScene::Update() {
 	viewProjection_.UpdateMatrix();
 
 
-	frem += 1.0f;
+	frem += 0.1f;
 
 	if (input_->PushKey(DIK_P)) {
 		frem = 0;

@@ -90,6 +90,9 @@ public:
 	// テクスチャハンドル
 	uint32_t GetTextureHadle(size_t index) { return textureHandle_[index]; }
 
+	// テクスチャハンドル
+	uint32_t GetTextureHadle() { return modelTextureHandle; }
+
 	void SetLight(Vector3 ambient, Vector3 diffuse, Vector3 specular, float alpha);
 
 private:
@@ -118,4 +121,8 @@ private:
 	/// 定数バッファの生成
 	/// </summary>
 	void CreateConstantBuffer();
+
+
+	uint32_t modelTextureHandle = 0;
+
 };

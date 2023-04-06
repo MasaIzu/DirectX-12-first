@@ -91,6 +91,8 @@ FbxModel* FbxLoader::LoadModelFromFile(const string& modelName)
 		}
 	}
 
+	model->SetTextureHandle(textureHandle);
+
 	return model;
 }
 
@@ -369,6 +371,7 @@ std::vector<uint32_t> FbxLoader::LoadMatrixerialTextures(aiMaterial* cmatrix, ai
 			std::string filename = ExtractFileName(std::string(str.C_Str()));
 			filename = modelName + '\\' + filename;
 			texture = TextureManager::Load(filename);
+			textureHandle = texture;
 		}
 
 		textures.push_back(texture);

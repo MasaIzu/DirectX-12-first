@@ -121,4 +121,6 @@ private:
 
 	const aiScene* mScene;
 
+	uint32_t textureHandle = 0;
+
 };

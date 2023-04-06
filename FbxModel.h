@@ -124,6 +124,9 @@ public: // メンバ関数
 
 	void Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection);
 
+	void Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, uint32_t textureHadle);
+
+
 	void ModelAnimation(float frame,aiAnimation* Animation);
 
 	void ReadNodeHeirarchy(Mesh* mesh, aiAnimation* Animation, FLOAT AnimationTime, Node*pNode,Matrix4& mxIdentity);
@@ -146,6 +149,8 @@ public: // メンバ関数
 	// メッシュコンテナを取得
 	inline const std::vector<Mesh*>& GetMeshes() { return meshes_; }
 
+	void SetTextureHandle(uint32_t textureHandle) { modelTextureHandle = textureHandle; }
+
 private:
 
 	Matrix4 Test;
@@ -166,7 +171,7 @@ private:
 	// デフォルトマテリアル
 	Material* defaultMaterial_ = nullptr;
 
-
+	uint32_t modelTextureHandle = 0;
 
 };
 

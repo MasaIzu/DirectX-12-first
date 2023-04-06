@@ -96,6 +96,9 @@ public: // メンバ関数
 	/// <returns>インデックス配列</returns>
 	inline const std::vector<unsigned short>& GetIndices() { return indices; }
 
+	void SetTextureHandle(uint32_t textureHandle) { modelTextureHandle = textureHandle; }
+
+
 private: // メンバ変数
 	// 名前
 	std::string name_;
@@ -110,6 +113,8 @@ private: // メンバ変数
 	std::vector<Mesh::VertexPosNormalUv>vertices;
 	//頂点インデックス
 	std::vector<unsigned short> indices;
+
+	uint32_t modelTextureHandle = 0;
 
 private: // メンバ関数
 

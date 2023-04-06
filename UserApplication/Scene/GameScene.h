@@ -65,10 +65,18 @@ private: // メンバ変数
 	ViewProjection viewProjection_;
 	//ワールド変換データ
 	WorldTransform worldTransform_;
+	//ワールド変換データ
+	WorldTransform worldTransform2_;
+	//ワールド変換データ
+	WorldTransform FbxWorldTransform_;
+
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0;
 	// 3Dモデル
 	std::unique_ptr<Model> model_ = nullptr;
+
+	// 3Dモデル
+	std::unique_ptr<Model> model2_ = nullptr;
 
 	//シーンマネージャー
 	SceneManager* sceneManager_ = nullptr;

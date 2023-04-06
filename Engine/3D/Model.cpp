@@ -188,6 +188,8 @@ Model* Model::CreateFromOBJ(const std::string& modelname, bool smoothing) {
 	Model* instance = new Model;
 	instance->Initialize(modelname, smoothing);
 
+
+
 	return instance;
 }
 
@@ -559,6 +561,7 @@ void Model::LoadTextures() {
 		if (material->textureFilename_.size() > 0) {
 			// マテリアルにテクスチャ読み込み
 			material->LoadTexture(directoryPath);
+			modelTextureHandle = material->GetTextureHadle();
 			textureIndex++;
 		}
 		// テクスチャなし
@@ -573,20 +576,18 @@ void Model::LoadTextures() {
 void Model::Draw(
 	const WorldTransform& worldTransform, const ViewProjection& viewProjection) {
 
+	// ライトの描画
+	lightGroup->Draw(sCommandList_, 4);
+
+	// CBVをセット（ワールド行列）
+	sCommandList_->SetGraphicsRootConstantBufferView(0, worldTransform.constBuff_->GetGPUVirtualAddress());
+
+	// CBVをセット（ビュープロジェクション行列）
+	sCommandList_->SetGraphicsRootConstantBufferView(1, viewProjection.constBuff_->GetGPUVirtualAddress());
+
 	for (int i = 0; i < meshes_.size(); i++) {
-
-		// ライトの描画
-		lightGroup->Draw(sCommandList_, 4);
-
-		// CBVをセット（ワールド行列）
-		sCommandList_->SetGraphicsRootConstantBufferView(0, worldTransform.constBuff_->GetGPUVirtualAddress());
-
-		// CBVをセット（ビュープロジェクション行列）
-		sCommandList_->SetGraphicsRootConstantBufferView(1, viewProjection.constBuff_->GetGPUVirtualAddress());
-
-
 		// 全メッシュを描画
-		meshes_[i]->Draw(sCommandList_, 2, 3, i);
+		meshes_[i]->Draw(sCommandList_, 2, 3, modelTextureHandle);
 	}
 }
 
@@ -598,10 +599,10 @@ void Model::Draw(
 	lightGroup->Draw(sCommandList_, 4);
 
 	// CBVをセット（ワールド行列）
-	sCommandList_->SetGraphicsRootConstantBufferView(0,worldTransform.constBuff_->GetGPUVirtualAddress());
+	sCommandList_->SetGraphicsRootConstantBufferView(0, worldTransform.constBuff_->GetGPUVirtualAddress());
 
 	// CBVをセット（ビュープロジェクション行列）
-	sCommandList_->SetGraphicsRootConstantBufferView(1,viewProjection.constBuff_->GetGPUVirtualAddress());
+	sCommandList_->SetGraphicsRootConstantBufferView(1, viewProjection.constBuff_->GetGPUVirtualAddress());
 
 	// 全メッシュを描画
 	for (auto& mesh : meshes_) {

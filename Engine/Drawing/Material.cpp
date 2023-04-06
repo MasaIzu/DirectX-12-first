@@ -56,7 +56,8 @@ void Material::LoadTexture(const std::string& directoryPath) {
 	string filepath = directoryPath + textureFilename_;
 
 	// テクスチャ読み込み
-	textureHandle_.push_back(TextureManager::Load(filepath));
+	modelTextureHandle = TextureManager::Load(filepath);
+	textureHandle_.push_back(modelTextureHandle);
 }
 
 void Material::Update() {
